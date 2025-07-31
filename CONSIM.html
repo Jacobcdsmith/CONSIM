@@ -1842,7 +1842,7 @@
                 const interactionRadius = 80;
                 const fieldInfluence = 0.002 * params.fieldStrength * params.timeDilation;
                 
-                nodes.forEach(otherNode => {
+                consciousnessNodes.forEach(otherNode => {
                     if (otherNode === this) return;
                     
                     const dx = otherNode.x - this.x;
