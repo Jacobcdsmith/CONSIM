@@ -103,7 +103,14 @@ async def simulation_loop():
             
             # Send to all connected clients
             if connected_clients:
-                state_json = json.dumps(state, default=str)
+                try:
+                    # Safe JSON serialization with explicit type handling
+                    state_json = json.dumps(state, ensure_ascii=False, separators=(',', ':'))
+                except (TypeError, ValueError) as e:
+                    logger.error(f"JSON serialization error: {e}")
+                    # Skip this frame if serialization fails
+                    continue
+                    
                 disconnected_clients = []
                 
                 for client in connected_clients:
@@ -136,8 +143,13 @@ async def websocket_endpoint(websocket: WebSocket):
     
     try:
         # Send initial state
-        initial_state = lattice.get_state_for_transmission()
-        await websocket.send_text(json.dumps(initial_state, default=str))
+        try:
+            initial_state = lattice.get_state_for_transmission()
+            initial_json = json.dumps(initial_state, ensure_ascii=False, separators=(',', ':'))
+            await websocket.send_text(initial_json)
+        except (TypeError, ValueError) as e:
+            logger.error(f"Failed to send initial state: {e}")
+            return
         
         # Listen for client messages (mouse interactions, etc.)
         while True:
@@ -153,7 +165,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     mouse_data = message.get('data', {})
                     # This will be handled in the next update cycle
                     # Store mouse influence for next frame
-                    lattice.mouse_influence = mouse_data
+                    lattice.mouse_influence_queue.append(mouse_data)
                 
                 elif message_type == 'parameter_update':
                     # Update simulation parameters

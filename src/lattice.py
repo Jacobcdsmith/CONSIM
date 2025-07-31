@@ -179,6 +179,8 @@ class ConsciousnessNode:
         if self.x < -world_bounds_x/2 or self.x > world_bounds_x/2:
             if np.random.random() < 0.05:  # 5% quantum tunneling
                 self.x = world_bounds_x/2 if self.x < -world_bounds_x/2 else -world_bounds_x/2
+                # Reverse velocity to prevent immediate re-collision
+                self.vx *= -0.5
             else:
                 self.vx *= -0.8 * params.get('elasticity', 0.8)
                 self.x = np.clip(self.x, -world_bounds_x/2, world_bounds_x/2)
@@ -186,6 +188,8 @@ class ConsciousnessNode:
         if self.y < -world_bounds_y/2 or self.y > world_bounds_y/2:
             if np.random.random() < 0.05:
                 self.y = world_bounds_y/2 if self.y < -world_bounds_y/2 else -world_bounds_y/2
+                # Reverse velocity to prevent immediate re-collision
+                self.vy *= -0.5
             else:
                 self.vy *= -0.8 * params.get('elasticity', 0.8)
                 self.y = np.clip(self.y, -world_bounds_y/2, world_bounds_y/2)
@@ -295,6 +299,8 @@ class ConsciousnessLattice:
         self.universes: List[Universe] = []
         self.clusters: List[Dict] = []
         
+        self.mouse_influence_queue: List[Dict] = []
+        
         # Dirichlet-sampled λ weights for universes
         self.lambdas = self._sample_dirichlet([1.0] * universe_count)
         
@@ -387,12 +393,15 @@ class ConsciousnessLattice:
         
         self.time += actual_delta_time * self.params['time_dilation']
         
+        # Process mouse influence from queue
+        current_mouse_influence = self.mouse_influence_queue.pop(0) if self.mouse_influence_queue else None
+
         # Update universes
         for universe in self.universes:
             universe.update(self.time)
         
         # Update nodes with node-to-node interactions
-        self._update_nodes_with_interactions(actual_delta_time, mouse_influence)
+        self._update_nodes_with_interactions(actual_delta_time, current_mouse_influence)
         
         # Update clusters and intelligence
         self._update_clusters()
@@ -403,7 +412,8 @@ class ConsciousnessLattice:
     def _update_nodes_with_interactions(self, delta_time: float, mouse_influence: Optional[Dict] = None):
         """Update all nodes including mutual interactions."""
         
-        # Calculate repulsion forces between nodes
+        # Calculate all forces first
+        forces = []
         for i, node in enumerate(self.nodes):
             # Reset forces
             repulsion_x = 0.0
@@ -426,9 +436,13 @@ class ConsciousnessLattice:
                     repulsion_x -= np.cos(angle) * force * repulsion_strength
                     repulsion_y -= np.sin(angle) * force * repulsion_strength
             
+            forces.append({'x': repulsion_x, 'y': repulsion_y})
+
+        # Then apply forces and update nodes
+        for i, node in enumerate(self.nodes):
             # Apply repulsion
-            node.vx += repulsion_x
-            node.vy += repulsion_y
+            node.vx += forces[i]['x']
+            node.vy += forces[i]['y']
             
             # Update node
             node.update(delta_time, self.params, mouse_influence)
@@ -450,8 +464,11 @@ class ConsciousnessLattice:
             cluster_nodes = [node]
             processed.add(i)
             queue = [i]
+            safety_counter = 0  # Prevent infinite loops
+            max_iterations = len(self.nodes) * 2  # Safety limit
             
-            while queue:
+            while queue and safety_counter < max_iterations:
+                safety_counter += 1
                 current_idx = queue.pop(0)
                 current_node = self.nodes[current_idx]
                 
@@ -469,7 +486,7 @@ class ConsciousnessLattice:
                         phase_compatible = phase_diff < 0.5
                         
                         # Check frequency compatibility
-                        freq_ratio = min(current_node.frequency, candidate.frequency) / max(current_node.frequency, candidate.frequency)
+                        freq_ratio = min(current_node.frequency, candidate.frequency) / max(max(current_node.frequency, candidate.frequency), 0.001)
                         freq_compatible = freq_ratio > 0.7
                         
                         if phase_compatible and freq_compatible:
@@ -541,7 +558,24 @@ class ConsciousnessLattice:
         self.nodes.append(node)
         self.universes[universe_id].nodes.append(node)
         
+        # Re-normalize attention field to maintain ∫A(x)dμ(x) = 1
+        self._normalize_attention_field()
+        
         return node
+    
+    def remove_node(self, node: ConsciousnessNode):
+        """Safely remove a node from both main list and universe list."""
+        if node in self.nodes:
+            self.nodes.remove(node)
+        
+        # Remove from universe nodes list to prevent stale references
+        if node.universe_id < len(self.universes):
+            universe = self.universes[node.universe_id]
+            if node in universe.nodes:
+                universe.nodes.remove(node)
+        
+        # Re-normalize attention field after removal
+        self._normalize_attention_field()
     
     def quantum_collapse(self, x: float, y: float):
         """Trigger quantum collapse effect at specified location."""
