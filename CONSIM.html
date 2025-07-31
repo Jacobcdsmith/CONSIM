@@ -28,7 +28,7 @@
             top: 15px;
             left: 15px;
             color: #00ffaa;
-            font-size: 10px;
+            font-size: 12px;
             text-shadow: 0 0 10px rgba(0, 255, 170, 0.8);
             z-index: 100;
             background: rgba(0, 0, 0, 0.7);
@@ -44,7 +44,7 @@
             top: 15px;
             right: 15px;
             color: #ffffff;
-            font-size: 10px;
+            font-size: 12px;
             text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
             z-index: 100;
             background: rgba(0, 0, 0, 0.6);
@@ -74,7 +74,7 @@
             cursor: pointer;
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
-            font-size: 9px;
+            font-size: 12px;
             font-family: inherit;
         }
         
@@ -95,10 +95,11 @@
             position: absolute;
             bottom: 10px;
             right: 10px;
-            color: #888;
-            font-size: 8px;
+            color: #ccc;
+            font-size: 12px;
             text-align: right;
             z-index: 100;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
         }
         
         .legend div {
@@ -348,8 +349,8 @@
         }
         
         .zoom-btn {
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.3);
             color: #ffffff;
@@ -458,8 +459,8 @@
             }
             
             .zoom-btn {
-                width: 25px;
-                height: 25px;
+                width: 35px;
+                height: 35px;
                 font-size: 16px;
             }
         }
@@ -470,7 +471,7 @@
         <div><strong>The Core EQ:</strong></div>
         <div>C = ∫<sub>M<sub>C</sub></sub> A(x) Φ(x) e<sup>iτ(x)</sup> dμ(x)</div>
         <div>M = Σ<sub>i</sub> λ<sub>i</sub> U<sub>i</sub></div>
-        <div style="margin-top: 8px; font-size: 8px; color: #888;">
+        <div style="margin-top: 8px; font-size: 10px; color: #aaa;">
             C: Consciousness | M<sub>C</sub>: Manifold<br>
             A(x): Attention | Φ(x): Frequency<br>
             τ(x): Temporal | M: Multiverse
@@ -482,6 +483,7 @@
         <div>Universe Resonance: <span id="resonance">0.0</span></div>
         <div>Attention Density: <span id="attention">0.0</span></div>
         <div>Temporal Phase: <span id="phase">0.0</span>°</div>
+        <div>Performance: <span id="fps">-- FPS</span></div>
     </div>
     
     <canvas id="canvas"></canvas>
@@ -517,38 +519,38 @@
         
         <div class="section-title">Interaction Mode</div>
         <div class="interaction-modes">
-            <button class="interaction-btn active" data-mode="push">Push</button>
-            <button class="interaction-btn" data-mode="pull">Pull</button>
-            <button class="interaction-btn" data-mode="vortex">Vortex</button>
-            <button class="interaction-btn" data-mode="wave">Wave</button>
-            <button class="interaction-btn" data-mode="string">String</button>
+            <button class="interaction-btn active" data-mode="push" aria-label="Push interaction mode">Push</button>
+            <button class="interaction-btn" data-mode="pull" aria-label="Pull interaction mode">Pull</button>
+            <button class="interaction-btn" data-mode="vortex" aria-label="Vortex interaction mode">Vortex</button>
+            <button class="interaction-btn" data-mode="wave" aria-label="Wave interaction mode">Wave</button>
+            <button class="interaction-btn" data-mode="string" aria-label="String interaction mode">String</button>
         </div>
         
         <div class="section-title">Intelligence Mode</div>
         <div class="intelligence-modes">
-            <button class="interaction-btn active" data-intel="basic">Basic</button>
-            <button class="interaction-btn" data-intel="neural">Neural</button>
-            <button class="interaction-btn" data-intel="quantum">Quantum</button>
+            <button class="interaction-btn active" data-intel="basic" aria-label="Basic intelligence mode">Basic</button>
+            <button class="interaction-btn" data-intel="neural" aria-label="Neural intelligence mode">Neural</button>
+            <button class="interaction-btn" data-intel="quantum" aria-label="Quantum intelligence mode">Quantum</button>
         </div>
     </div>
     
     <!-- Zoom Controls -->
     <div class="zoom-controls">
-        <button class="zoom-btn" id="zoomIn">+</button>
-        <button class="zoom-btn" id="zoomOut">-</button>
-        <button class="zoom-btn" id="resetView">↺</button>
+        <button class="zoom-btn" id="zoomIn" aria-label="Zoom in">+</button>
+        <button class="zoom-btn" id="zoomOut" aria-label="Zoom out">-</button>
+        <button class="zoom-btn" id="resetView" aria-label="Reset view">↺</button>
     </div>
     
     <div class="pan-indicator" id="panIndicator"></div>
     
     <div class="controls">
-        <button class="btn active" onclick="setMode('consciousness')">Consciousness (C)</button>
-        <button class="btn" onclick="setMode('attention')">Attention A(x)</button>
-        <button class="btn" onclick="setMode('frequency')">Frequency Φ(x)</button>
-        <button class="btn" onclick="setMode('temporal')">Temporal τ(x)</button>
-        <button class="btn" onclick="setMode('multiverse')">Multiverse M</button>
-        <button class="btn" onclick="quantumCollapse()">Quantum Collapse</button>
-        <button class="btn" onclick="reset()">Reset Manifold</button>
+        <button class="btn active" onclick="setMode('consciousness')" aria-label="Switch to consciousness mode">Consciousness (C)</button>
+        <button class="btn" onclick="setMode('attention')" aria-label="Switch to attention mode">Attention A(x)</button>
+        <button class="btn" onclick="setMode('frequency')" aria-label="Switch to frequency mode">Frequency Φ(x)</button>
+        <button class="btn" onclick="setMode('temporal')" aria-label="Switch to temporal mode">Temporal τ(x)</button>
+        <button class="btn" onclick="setMode('multiverse')" aria-label="Switch to multiverse mode">Multiverse M</button>
+        <button class="btn" onclick="quantumCollapse()" aria-label="Trigger quantum collapse effect">Quantum Collapse</button>
+        <button class="btn" onclick="reset()" aria-label="Reset the consciousness manifold">Reset Manifold</button>
     </div>
     
     <div class="legend">
@@ -559,7 +561,7 @@
         <div>Red: Universe Boundaries</div>
     </div>
     
-    <div class="help-btn" onclick="showTutorial()">?</div>
+    <div class="help-btn" onclick="showTutorial()" aria-label="Show tutorial">?</div>
     
     <!-- Tutorial Popup -->
     <div id="tutorialOverlay" class="tutorial-overlay" style="display: none;">
@@ -798,6 +800,24 @@
         let lastTime = 0;
         let stars = [];
         let shockwaves = [];
+        
+        // FPS counter variables
+        let frameCount = 0;
+        let lastFPSTime = 0;
+        
+        // Update FPS counter
+        function updateFPS(timestamp) {
+            frameCount++;
+            if (lastFPSTime === 0) {
+                lastFPSTime = timestamp;
+            }
+            if (timestamp - lastFPSTime > 1000) {
+                const fps = Math.round(frameCount * 1000 / (timestamp - lastFPSTime));
+                safeUpdateElement('fps', `${fps} FPS`);
+                frameCount = 0;
+                lastFPSTime = timestamp;
+            }
+        }
         
         // Dirichlet distribution sampler
         function sampleDirichlet(alpha) {
@@ -1750,7 +1770,7 @@
                 // Evolution rates based on environmental factors and node state
                 const evolutionRate = 0.02 * params.timeDilation * (1 + this.thoughtIntensity);
                 const stateInfluence = this.state * 0.01;
-                const fieldInfluence = fieldStrength * 0.003;
+                const fieldInfluence = params.fieldStrength * 0.003;
                 
                 // Evolve each tensor component
                 Object.keys(this.intelligenceTensor).forEach(tensorName => {
@@ -2374,11 +2394,21 @@
             // Calculate global thought complexity
             if (clusters.length > 0) {
                 let totalComplexity = 0;
+                let validClusters = 0;
                 clusters.forEach(cluster => {
-                    totalComplexity += cluster.complexityScore;
+                    const complexity = cluster.complexityScore || 0;
+                    if (!isNaN(complexity)) {
+                        totalComplexity += complexity;
+                        validClusters++;
+                    }
                 });
-                globalThoughtComplexity = totalComplexity / clusters.length;
+                globalThoughtComplexity = validClusters > 0 ? totalComplexity / validClusters : 0;
             } else {
+                globalThoughtComplexity = 0;
+            }
+            
+            // Ensure globalThoughtComplexity is never NaN
+            if (isNaN(globalThoughtComplexity)) {
                 globalThoughtComplexity = 0;
             }
             
@@ -2533,11 +2563,19 @@
                 const globalConsciousnessMagnitude = Math.sqrt(totalConsciousnessRe * totalConsciousnessRe + totalConsciousnessIm * totalConsciousnessIm);
                 globalResonance = consciousnessNodes.length > 0 ? globalConsciousnessMagnitude / consciousnessNodes.length : 0;
                 
+                // Ensure globalResonance is never NaN
+                if (isNaN(globalResonance)) {
+                    globalResonance = 0;
+                }
+                
                 // Update UI with safety checks for NaN values
                 document.getElementById('nodeCount').textContent = consciousnessNodes.length;
                 document.getElementById('resonance').textContent = (isNaN(globalResonance) ? 0 : globalResonance).toFixed(3);
                 document.getElementById('attention').textContent = (consciousnessNodes.length > 0 ? totalAttention / consciousnessNodes.length : 0).toFixed(3);
                 document.getElementById('phase').textContent = (consciousnessNodes.length > 0 ? (totalPhase / consciousnessNodes.length) * 180 / Math.PI % 360 : 0).toFixed(1);
+                
+                // Update FPS counter
+                updateFPS(timestamp);
                 
                 requestAnimationFrame(animate);
             } catch (e) {
@@ -2639,17 +2677,21 @@
             }
         }
         
-        // More robust window resize handling
+        // More robust window resize handling with debouncing
+        let resizeTimeout;
         window.addEventListener('resize', () => {
-            try {
-                // Resize canvas
-                resize();
-                
-                // Refresh pan indicator
-                updatePanIndicator();
-            } catch (e) {
-                console.error("Error during window resize:", e);
-            }
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                try {
+                    // Resize canvas
+                    resize();
+                    
+                    // Refresh pan indicator
+                    updatePanIndicator();
+                } catch (e) {
+                    console.error("Error during window resize:", e);
+                }
+            }, 100);
         });
         
         // Setup intelligence mode buttons with error handling
