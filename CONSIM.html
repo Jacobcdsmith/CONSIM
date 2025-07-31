@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Core EQ: Consciousness Manifold</title>
+    <title>CONSIM: Consciousness Manifold Simulator</title>
     <style>
         * {
             margin: 0;
@@ -758,14 +758,20 @@
         const ctx = canvas.getContext('2d');
         
         let width, height;
-        // Add missing globals to fix variable scope pollution
-        let nodes = []; // Alias for consciousnessNodes
+        
+        // Initialize critical globals first to fix "Unexpected token" errors
         let clusters = [];
         let intelligenceMode = 'basic';
         let globalThoughtComplexity = 0;
-        let timeDilation = 1.0; // Reference to params.timeDilation
-        let fieldStrength = 1.0; // Reference to params.fieldStrength
-
+        let thresholds = {
+            clusterProximity: 80,
+            phaseAlignment: 0.8,
+            frequencyResonance: 0.7
+        };
+        
+        // Global lambda weights for universes - initialize empty array to prevent undefined errors
+        let lambdas = [0.33, 0.33, 0.34]; // Default Dirichlet distribution for 3 universes
+        
         let consciousnessNodes = [];
         let universes = [];
         let mouse = { x: 0, y: 0, isDown: false };
@@ -815,7 +821,7 @@
                     if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v;
                 }
             });
-            const sum = samples.reduce((a, b) => a + b, 0);
+            const sum = samples.reduce((a, b) => a + b, 0) || 1; // Avoid division by zero
             return samples.map(s => s / sum);
         }
 
@@ -842,8 +848,7 @@
              }
         }
 
-        // Global lambda weights for universes
-        let lambdas = [];
+
 
         // Tutorial state
         let currentTutorialPage = 1;
@@ -879,21 +884,49 @@
         
         // Update tutorial page display
         function updateTutorialPage() {
-            // Hide all pages
+            // Hide all pages - Add null checks to prevent errors
             for (let i = 1; i <= totalTutorialPages; i++) {
-                document.getElementById(`tutorialPage${i}`).style.display = 'none';
+                const pageElement = document.getElementById(`tutorialPage${i}`);
+                if (pageElement) {
+                    pageElement.style.display = 'none';
+                }
             }
             
-            // Show current page
-            document.getElementById(`tutorialPage${currentTutorialPage}`).style.display = 'block';
+            // Show current page - Add null check
+            const currentPageElement = document.getElementById(`tutorialPage${currentTutorialPage}`);
+            if (currentPageElement) {
+                currentPageElement.style.display = 'block';
+            }
             
-            // Update navigation buttons
-            document.getElementById('prevBtn').disabled = currentTutorialPage === 1;
-            document.getElementById('nextBtn').disabled = currentTutorialPage === totalTutorialPages;
+            // Update navigation buttons - Add null checks
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            if (prevBtn) prevBtn.disabled = currentTutorialPage === 1;
+            if (nextBtn) nextBtn.disabled = currentTutorialPage === totalTutorialPages;
             
-            // Update progress indicator
-            document.getElementById('tutorialProgress').textContent = `Page ${currentTutorialPage} of ${totalTutorialPages}`;
+            // Update progress indicator - Add null check
+            const progressElement = document.getElementById('tutorialProgress');
+            if (progressElement) {
+                progressElement.textContent = `Page ${currentTutorialPage} of ${totalTutorialPages}`;
+            }
         }
+        
+        // Add keyboard navigation for tutorial
+        document.addEventListener('keydown', (e) => {
+            const tutorialOverlay = document.getElementById('tutorialOverlay');
+            if (tutorialOverlay && tutorialOverlay.style.display === 'flex') {
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    nextTutorialPage();
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    prevTutorialPage();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    hideTutorial();
+                }
+            }
+        });
         
         // Resize canvas
         function resize() {
@@ -1282,7 +1315,7 @@
 
                 // Calculate emergent properties from tensor interactions
                 this.calculateEmergentProperties();
-
+            }
             
             applyCrossTensorDynamics(deltaTime) {
                 const tensors = this.intelligenceTensor;
@@ -1715,7 +1748,7 @@
             
             evolveTensors() {
                 // Evolution rates based on environmental factors and node state
-                const evolutionRate = 0.02 * timeDilation * (1 + this.thoughtIntensity);
+                const evolutionRate = 0.02 * params.timeDilation * (1 + this.thoughtIntensity);
                 const stateInfluence = this.state * 0.01;
                 const fieldInfluence = fieldStrength * 0.003;
                 
@@ -1748,7 +1781,7 @@
             applyCrossTensorDynamics() {
                 // Cross-tensor interactions create emergent behaviors
                 const tensorKeys = Object.keys(this.intelligenceTensor);
-                const crossInfluence = 0.005 * timeDilation;
+                const crossInfluence = 0.005 * params.timeDilation;
                 
                 for (let i = 0; i < tensorKeys.length; i++) {
                     for (let j = i + 1; j < tensorKeys.length; j++) {
@@ -1787,7 +1820,7 @@
             applyTensorFieldInteractions() {
                 // Interact with nearby nodes' tensor fields
                 const interactionRadius = 80;
-                const fieldInfluence = 0.002 * fieldStrength * timeDilation;
+                const fieldInfluence = 0.002 * params.fieldStrength * params.timeDilation;
                 
                 nodes.forEach(otherNode => {
                     if (otherNode === this) return;
@@ -1849,14 +1882,14 @@
                 });
                 
                 const avgMagnitude = totalMagnitude / tensorKeys.length;
-                const avgAlignment = alignmentSum / (tensorKeys.length * (tensorKeys.length - 1));
+                const avgAlignment = alignmentSum / (tensorKeys.length * (tensorKeys.length - 1)) || 0;
                 
-                // Update emergent properties based on tensor dynamics
-                this.emergentProperties.consciousness_depth = Math.min(1.0, avgMagnitude * 0.8 + this.thoughtIntensity * 0.2);
-                this.emergentProperties.self_awareness = Math.min(1.0, avgAlignment * 0.6 + (this.state > 0 ? 0.4 : 0));
-                this.emergentProperties.adaptive_capacity = Math.min(1.0, complexityMeasure * 0.1 + this.velocity * 0.5);
+                // Update emergent properties based on tensor dynamics with NaN protection
+                this.emergentProperties.consciousness_depth = isNaN(avgMagnitude) ? 0 : Math.min(1.0, avgMagnitude * 0.8 + this.thoughtIntensity * 0.2);
+                this.emergentProperties.self_awareness = isNaN(avgAlignment) ? 0 : Math.min(1.0, avgAlignment * 0.6 + (this.state > 0 ? 0.4 : 0));
+                this.emergentProperties.adaptive_capacity = isNaN(complexityMeasure) ? 0 : Math.min(1.0, complexityMeasure * 0.1 + this.velocity * 0.5);
                 this.emergentProperties.collective_intelligence = Math.min(1.0, 
-                    (this.clusterId >= 0 ? 0.5 : 0) + avgMagnitude * 0.3 + avgAlignment * 0.2);
+                    (this.clusterId >= 0 ? 0.5 : 0) + (isNaN(avgMagnitude) ? 0 : avgMagnitude * 0.3) + (isNaN(avgAlignment) ? 0 : avgAlignment * 0.2));
                 
                 // Store for intelligence panel
                 this.calculatedEmergentProperties = {
@@ -2657,15 +2690,7 @@
             }
         }
         
-        // Define missing globals
-        let clusters = [];
-        let intelligenceMode = 'basic';
-        let globalThoughtComplexity = 0;
-        let thresholds = {
-            clusterProximity: 80,
-            phaseAlignment: 0.8,
-            frequencyResonance: 0.7
-        };
+
         
         // Add missing functions
         
