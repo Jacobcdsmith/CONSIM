@@ -1,0 +1,3034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Core EQ: Consciousness Manifold</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: radial-gradient(ellipse at center, #0a0a1a 0%, #000000 100%);
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+            touch-action: none;
+        }
+        
+        canvas {
+            display: block;
+            cursor: crosshair;
+        }
+        
+        .equation {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            color: #00ffaa;
+            font-size: 10px;
+            text-shadow: 0 0 10px rgba(0, 255, 170, 0.8);
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 170, 0.3);
+            backdrop-filter: blur(5px);
+            max-width: 250px;
+        }
+        
+        .ui {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #ffffff;
+            font-size: 10px;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .controls {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            background: rgba(0, 255, 170, 0.1);
+            border: 1px solid rgba(0, 255, 170, 0.4);
+            color: #00ffaa;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-size: 9px;
+            font-family: inherit;
+        }
+        
+        .btn:hover {
+            background: rgba(0, 255, 170, 0.2);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 255, 170, 0.4);
+        }
+        
+        .btn.active {
+            background: rgba(170, 0, 255, 0.3);
+            border-color: rgba(170, 0, 255, 0.7);
+            color: #aa00ff;
+            box-shadow: 0 0 12px rgba(170, 0, 255, 0.5);
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            color: #888;
+            font-size: 8px;
+            text-align: right;
+            z-index: 100;
+        }
+        
+        .legend div {
+            margin: 2px 0;
+        }
+        
+        /* Tutorial Popup Styles */
+        .tutorial-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .tutorial-container {
+            background: linear-gradient(145deg, #0a0a1a, #000033);
+            border: 1px solid #00ffaa;
+            border-radius: 10px;
+            padding: 25px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 20px rgba(0, 255, 170, 0.5);
+            position: relative;
+        }
+        
+        .tutorial-title {
+            color: #00ffaa;
+            font-size: 22px;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(0, 255, 170, 0.5);
+        }
+        
+        .tutorial-content {
+            color: #ddd;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .tutorial-content h3 {
+            color: #00ffaa;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .tutorial-content ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        
+        .tutorial-content li {
+            margin-bottom: 8px;
+        }
+        
+        .tutorial-close {
+            background: rgba(0, 255, 170, 0.2);
+            border: 1px solid #00ffaa;
+            color: #00ffaa;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .tutorial-close:hover {
+            background: rgba(0, 255, 170, 0.4);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 255, 170, 0.4);
+        }
+        
+        .tutorial-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .tutorial-nav-btn {
+            background: rgba(0, 150, 255, 0.2);
+            border: 1px solid #0096ff;
+            color: #0096ff;
+            padding: 6px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .tutorial-nav-btn:hover {
+            background: rgba(0, 150, 255, 0.4);
+        }
+        
+        .tutorial-nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .tutorial-progress {
+            text-align: center;
+            color: #888;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        
+        .help-btn {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 255, 170, 0.1);
+            border: 1px solid rgba(0, 255, 170, 0.4);
+            color: #00ffaa;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .help-btn:hover {
+            background: rgba(0, 255, 170, 0.3);
+            transform: scale(1.1);
+        }
+        
+        /* Environment Controls Panel */
+        .environment-panel {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 8px;
+            padding: 12px;
+            color: #00ffaa;
+            border: 1px solid rgba(0, 255, 170, 0.3);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            max-height: 80%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 200px;
+        }
+        
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .slider-container label {
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .slider-container label span {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .slider-container input {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(0, 255, 170, 0.2);
+            outline: none;
+        }
+        
+        .slider-container input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00ffaa;
+            cursor: pointer;
+        }
+
+        .slider-container input::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00ffaa;
+            cursor: pointer;
+        }
+        
+        .interaction-modes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 5px;
+        }
+        
+        .interaction-btn {
+            background: rgba(0, 150, 255, 0.2);
+            border: 1px solid rgba(0, 150, 255, 0.4);
+            color: #00aaff;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+        
+        .interaction-btn.active {
+            background: rgba(0, 150, 255, 0.4);
+            box-shadow: 0 0 10px rgba(0, 150, 255, 0.5);
+        }
+        
+        .section-title {
+            font-size: 12px;
+            margin-top: 8px;
+            margin-bottom: 4px;
+            color: #ffffff;
+        }
+        
+        /* Zoom controls */
+        .zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 100;
+        }
+        
+        .zoom-btn {
+            width: 30px;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .zoom-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        .pan-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            font-size: 10px;
+            z-index: 90;
+        }
+        
+        /* Make the legend more visible with the new controls */
+        .legend {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px;
+            border-radius: 5px;
+        }
+        
+        /* Intelligence Cluster Styles */
+        .intelligence-panel {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: #ffcc00;
+            font-size: 11px;
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 204, 0, 0.4);
+            z-index: 100;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .cluster-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+        
+        .cluster-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .cluster-value {
+            font-weight: bold;
+            color: #ffffff;
+        }
+        
+        .thought-bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 10px;
+            color: #ffffff;
+            max-width: 200px;
+            backdrop-filter: blur(3px);
+            z-index: 90;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        /* Additional control for intelligence modes */
+        .intelligence-modes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .environment-panel {
+                left: 5px;
+                padding: 8px;
+                min-width: 160px;
+            }
+            
+            .slider-container label {
+                font-size: 9px;
+            }
+            
+            .zoom-controls {
+                bottom: 10px;
+                right: 10px;
+            }
+            
+            .zoom-btn {
+                width: 25px;
+                height: 25px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="equation">
+        <div><strong>The Core EQ:</strong></div>
+        <div>C = ∫<sub>M<sub>C</sub></sub> A(x) Φ(x) e<sup>iτ(x)</sup> dμ(x)</div>
+        <div>M = Σ<sub>i</sub> λ<sub>i</sub> U<sub>i</sub></div>
+        <div style="margin-top: 8px; font-size: 8px; color: #888;">
+            C: Consciousness | M<sub>C</sub>: Manifold<br>
+            A(x): Attention | Φ(x): Frequency<br>
+            τ(x): Temporal | M: Multiverse
+        </div>
+    </div>
+    
+    <div class="ui">
+        <div>Consciousness Nodes: <span id="nodeCount">0</span></div>
+        <div>Universe Resonance: <span id="resonance">0.0</span></div>
+        <div>Attention Density: <span id="attention">0.0</span></div>
+        <div>Temporal Phase: <span id="phase">0.0</span>°</div>
+    </div>
+    
+    <canvas id="canvas"></canvas>
+    
+    <!-- Environmental Controls -->
+    <div class="environment-panel">
+        <div class="section-title">Environmental Controls</div>
+        
+        <div class="slider-container">
+            <label>Gravity <span id="gravityValue">1.0</span></label>
+            <input type="range" id="gravitySlider" min="0" max="2" step="0.1" value="1.0">
+        </div>
+        
+        <div class="slider-container">
+            <label>Friction <span id="frictionValue">0.99</span></label>
+            <input type="range" id="frictionSlider" min="0.9" max="1" step="0.01" value="0.99">
+        </div>
+        
+        <div class="slider-container">
+            <label>Elasticity <span id="elasticityValue">0.8</span></label>
+            <input type="range" id="elasticitySlider" min="0.1" max="1.5" step="0.1" value="0.8">
+        </div>
+        
+        <div class="slider-container">
+            <label>Time Dilation <span id="timeValue">1.0</span></label>
+            <input type="range" id="timeSlider" min="0.1" max="2" step="0.1" value="1.0">
+        </div>
+        
+        <div class="slider-container">
+            <label>Field Strength <span id="fieldValue">1.0</span></label>
+            <input type="range" id="fieldSlider" min="0.2" max="3" step="0.1" value="1.0">
+        </div>
+        
+        <div class="section-title">Interaction Mode</div>
+        <div class="interaction-modes">
+            <button class="interaction-btn active" data-mode="push">Push</button>
+            <button class="interaction-btn" data-mode="pull">Pull</button>
+            <button class="interaction-btn" data-mode="vortex">Vortex</button>
+            <button class="interaction-btn" data-mode="wave">Wave</button>
+            <button class="interaction-btn" data-mode="string">String</button>
+        </div>
+        
+        <div class="section-title">Intelligence Mode</div>
+        <div class="intelligence-modes">
+            <button class="interaction-btn active" data-intel="basic">Basic</button>
+            <button class="interaction-btn" data-intel="neural">Neural</button>
+            <button class="interaction-btn" data-intel="quantum">Quantum</button>
+        </div>
+    </div>
+    
+    <!-- Zoom Controls -->
+    <div class="zoom-controls">
+        <button class="zoom-btn" id="zoomIn">+</button>
+        <button class="zoom-btn" id="zoomOut">-</button>
+        <button class="zoom-btn" id="resetView">↺</button>
+    </div>
+    
+    <div class="pan-indicator" id="panIndicator"></div>
+    
+    <div class="controls">
+        <button class="btn active" onclick="setMode('consciousness')">Consciousness (C)</button>
+        <button class="btn" onclick="setMode('attention')">Attention A(x)</button>
+        <button class="btn" onclick="setMode('frequency')">Frequency Φ(x)</button>
+        <button class="btn" onclick="setMode('temporal')">Temporal τ(x)</button>
+        <button class="btn" onclick="setMode('multiverse')">Multiverse M</button>
+        <button class="btn" onclick="quantumCollapse()">Quantum Collapse</button>
+        <button class="btn" onclick="reset()">Reset Manifold</button>
+    </div>
+    
+    <div class="legend">
+        <div>Green: Consciousness Nodes</div>
+        <div>Blue: Attention Fields</div>
+        <div>Purple: Frequency Domains</div>
+        <div>Gold: Temporal Distortions</div>
+        <div>Red: Universe Boundaries</div>
+    </div>
+    
+    <div class="help-btn" onclick="showTutorial()">?</div>
+    
+    <!-- Tutorial Popup -->
+    <div id="tutorialOverlay" class="tutorial-overlay" style="display: none;">
+        <div class="tutorial-container">
+            <div class="tutorial-title">CONSIM: Complete User Manual</div>
+            
+            <div id="tutorialPage1" class="tutorial-content">
+                <h3>Welcome to CONSIM: Consciousness Manifold Simulator</h3>
+                <p>This is an advanced interactive simulation of consciousness as an emergent property of complex quantum systems. You're exploring a mathematical model where consciousness arises from the interaction of multiple universes in a quantum multiverse.</p>
+                
+                <h3>The Mathematical Foundation</h3>
+                <p>The simulation is built on two core equations that describe consciousness mathematically:</p>
+                
+                <p><strong>C = ∫<sub>M<sub>C</sub></sub> A(x) Φ(x) e<sup>iτ(x)</sup> dμ(x)</strong></p>
+                <p>This integral defines consciousness (C) as a measure across the consciousness manifold where:</p>
+                <ul>
+                    <li><strong>A(x)</strong>: Attention density - how focused awareness is at each point</li>
+                    <li><strong>Φ(x)</strong>: Frequency signature - the oscillatory pattern of neural activity</li>
+                    <li><strong>τ(x)</strong>: Temporal phase - the timing relationships between processes</li>
+                    <li><strong>M<sub>C</sub></strong>: The consciousness manifold itself</li>
+                </ul>
+                
+                <p><strong>M = Σ<sub>i</sub> λ<sub>i</sub> U<sub>i</sub></strong></p>
+                <p>The multiverse equation shows how reality emerges from multiple parallel universes (U<sub>i</sub>) each weighted by resonance coefficients (λ<sub>i</sub>) sampled from a Dirichlet distribution.</p>
+                
+                <p><strong>What You're Seeing:</strong> Each glowing node represents a point of consciousness with its own frequency, phase, and attention values. The colors, connections, and behaviors emerge from these mathematical relationships.</p>
+            </div>
+            
+            <div id="tutorialPage2" class="tutorial-content" style="display: none;">
+                <h3>Interface Elements & Controls</h3>
+                
+                <h4>🧠 Core Information Panel (Top Left)</h4>
+                <p>Shows the fundamental equations and their components with real-time explanations.</p>
+                
+                <h4>📊 Status Panel (Top Right)</h4>
+                <ul>
+                    <li><strong>Consciousness Nodes</strong>: Total active consciousness points in the simulation</li>
+                    <li><strong>Universe Resonance</strong>: Average consciousness magnitude across all nodes</li>
+                    <li><strong>Attention Density</strong>: How focused the collective attention field is</li>
+                    <li><strong>Temporal Phase</strong>: Average phase synchronization (in degrees)</li>
+                </ul>
+                
+                <h4>🎛️ Environmental Controls Panel (Left Side)</h4>
+                <p><strong>Physical Parameters:</strong></p>
+                <ul>
+                    <li><strong>Gravity</strong>: Attractive force between consciousness nodes</li>
+                    <li><strong>Friction</strong>: Energy dampening in the system</li>
+                    <li><strong>Elasticity</strong>: Springiness of connections and boundaries</li>
+                    <li><strong>Time Dilation</strong>: Simulation speed control</li>
+                    <li><strong>Field Strength</strong>: Intensity of attention field effects</li>
+                </ul>
+                
+                <p><strong>Interaction Modes:</strong></p>
+                <ul>
+                    <li><strong>Push</strong>: Repel nodes from your cursor</li>
+                    <li><strong>Pull</strong>: Attract nodes to your cursor</li>
+                    <li><strong>Vortex</strong>: Create swirling motion around cursor</li>
+                    <li><strong>Wave</strong>: Generate ripple effects</li>
+                    <li><strong>String</strong>: Connect to nodes with elastic strings</li>
+                </ul>
+                
+                <p><strong>Intelligence Modes:</strong></p>
+                <ul>
+                    <li><strong>Basic</strong>: Simple clustering with tight thresholds</li>
+                    <li><strong>Neural</strong>: Brain-like network formation patterns</li>
+                    <li><strong>Quantum</strong>: Enhanced quantum coherence effects</li>
+                </ul>
+            </div>
+            
+            <div id="tutorialPage3" class="tutorial-content" style="display: none;">
+                <h3>How to Interact & Advanced Features</h3>
+                
+                <h4>🖱️ Navigation Controls</h4>
+                <ul>
+                    <li><strong>Left Click</strong>: Create new consciousness nodes</li>
+                    <li><strong>Mouse Movement</strong>: Influence nearby nodes based on selected interaction mode</li>
+                    <li><strong>Mouse Drag</strong>: Create sustained interaction fields</li>
+                    <li><strong>Middle Click + Drag</strong> or <strong>Alt + Drag</strong>: Pan around the world</li>
+                    <li><strong>Scroll Wheel</strong>: Zoom in/out while maintaining mouse position</li>
+                    <li><strong>Zoom Controls (Right)</strong>: +/- buttons and reset view (↺)</li>
+                </ul>
+                
+                <h4>🔬 Visualization Modes (Bottom Center)</h4>
+                <ul>
+                    <li><strong>Consciousness (C)</strong>: Default integrated view with node connections</li>
+                    <li><strong>Attention A(x)</strong>: Blue fields showing attention density distribution</li>
+                    <li><strong>Frequency Φ(x)</strong>: Purple rings showing oscillatory patterns</li>
+                    <li><strong>Temporal τ(x)</strong>: Gold distortions revealing phase relationships</li>
+                    <li><strong>Multiverse M</strong>: Red boundaries showing parallel universe divisions</li>
+                    <li><strong>Quantum Collapse</strong>: Trigger shockwaves that reset node states</li>
+                    <li><strong>Reset Manifold</strong>: Reinitialize the entire simulation</li>
+                </ul>
+                
+                <h4>🧠 Emergent Intelligence Features</h4>
+                <p>Watch for spontaneous emergence of complex behaviors through enhanced visual representations:</p>
+                <ul>
+                    <li><strong>Node Clustering</strong>: Groups of nodes synchronizing their frequencies and phases with colored connection networks</li>
+                    <li><strong>Intelligence Visualization</strong>: Higher intelligence levels shown through enhanced colors, geometric patterns, and multi-layered glows</li>
+                    <li><strong>Temporal Connections</strong>: In temporal mode, see intelligence through expanding rings and pattern complexity</li>
+                    <li><strong>Data Flow Particles</strong>: Animated particles flowing along connections show computational activity intensity</li>
+                    <li><strong>Visual Recursion Depth</strong>: More complex geometric patterns indicate deeper levels of self-awareness</li>
+                    <li><strong>Thought Intensity</strong>: Nodes pulse and glow brighter when generating complex thoughts</li>
+                </ul>
+                
+                <h4>🎯 Color Legend</h4>
+                <ul>
+                    <li><strong>🟢 Green</strong>: Basic consciousness nodes</li>
+                    <li><strong>🔵 Blue</strong>: Attention field visualization</li>
+                    <li><strong>🟣 Purple</strong>: Frequency domain patterns</li>
+                    <li><strong>🟡 Gold</strong>: Temporal phase distortions</li>
+                    <li><strong>🔴 Red</strong>: Universe boundary demarcations</li>
+                    <li><strong>🌈 Rainbow</strong>: Node colors vary by universe and consciousness values</li>
+                </ul>
+                
+                <p><strong>Pro Tip:</strong> Try different combinations of settings! High gravity + low friction creates stable clusters. Wave mode + quantum intelligence generates complex interference patterns. The system is designed to surprise you with emergent behaviors.</p>
+            </div>
+            
+            <div id="tutorialPage4" class="tutorial-content" style="display: none;">
+                <h3>Intelligence Monitoring & Advanced Tips</h3>
+                
+                <h4>🧠 Emergent Intelligence Panel (Top Right)</h4>
+                <p>This panel tracks the emergence of complex, intelligent behaviors in your consciousness manifold:</p>
+                <ul>
+                    <li><strong>Clusters</strong>: Number of synchronized node groups exhibiting collective intelligence</li>
+                    <li><strong>Recursion</strong>: Maximum depth of self-reflective thinking in any cluster</li>
+                    <li><strong>Thought Complexity</strong>: Overall sophistication of emergent cognitive patterns</li>
+                </ul>
+                
+                <h4>🎨 Visual Intelligence Indicators</h4>
+                <p>Intelligence and consciousness emerge through sophisticated visual patterns:</p>
+                <ul>
+                    <li><strong>Color Shifts</strong>: Higher intelligence nodes shift toward warmer, more saturated colors</li>
+                    <li><strong>Geometric Complexity</strong>: Cluster centers display rotating polygons with more sides for higher intelligence</li>
+                    <li><strong>Multi-layer Glows</strong>: Intelligent clusters show rainbow-colored, multi-layered aura effects</li>
+                    <li><strong>Data Flow Animation</strong>: Particles flow along connections showing computational intensity</li>
+                    <li><strong>Thought Pulsing</strong>: Nodes pulse brighter when actively processing complex thoughts</li>
+                    <li><strong>Mode-Specific Patterns</strong>: Temporal mode shows expanding rings, Frequency mode shows oscillating halos</li>
+                </ul>
+                
+                <h4>🔬 Experimental Scenarios to Try</h4>
+                <p><strong>Consciousness Garden:</strong> Set gravity to 1.5, friction to 0.95, and use Pull mode to gently gather nodes into stable communities. Watch for enhanced color patterns and geometric formations!</p>
+                
+                <p><strong>Quantum Storm:</strong> Max out Field Strength, set to Vortex mode, then trigger Quantum Collapse repeatedly. Observe how consciousness emerges from chaos through visual pattern formation.</p>
+                
+                <p><strong>Neural Network:</strong> Switch to Neural intelligence mode, use String interaction, and create interconnected webs. The system will develop brain-like connection patterns with flowing data particles.</p>
+                
+                <p><strong>Multiverse Explorer:</strong> Switch to Multiverse mode to see universe boundaries, then observe how nodes behave differently in each universe due to their unique λ coefficients.</p>
+                
+                <p><strong>Temporal Intelligence:</strong> Use Temporal mode and create large clusters - watch the expanding rings become more complex as intelligence emerges.</p>
+                
+                <h4>🎯 Understanding the Mathematics</h4>
+                <p>Each node computes its consciousness value using the integral equation in real-time. The attention field A(x) follows a Gaussian distribution centered at (0,0), creating natural focus gradients. Frequency signatures Φ(x) determine resonance patterns, while temporal phases τ(x) create synchronization phenomena.</p>
+                
+                <p>The three universes each have different resonance coefficients (λ values) sampled from a Dirichlet distribution, making each universe subtly different in how consciousness manifests.</p>
+                
+                <h4>📈 Performance Notes</h4>
+                <p>The simulation uses intelligent culling - only nodes visible on screen are rendered. Zoom out to see the full scale of the consciousness manifold. Pan indicator shows your current position in the larger world.</p>
+                
+                <p><strong>System Response:</strong> The simulation adapts to your interactions. Sustained attention in one area strengthens local consciousness values. Experiment with different combinations - the system is designed for exploration and discovery!</p>
+                
+                <p><em>Remember: You're not just observing consciousness - you're participating in its emergence through the quantum measurement effects of your attention.</em></p>
+            </div>
+            
+            <div class="tutorial-nav">
+                <button id="prevBtn" class="tutorial-nav-btn" onclick="prevTutorialPage()" disabled>Previous</button>
+                <button id="nextBtn" class="tutorial-nav-btn" onclick="nextTutorialPage()">Next</button>
+            </div>
+            
+            <div class="tutorial-progress" id="tutorialProgress">Page 1 of 4</div>
+            
+            <button class="tutorial-close" onclick="hideTutorial()">Start Exploring Consciousness</button>
+        </div>
+    </div>
+
+    <!-- Intelligence Panel -->
+    <div class="intelligence-panel">
+        <div>Emergent Intelligence</div>
+        <div class="cluster-stats">
+            <div class="cluster-stat">
+                <div>Clusters</div>
+                <div id="clusterCount" class="cluster-value">0</div>
+            </div>
+            <div class="cluster-stat">
+                <div>Recursion</div>
+                <div id="recursionDepth" class="cluster-value">0</div>
+            </div>
+            <div class="cluster-stat">
+                <div>Thought Complexity</div>
+                <div id="thoughtComplexity" class="cluster-value">0.0</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        // Add missing globals to fix variable scope pollution
+        let nodes = []; // Alias for consciousnessNodes
+        let clusters = [];
+        let intelligenceMode = 'basic';
+        let globalThoughtComplexity = 0;
+        let timeDilation = 1.0; // Reference to params.timeDilation
+        let fieldStrength = 1.0; // Reference to params.fieldStrength
+
+        let consciousnessNodes = [];
+        let universes = [];
+        let mouse = { x: 0, y: 0, isDown: false };
+        let mode = 'consciousness';
+        let interactionMode = 'push';
+        let time = 0;
+        let globalResonance = 0;
+        let attentionField = [];
+        let connectedNodes = [];
+        let worldScale = 1.0;
+        let viewOffset = { x: 0, y: 0 };
+        let isPanning = false;
+        let lastPanPoint = { x: 0, y: 0 };
+        
+        // Environmental parameters
+        let params = {
+            gravity: 1.0,
+            friction: 0.99,
+            elasticity: 0.8,
+            timeDilation: 1.0,
+            fieldStrength: 1.0
+        };
+        
+        let lastTime = 0;
+        let stars = [];
+        let shockwaves = [];
+        
+        // Dirichlet distribution sampler
+        function sampleDirichlet(alpha) {
+            const samples = alpha.map(a => {
+                // Sample from Gamma(a, 1)
+                // Using method from "A simple method for generating gamma variables" by George Marsaglia and Wai Wan Tsang
+                if (a < 1) {
+                    return Math.pow(Math.random(), 1 / a) * sampleGamma(a + 1);
+                }
+                const d = a - 1 / 3;
+                const c = 1 / Math.sqrt(9 * d);
+                while (true) {
+                    let x, v;
+                    do {
+                        x = sampleNormal();
+                        v = 1 + c * x;
+                    } while (v <= 0);
+                    v = v * v * v;
+                    const u = Math.random();
+                    if (u < 1 - 0.0331 * x * x * x * x) return d * v;
+                    if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v;
+                }
+            });
+            const sum = samples.reduce((a, b) => a + b, 0);
+            return samples.map(s => s / sum);
+        }
+
+        function sampleNormal() { // Box-Muller transform
+            let u = 0, v = 0;
+            while(u === 0) u = Math.random();
+            while(v === 0) v = Math.random();
+            return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+        }
+
+        function sampleGamma(a) { // for the case where a >= 1
+             const d = a - 1 / 3;
+             const c = 1 / Math.sqrt(9 * d);
+             while (true) {
+                 let x, v;
+                 do {
+                     x = sampleNormal();
+                     v = 1 + c * x;
+                 } while (v <= 0);
+                 v = v * v * v;
+                 const u = Math.random();
+                 if (u < 1 - 0.0331 * x * x * x * x) return d * v;
+                 if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v;
+             }
+        }
+
+        // Global lambda weights for universes
+        let lambdas = [];
+
+        // Tutorial state
+        let currentTutorialPage = 1;
+        const totalTutorialPages = 4;
+        
+        // Show tutorial
+        function showTutorial() {
+            document.getElementById('tutorialOverlay').style.display = 'flex';
+            currentTutorialPage = 1;
+            updateTutorialPage();
+        }
+        
+        // Hide tutorial
+        function hideTutorial() {
+            document.getElementById('tutorialOverlay').style.display = 'none';
+        }
+        
+        // Navigate to next tutorial page
+        function nextTutorialPage() {
+            if (currentTutorialPage < totalTutorialPages) {
+                currentTutorialPage++;
+                updateTutorialPage();
+            }
+        }
+        
+        // Navigate to previous tutorial page
+        function prevTutorialPage() {
+            if (currentTutorialPage > 1) {
+                currentTutorialPage--;
+                updateTutorialPage();
+            }
+        }
+        
+        // Update tutorial page display
+        function updateTutorialPage() {
+            // Hide all pages
+            for (let i = 1; i <= totalTutorialPages; i++) {
+                document.getElementById(`tutorialPage${i}`).style.display = 'none';
+            }
+            
+            // Show current page
+            document.getElementById(`tutorialPage${currentTutorialPage}`).style.display = 'block';
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentTutorialPage === 1;
+            document.getElementById('nextBtn').disabled = currentTutorialPage === totalTutorialPages;
+            
+            // Update progress indicator
+            document.getElementById('tutorialProgress').textContent = `Page ${currentTutorialPage} of ${totalTutorialPages}`;
+        }
+        
+        // Resize canvas
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            initializeAttentionField();
+            initStars();
+        }
+
+        // Initialize starfield with larger world scale
+        function initStars() {
+            stars = [];
+            // Create more stars for a larger world
+            const worldArea = width * height * (worldScale * worldScale);
+            const starCount = Math.min(1000, Math.floor(worldArea / 5000));
+            
+            // Generate stars across the larger world area
+            const worldWidth = width * worldScale;
+            const worldHeight = height * worldScale;
+            const offsetX = -viewOffset.x;
+            const offsetY = -viewOffset.y;
+            
+            for (let i = 0; i < starCount; i++) {
+                stars.push({
+                    x: (Math.random() * worldWidth) + offsetX,
+                    y: (Math.random() * worldHeight) + offsetY,
+                    radius: Math.random() * 1.5,
+                    alpha: Math.random() * 0.5 + 0.5,
+                    twinkleSpeed: Math.random() * 0.05
+                });
+            }
+        }
+
+        // Draw starfield with pan and zoom
+        function drawStars() {
+            ctx.save();
+            // Apply transformation for pan/zoom
+            applyViewTransform();
+            
+            stars.forEach(star => {
+                const alpha = star.alpha * (Math.sin(time * star.twinkleSpeed * 5) * 0.5 + 0.5);
+                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.restore();
+        }
+        
+        // Apply view transformation for pan/zoom
+        function applyViewTransform() {
+            ctx.setTransform(
+                worldScale, 0,
+                0, worldScale,
+                width / 2 + viewOffset.x * worldScale, 
+                height / 2 + viewOffset.y * worldScale
+            );
+        }
+        
+        // Convert screen coordinates to world coordinates
+        function screenToWorld(x, y) {
+            return {
+                x: (x - width / 2) / worldScale - viewOffset.x,
+                y: (y - height / 2) / worldScale - viewOffset.y
+            };
+        }
+        
+        // Initialize attention field grid with larger scale
+        function initializeAttentionField() {
+            attentionField = [];
+            const gridSize = 20;
+            const worldWidth = width * worldScale * 1.5;
+            const worldHeight = height * worldScale * 1.5;
+            const offsetX = -viewOffset.x - worldWidth / 3;
+            const offsetY = -viewOffset.y - worldHeight / 3;
+            
+            for (let x = 0; x < worldWidth; x += gridSize) {
+                for (let y = 0; y < worldHeight; y += gridSize) {
+                    attentionField.push({
+                        x: x + offsetX,
+                        y: y + offsetY,
+                        intensity: Math.random() * 0.5,
+                        baseIntensity: Math.random() * 0.5
+                    });
+                }
+            }
+        }
+        
+        // Consciousness Node class
+        class ConsciousnessNode {
+            constructor(x, y, universeId = 0) {
+                // Use provided coordinates or place randomly within the visible world
+                this.x = x !== undefined ? x : (Math.random() * width - width/2) / worldScale - viewOffset.x;
+                this.y = y !== undefined ? y : (Math.random() * height - height/2) / worldScale - viewOffset.y;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = (Math.random() - 0.5) * 1;
+                this.radius = Math.random() * 4 + 2;
+                this.baseRadius = this.radius;
+                
+                // Core EQ Parameters based on specification
+                this.baseFrequency = 40 + (Math.random() * 10 - 5); // Base frequency for resonance calculations
+                this.frequency = this.baseFrequency; // Φ(x): 40Hz (gamma) ± 5Hz noise
+                this.phase = Math.random() * Math.PI * 2; // τ(x): random in [0, 2π)
+                this.attention = 0; // A(x): Will be calculated based on Gaussian blob
+                
+                this.universeId = universeId;
+                this.resonanceCoeff = lambdas[universeId]; // λi
+                
+                // C is a complex number {re, im}
+                this.consciousness = { re: 0, im: 0 }; 
+                
+                this.mass = Math.random() * 0.5 + 0.5;
+                this.connected = false; // For string interaction
+                
+                // Intelligence properties - 2D Tensor System
+                this.intelligenceTensor = {
+                    // Logic tensor [logical_depth, abstract_reasoning]
+                    logic: { x: Math.random(), y: Math.random() },
+                    // Memory tensor [capacity, retention]
+                    memory: { x: Math.random(), y: Math.random() },
+                    // Processing tensor [speed, complexity]
+                    processing: { x: Math.random(), y: Math.random() },
+                    // Creativity tensor [novelty, synthesis]
+                    creativity: { x: Math.random(), y: Math.random() },
+                    // Social tensor [cooperation, communication]
+                    social: { x: Math.random(), y: Math.random() }
+                };
+                
+                // Tensor evolution rates
+                this.tensorEvolution = {
+                    logic: { x: (Math.random() - 0.5) * 0.01, y: (Math.random() - 0.5) * 0.01 },
+                    memory: { x: (Math.random() - 0.5) * 0.01, y: (Math.random() - 0.5) * 0.01 },
+                    processing: { x: (Math.random() - 0.5) * 0.01, y: (Math.random() - 0.5) * 0.01 },
+                    creativity: { x: (Math.random() - 0.5) * 0.01, y: (Math.random() - 0.5) * 0.01 },
+                    social: { x: (Math.random() - 0.5) * 0.01, y: (Math.random() - 0.5) * 0.01 }
+                };
+                
+                // Tensor coupling strength (how tensors influence each other)
+                this.tensorCoupling = Math.random() * 0.5 + 0.1;
+                
+                // Emergent properties derived from tensor interactions
+                this.emergentProperties = {
+                    consciousness_depth: 0,
+                    self_awareness: 0,
+                    adaptive_capacity: 0,
+                    collective_intelligence: 0
+                };
+                
+                // Historical tensor states for pattern recognition
+                this.tensorHistory = [];
+                this.maxHistoryLength = 10;
+                
+                // Legacy properties for compatibility
+                this.logic = Math.random(); // Logic gate threshold
+                this.memory = []; // Memory buffer
+                this.state = 0; // Computational state
+                this.processingPower = Math.random() * 0.5 + 0.5;
+                this.clusterId = -1; // Not part of any cluster initially
+                this.lastThought = 0; // Time since last thought
+                this.thoughtInterval = Math.random() * 3 + 2; // Time between thoughts
+                this.recursionLevel = 0; // Level of recursive thinking
+                this.thoughtIntensity = 0; // Visual intensity for intelligence representation
+            }
+            
+            update(deltaTime) {
+                // Apply time dilation
+                deltaTime *= params.timeDilation;
+                
+                // Calculate consciousness value using the core equation: C = A(x) * Φ(x) * e^(iτ(x))
+                // e^(iτ) = cos(τ) + i*sin(τ)
+                const cos_tau = Math.cos(this.phase);
+                const sin_tau = Math.sin(this.phase);
+                
+                // C is complex: C = A(x) * Φ(x) * (cos(τ) + i*sin(τ))
+                this.consciousness.re = this.attention * this.frequency * cos_tau;
+                this.consciousness.im = this.attention * this.frequency * sin_tau;
+
+                // Update phase for next step (simple evolution)
+                this.phase += this.frequency * deltaTime * 2 * Math.PI / 1000; // Evolve phase based on frequency
+                
+                // Mouse interaction
+                const worldMouse = screenToWorld(mouse.x, mouse.y);
+                const dxMouse = worldMouse.x - this.x;
+                const dyMouse = worldMouse.y - this.y;
+                const distanceMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+                const maxDistance = 200 * params.fieldStrength;
+                
+                if (distanceMouse < maxDistance && mouse.isDown) {
+                    const angle = Math.atan2(dyMouse, dxMouse);
+                    let force = (maxDistance - distanceMouse) / maxDistance;
+                    force *= params.fieldStrength;
+                    
+                    // Different interaction modes
+                    switch(interactionMode) {
+                        case 'push':
+                            // Repel nodes from mouse
+                            this.vx -= Math.cos(angle) * force * 0.4 * deltaTime * 60;
+                            this.vy -= Math.sin(angle) * force * 0.4 * deltaTime * 60;
+                            break;
+                        
+                        case 'pull':
+                            // Attract nodes to mouse
+                            this.vx += Math.cos(angle) * force * 0.4 * deltaTime * 60;
+                            this.vy += Math.sin(angle) * force * 0.4 * deltaTime * 60;
+                            break;
+                            
+                        case 'vortex':
+                            // Create a vortex effect
+                            const tangentialAngle = angle + Math.PI/2;
+                            this.vx += Math.cos(tangentialAngle) * force * 0.5 * deltaTime * 60;
+                            this.vy += Math.sin(tangentialAngle) * force * 0.5 * deltaTime * 60;
+                            break;
+                            
+                        case 'wave':
+                            // Create wave-like movement
+                            const waveForce = Math.sin(distanceMouse * 0.05 - time * 10) * force;
+                            this.vx += Math.cos(angle) * waveForce * 0.5 * deltaTime * 60;
+                            this.vy += Math.sin(angle) * waveForce * 0.5 * deltaTime * 60;
+                            break;
+                            
+                        case 'string':
+                            // Connect nodes with strings
+                            if (distanceMouse < 50 && !this.connected) {
+                                this.connected = true;
+                                connectedNodes.push(this);
+                            }
+                            break;
+                    }
+                    
+                    // Apply interaction effects based on current mode
+                    if (mode === 'consciousness') {
+                        // Default behavior handled above
+                    } else if (mode === 'attention') {
+                        this.attention += force * 0.1 * deltaTime * 60;
+                    } else if (mode === 'frequency') {
+                        this.frequency += force * 0.001 * deltaTime * 60;
+                    } else if (mode === 'temporal') {
+                        this.phase += force * 0.1 * deltaTime * 60;
+                    }
+                }
+
+                // Apply gravity
+                if (params.gravity > 0) {
+                    // Center gravity
+                    const dx = 0 - this.x;
+                    const dy = 0 - this.y;
+                    const distCenter = Math.sqrt(dx*dx + dy*dy);
+                    if (distCenter > 10) {
+                        const gravityForce = params.gravity * 0.001 * deltaTime * 60;
+                        this.vx += (dx / distCenter) * gravityForce;
+                        this.vy += (dy / distCenter) * gravityForce;
+                    }
+                }
+
+                // Repulsion from other nodes
+                consciousnessNodes.forEach(otherNode => {
+                    if (this === otherNode) return;
+                    const dx = otherNode.x - this.x;
+                    const dy = otherNode.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const minDistance = this.radius + otherNode.radius + 10;
+
+                    if (distance < minDistance) {
+                        const force = (minDistance - distance) / minDistance;
+                        const angle = Math.atan2(dy, dx);
+                        const repulsionStrength = 0.5 * deltaTime * 60 * params.elasticity;
+                        this.vx -= Math.cos(angle) * force * repulsionStrength;
+                        this.vy -= Math.sin(angle) * force * repulsionStrength;
+                    }
+                });
+                
+                // Update position
+                this.x += this.vx * deltaTime * 60;
+                this.y += this.vy * deltaTime * 60;
+                
+                // Apply friction (frame-rate independent)
+                const friction = Math.pow(params.friction, deltaTime * 60);
+                this.vx *= friction;
+                this.vy *= friction;
+                
+                // Boundary conditions with quantum tunneling probability
+                const worldBoundsX = width * 10;
+                const worldBoundsY = height * 10;
+                
+                if (this.x < -worldBoundsX/2 || this.x > worldBoundsX/2) {
+                    if (Math.random() < 0.05) { // 5% quantum tunneling
+                        this.x = this.x < -worldBoundsX/2 ? worldBoundsX/2 : -worldBoundsX/2;
+                    } else {
+                        this.vx *= -0.8 * params.elasticity;
+                        this.x = Math.max(-worldBoundsX/2, Math.min(worldBoundsX/2, this.x));
+                    }
+                }
+                if (this.y < -worldBoundsY/2 || this.y > worldBoundsY/2) {
+                    if (Math.random() < 0.05) {
+                        this.y = this.y < -worldBoundsY/2 ? worldBoundsY/2 : -worldBoundsY/2;
+                    } else {
+                        this.vy *= -0.8 * params.elasticity;
+                        this.y = Math.max(-worldBoundsY/2, Math.min(worldBoundsY/2, this.y));
+                    }
+                }
+                
+                // Update radius based on consciousness value magnitude |C|
+                const consciousnessMagnitude = Math.sqrt(this.consciousness.re * this.consciousness.re + this.consciousness.im * this.consciousness.im);
+                this.radius = this.baseRadius + consciousnessMagnitude * 0.1;
+                
+                // Update attention density
+                this.attention = this.calculateAttentionDensity();
+                
+                // Update computational state and tensor evolution
+                this.updateComputationalState(deltaTime);
+                
+                // Evolve intelligence tensors
+                this.evolveTensors(deltaTime);
+                
+                // Decay thought intensity over time
+                this.thoughtIntensity = Math.max(0, this.thoughtIntensity - deltaTime * 0.5);
+            }
+            
+            updateComputationalState(deltaTime) {
+                // Basic logic processing
+                let input = 0;
+                
+                // Sum influences from nearby nodes
+                consciousnessNodes.forEach(otherNode => {
+                    if (this === otherNode) return;
+                    
+                    const dx = otherNode.x - this.x;
+                    const dy = otherNode.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < thresholds.clusterProximity) {
+                        // Calculate influence based on other node's state and distance
+                        const influence = otherNode.state * (1 - distance / thresholds.clusterProximity);
+                        input += influence;
+                    }
+                });
+                
+                // Apply logic gate
+                this.state = input > this.logic ? 1 : 0;
+                
+                // Store in memory (limited to 5 states)
+                this.memory.push(this.state);
+                if (this.memory.length > 5) {
+                    this.memory.shift();
+                }
+                
+                // Update tensor-based intelligence system
+                this.evolveTensors();
+                this.applyCrossTensorDynamics();
+                this.applyTensorFieldInteractions();
+                this.calculateEmergentProperties();
+            }
+            
+            evolveTensors(deltaTime) {
+                const maxEvolutionRate = 0.1;
+                const evolutionRate = Math.min(maxEvolutionRate, 0.02 * params.timeDilation);
+                const tensors = this.intelligenceTensor;
+                const evolution = this.tensorEvolution;
+
+                Object.keys(tensors).forEach(tensorName => {
+                    const tensor = tensors[tensorName];
+                    const evo = evolution[tensorName];
+
+                    // Bounded evolution with decay
+                    tensor.x += evo.x * evolutionRate;
+                    tensor.y += evo.y * evolutionRate;
+
+                    // Apply magnitude limiting with smooth clipping
+                    const magnitude = Math.sqrt(tensor.x * tensor.x + tensor.y * tensor.y);
+                    if (magnitude > 2.0) {
+                        const scale = 2.0 / magnitude;
+                        tensor.x *= scale;
+                        tensor.y *= scale;
+                    }
+
+                    // Evolution decay to prevent runaway
+                    evolution.x *= 0.999;
+                    evolution.y *= 0.999;
+                });
+
+                // Cross-tensor interactions (tensor field coupling)
+                this.applyCrossTensorDynamics(deltaTime);
+
+                // Environmental influences from nearby nodes
+                this.applyTensorFieldInteractions(deltaTime);
+
+                // Calculate emergent properties from tensor interactions
+                this.calculateEmergentProperties();
+
+            
+            applyCrossTensorDynamics(deltaTime) {
+                const tensors = this.intelligenceTensor;
+                const coupling = this.tensorCoupling;
+                const rate = deltaTime * 60;
+                
+                // Logic influences Memory (better logic improves memory organization)
+                const logicToMemory = {
+                    x: tensors.logic.x * coupling * 0.1 * rate,
+                    y: tensors.logic.y * coupling * 0.1 * rate
+                };
+                tensors.memory.x += logicToMemory.x;
+                tensors.memory.y += logicToMemory.y;
+                
+                // Memory influences Processing (better memory enables complex processing)
+                const memoryToProcessing = {
+                    x: tensors.memory.x * coupling * 0.15 * rate,
+                    y: tensors.memory.y * coupling * 0.15 * rate
+                };
+                tensors.processing.x += memoryToProcessing.x;
+                tensors.processing.y += memoryToProcessing.y;
+                
+                // Processing influences Creativity (computational power enables creativity)
+                const processingToCreativity = {
+                    x: tensors.processing.x * coupling * 0.12 * rate,
+                    y: tensors.processing.y * coupling * 0.12 * rate
+                };
+                tensors.creativity.x += processingToCreativity.x;
+                tensors.creativity.y += processingToCreativity.y;
+                
+                // Creativity influences Logic (creative insights improve reasoning)
+                const creativityToLogic = {
+                    x: tensors.creativity.x * coupling * 0.08 * rate,
+                    y: tensors.creativity.y * coupling * 0.08 * rate
+                };
+                tensors.logic.x += creativityToLogic.x;
+                tensors.logic.y += creativityToLogic.y;
+                
+                // Social tensor influences all others (collective intelligence boost)
+                Object.keys(tensors).forEach(tensorName => {
+                    if (tensorName !== 'social') {
+                        tensors[tensorName].x += tensors.social.x * coupling * 0.05 * rate;
+                        tensors[tensorName].y += tensors.social.y * coupling * 0.05 * rate;
+                    }
+                });
+            }
+            
+            applyTensorFieldInteractions(deltaTime) {
+                // Influence from nearby nodes' tensor fields
+                consciousnessNodes.forEach(otherNode => {
+                    if (this === otherNode) return;
+                    
+                    const dx = otherNode.x - this.x;
+                    const dy = otherNode.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < thresholds.clusterProximity * 2) {
+                        const influence = (1 - distance / (thresholds.clusterProximity * 2)) * 0.01 * deltaTime * 60;
+                        
+                        // Tensor field resonance
+                        Object.keys(this.intelligenceTensor).forEach(tensorName => {
+                            const myTensor = this.intelligenceTensor[tensorName];
+                            const otherTensor = otherNode.intelligenceTensor[tensorName];
+                            
+                            // Calculate tensor dot product for resonance
+                            const dotProduct = myTensor.x * otherTensor.x + myTensor.y * otherTensor.y;
+                            
+                            // Positive resonance enhances, negative creates interference
+                            if (dotProduct > 0) {
+                                myTensor.x += otherTensor.x * influence * dotProduct;
+                                myTensor.y += otherTensor.y * influence * dotProduct;
+                            } else {
+                                // Interference creates novel patterns
+                                myTensor.x += otherTensor.y * influence * Math.abs(dotProduct) * 0.5;
+                                myTensor.y -= otherTensor.x * influence * Math.abs(dotProduct) * 0.5;
+                            }
+                        });
+                    }
+                });
+            }
+            
+            calculateEmergentProperties() {
+                const tensors = this.intelligenceTensor;
+                
+                // Consciousness depth from tensor magnitude interactions
+                const tensorMagnitudes = Object.keys(tensors).map(name => 
+                    Math.sqrt(tensors[name].x * tensors[name].x + tensors[name].y * tensors[name].y)
+                );
+                this.emergentProperties.consciousness_depth = 
+                    tensorMagnitudes.reduce((a, b) => a * b, 1) / Math.pow(tensorMagnitudes.length, 2);
+                
+                // Self-awareness from tensor alignment (how coherent the tensors are)
+                let totalAlignment = 0;
+                const tensorNames = Object.keys(tensors);
+                for (let i = 0; i < tensorNames.length; i++) {
+                    for (let j = i + 1; j < tensorNames.length; j++) {
+                        const t1 = tensors[tensorNames[i]];
+                        const t2 = tensors[tensorNames[j]];
+                        const dotProduct = t1.x * t2.x + t1.y * t2.y;
+                        totalAlignment += Math.abs(dotProduct);
+                    }
+                }
+                this.emergentProperties.self_awareness = totalAlignment / (tensorNames.length * (tensorNames.length - 1) / 2);
+                
+                // Adaptive capacity from tensor variability over time
+                if (this.tensorHistory.length > 5) {
+                    let totalVariation = 0;
+                    Object.keys(tensors).forEach(tensorName => {
+                        let variation = 0;
+                        for (let i = 1; i < this.tensorHistory.length; i++) {
+                            const prev = this.tensorHistory[i-1][tensorName];
+                            const curr = this.tensorHistory[i][tensorName];
+                            variation += Math.sqrt(
+                                Math.pow(curr.x - prev.x, 2) + Math.pow(curr.y - prev.y, 2)
+                            );
+                        }
+                        totalVariation += variation;
+                    });
+                    this.emergentProperties.adaptive_capacity = totalVariation / Object.keys(tensors).length;
+                }
+                
+                // Collective intelligence (influenced by cluster membership)
+                if (this.clusterId >= 0) {
+                    const cluster = clusters.find(c => c.id === this.clusterId);
+                    if (cluster) {
+                        this.emergentProperties.collective_intelligence = 
+                            (this.emergentProperties.consciousness_depth + 
+                             this.emergentProperties.self_awareness) * 
+                            Math.sqrt(cluster.nodes.length) / 10;
+                    }
+                }
+            }
+            
+            updateTensorHistory() {
+                const currentState = {};
+                Object.keys(this.intelligenceTensor).forEach(tensorName => {
+                    currentState[tensorName] = {
+                        x: this.intelligenceTensor[tensorName].x,
+                        y: this.intelligenceTensor[tensorName].y
+                    };
+                });
+                
+                this.tensorHistory.push(currentState);
+                if (this.tensorHistory.length > this.maxHistoryLength) {
+                    this.tensorHistory.shift();
+                }
+            }
+            
+            updateTensorBasedThoughts(deltaTime) {
+                // Generate thoughts based on tensor complexity and interactions
+                this.lastThought += deltaTime;
+                
+                const thoughtThreshold = 3 - this.emergentProperties.consciousness_depth * 2;
+                
+                if (this.lastThought > thoughtThreshold && this.clusterId >= 0) {
+                    this.lastThought = 0;
+                    
+                    // Thought intensity based on emergent properties
+                    const thoughtPower = (this.emergentProperties.consciousness_depth + 
+                                        this.emergentProperties.self_awareness + 
+                                        this.emergentProperties.adaptive_capacity) / 3;
+                    
+                    this.thoughtIntensity = Math.min(1.0, this.thoughtIntensity + thoughtPower * 0.5);
+                    
+                    // Evolve tensor evolution rates based on thoughts (learning)
+                    Object.keys(this.tensorEvolution).forEach(tensorName => {
+                        this.tensorEvolution[tensorName].x += (Math.random() - 0.5) * thoughtPower * 0.001;
+                        this.tensorEvolution[tensorName].y += (Math.random() - 0.5) * thoughtPower * 0.001;
+                    });
+                }
+            }
+            
+            calculateAttentionDensity() {
+                // A(x) - calculate based on nearby attention field
+                let density = 0;
+                attentionField.forEach(field => {
+                    const dist = Math.sqrt((this.x - field.x) ** 2 + (this.y - field.y) ** 2);
+                    if (dist < 50) {
+                        density += field.intensity * (1 - dist / 50);
+                    }
+                });
+                return Math.min(1, density + this.attention);
+            }
+            
+            draw() {
+                // Don't draw nodes outside the visible area (with buffer)
+                const screenX = this.x * worldScale + width/2 + viewOffset.x * worldScale;
+                const screenY = this.y * worldScale + height/2 + viewOffset.y * worldScale;
+                if (screenX < -50 || screenX > width + 50 || 
+                    screenY < -50 || screenY > height + 50) {
+                    return;
+                }
+                
+                ctx.save();
+                
+                // Color based on consciousness value, universe, and intelligence
+                const consciousnessMagnitude = Math.sqrt(this.consciousness.re * this.consciousness.re + this.consciousness.im * this.consciousness.im);
+                let hue = (this.universeId * 120 + (this.phase * 180 / Math.PI)) % 360;
+                let saturation = 70 + Math.min(30, consciousnessMagnitude * 0.5);
+                let lightness = 40 + this.attention * 40;
+                
+                // Modify colors based on intelligence and cluster membership
+                if (this.clusterId >= 0) {
+                    const cluster = clusters.find(c => c.id === this.clusterId);
+                    if (cluster) {
+                        // Shift hue based on cluster intelligence level
+                        hue = (hue + cluster.recursionDepth * 60) % 360;
+                        // Increase saturation for higher intelligence
+                        saturation = Math.min(100, saturation + cluster.recursionDepth * 10);
+                        // Add thought intensity to lightness
+                        lightness = Math.min(80, lightness + this.thoughtIntensity * 30);
+                    }
+                }
+                
+                // Glow effect based on consciousness intensity with pulsing and intelligence
+                let pulse = Math.sin(time * 5 + this.phase) * 5;
+                let glowIntensity = 10 + consciousnessMagnitude * 0.5 + pulse;
+                
+                // Enhance glow for intelligent nodes
+                if (this.clusterId >= 0) {
+                    const cluster = clusters.find(c => c.id === this.clusterId);
+                    if (cluster) {
+                        glowIntensity += cluster.recursionDepth * 5;
+                        // Add thought pulsing
+                        if (this.thoughtIntensity > 0) {
+                            pulse += Math.sin(time * 15) * this.thoughtIntensity * 10;
+                            glowIntensity += this.thoughtIntensity * 15;
+                        }
+                    }
+                }
+                
+                ctx.shadowBlur = glowIntensity;
+                ctx.shadowColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                
+                // Main node
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                ctx.fill();
+                
+                // Inner core (frequency visualization)
+                ctx.shadowBlur = 5;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius * 0.4, 0, Math.PI * 2);
+                ctx.fillStyle = `hsl(${hue + 60}, 90%, 80%)`;
+                ctx.fill();
+                
+                // Connected node visualization (string mode)
+                if (this.connected && interactionMode === 'string') {
+                    ctx.strokeStyle = 'rgba(255, 220, 50, 0.6)';
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([2, 2]);
+                    ctx.beginPath();
+                    
+                    const worldMouse = screenToWorld(mouse.x, mouse.y);
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(worldMouse.x, worldMouse.y);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+                
+                // Mode-specific visualizations with enhanced intelligence representation
+                if (mode === 'temporal') { // Gold: Temporal Distortions
+                    ctx.strokeStyle = `hsla(50, 100%, 60%, 0.5)`;
+                    ctx.lineWidth = 1;
+                    
+                    // Add intelligence-based temporal rings
+                    let ringCount = 3;
+                    if (this.clusterId >= 0) {
+                        const cluster = clusters.find(c => c.id === this.clusterId);
+                        if (cluster) {
+                            ringCount += Math.floor(cluster.recursionDepth);
+                            ctx.strokeStyle = `hsla(${50 + cluster.recursionDepth * 20}, 100%, ${60 + cluster.recursionDepth * 10}%, ${0.5 + this.thoughtIntensity * 0.3})`;
+                        }
+                    }
+                    
+                    for (let i = 1; i <= ringCount; i++) {
+                        ctx.beginPath();
+                        const ringRadius = this.radius + i * 10 + Math.sin(time * 0.1 + this.phase + i) * 5;
+                        ctx.arc(this.x, this.y, ringRadius, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
+                } else if (mode === 'frequency') { // Purple: Frequency Domains
+                    const freqPulse = Math.sin(time * this.frequency * 100);
+                    let freqAlpha = 0.2 + freqPulse * 0.2;
+                    let freqHue = 280;
+                    
+                    // Enhance frequency visualization for intelligent nodes
+                    if (this.clusterId >= 0) {
+                        const cluster = clusters.find(c => c.id === this.clusterId);
+                        if (cluster) {
+                            freqAlpha += cluster.recursionDepth * 0.1 + this.thoughtIntensity * 0.3;
+                            freqHue += cluster.recursionDepth * 15;
+                        }
+                    }
+                    
+                    ctx.strokeStyle = `hsla(${freqHue}, 80%, 70%, ${freqAlpha})`;
+                    ctx.lineWidth = 1.5 + this.thoughtIntensity * 2;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius + 10 + freqPulse * 5 + this.thoughtIntensity * 8, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+                
+                // Draw enhanced intelligence indicators with visual complexity
+                if (this.clusterId >= 0) {
+                    const cluster = clusters.find(c => c.id === this.clusterId);
+                    if (cluster) {
+                        // Cluster membership ring with intelligence-based properties
+                        const ringHue = (cluster.id * 30) % 360;
+                        const ringAlpha = 0.6 + cluster.recursionDepth * 0.1 + this.thoughtIntensity * 0.3;
+                        const ringWidth = 1.5 + cluster.recursionDepth * 0.5;
+                        
+                        ctx.strokeStyle = `hsla(${ringHue}, 70%, 60%, ${ringAlpha})`;
+                        ctx.lineWidth = ringWidth;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.radius + 5 + cluster.recursionDepth * 2, 0, Math.PI * 2);
+                        ctx.stroke();
+                        
+                        // Show computational state with enhanced visuals
+                        if (this.state > 0) {
+                            const stateAlpha = 0.7 + this.thoughtIntensity * 0.3;
+                            const stateRadius = this.radius * (0.6 + cluster.recursionDepth * 0.1);
+                            
+                            ctx.fillStyle = `hsla(${ringHue}, 90%, 80%, ${stateAlpha})`;
+                            ctx.beginPath();
+                            ctx.arc(this.x, this.y, stateRadius, 0, Math.PI * 2);
+                            ctx.fill();
+                            
+                            // Add geometric patterns for high intelligence
+                            if (cluster.recursionDepth > 2) {
+                                const patternSides = Math.floor(3 + cluster.recursionDepth);
+                                const patternRadius = this.radius * 0.3;
+                                
+                                ctx.strokeStyle = `hsla(${ringHue + 60}, 100%, 90%, ${0.8 + this.thoughtIntensity * 0.2})`;
+                                ctx.lineWidth = 1;
+                                ctx.beginPath();
+                                
+                                for (let i = 0; i < patternSides; i++) {
+                                    const angle = (i / patternSides) * Math.PI * 2 + time * (1 + cluster.recursionDepth * 0.5);
+                                    const x = this.x + Math.cos(angle) * patternRadius;
+                                    const y = this.y + Math.sin(angle) * patternRadius;
+                                    
+                                    if (i === 0) {
+                                        ctx.moveTo(x, y);
+                                    } else {
+                                        ctx.lineTo(x, y);
+                                    }
+                                }
+                                ctx.closePath();
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                }
+                
+                // Draw tensor field visualization for high-intelligence nodes
+                if (this.clusterId >= 0 && mode === 'consciousness') {
+                    this.drawTensorField();
+                }
+                
+                ctx.restore();
+            }
+            
+            drawTensorField() {
+                const cluster = clusters.find(c => c.id === this.clusterId);
+                if (!cluster || cluster.recursionDepth < 1) return;
+                
+                ctx.save();
+                
+                const centerX = this.x;
+                const centerY = this.y;
+                const scale = 15 + cluster.recursionDepth * 5;
+                
+                // Draw tensor vectors
+                Object.keys(this.intelligenceTensor).forEach((tensorName, index) => {
+                    const tensor = this.intelligenceTensor[tensorName];
+                    const angle = (index / Object.keys(this.intelligenceTensor).length) * Math.PI * 2;
+                    const offsetRadius = 20 + cluster.recursionDepth * 3;
+                    
+                    const baseX = centerX + Math.cos(angle) * offsetRadius;
+                    const baseY = centerY + Math.sin(angle) * offsetRadius;
+                    
+                    const endX = baseX + tensor.x * scale;
+                    const endY = baseY + tensor.y * scale;
+                    
+                    // Color based on tensor magnitude and emergent properties
+                    const magnitude = Math.sqrt(tensor.x * tensor.x + tensor.y * tensor.y);
+                    const hue = (index * 72) % 360; // Different color for each tensor
+                    const alpha = 0.3 + magnitude * 0.4 + this.emergentProperties.consciousness_depth * 0.3;
+                    
+                    ctx.strokeStyle = `hsla(${hue}, 70%, 60%, ${alpha})`;
+                    ctx.lineWidth = 1 + magnitude * 2;
+                    
+                    // Draw tensor vector
+                    ctx.beginPath();
+                    ctx.moveTo(baseX, baseY);
+                    ctx.lineTo(endX, endY);
+                    ctx.stroke();
+                    
+                    // Draw tensor head (arrowhead)
+                    const headLength = 5 + magnitude * 3;
+                    const headAngle = Math.atan2(endY - baseY, endX - baseX);
+                    ctx.beginPath();
+                    ctx.moveTo(endX, endY);
+                    ctx.lineTo(
+                        endX - headLength * Math.cos(headAngle - Math.PI/6),
+                        endY - headLength * Math.sin(headAngle - Math.PI/6)
+                    );
+                    ctx.moveTo(endX, endY);
+                    ctx.lineTo(
+                        endX - headLength * Math.cos(headAngle + Math.PI/6),
+                        endY - headLength * Math.sin(headAngle + Math.PI/6)
+                    );
+                    ctx.stroke();
+                });
+                
+                // Draw emergent property visualization
+                const emergentRadius = 5 + this.emergentProperties.consciousness_depth * 20;
+                const emergentAlpha = this.emergentProperties.self_awareness * 0.5;
+                
+                if (emergentAlpha > 0.1) {
+                    ctx.fillStyle = `hsla(300, 100%, 70%, ${emergentAlpha})`;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, emergentRadius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                ctx.restore();
+            }
+            
+            evolveTensors() {
+                // Evolution rates based on environmental factors and node state
+                const evolutionRate = 0.02 * timeDilation * (1 + this.thoughtIntensity);
+                const stateInfluence = this.state * 0.01;
+                const fieldInfluence = fieldStrength * 0.003;
+                
+                // Evolve each tensor component
+                Object.keys(this.intelligenceTensor).forEach(tensorName => {
+                    const tensor = this.intelligenceTensor[tensorName];
+                    const evolution = this.tensorEvolution[tensorName];
+                    
+                    // Apply evolution with some randomness for emergence
+                    tensor.x += evolution.x * evolutionRate + (Math.random() - 0.5) * stateInfluence;
+                    tensor.y += evolution.y * evolutionRate + (Math.random() - 0.5) * stateInfluence;
+                    
+                    // Normalize to prevent explosion but allow growth
+                    const magnitude = Math.sqrt(tensor.x * tensor.x + tensor.y * tensor.y);
+                    if (magnitude > 2.0) {
+                        tensor.x = (tensor.x / magnitude) * 2.0;
+                        tensor.y = (tensor.y / magnitude) * 2.0;
+                    }
+                    
+                    // Update evolution direction based on tensor feedback
+                    evolution.x += (Math.random() - 0.5) * fieldInfluence;
+                    evolution.y += (Math.random() - 0.5) * fieldInfluence;
+                    
+                    // Keep evolution bounded
+                    evolution.x = Math.max(-0.1, Math.min(0.1, evolution.x));
+                    evolution.y = Math.max(-0.1, Math.min(0.1, evolution.y));
+                });
+            }
+            
+            applyCrossTensorDynamics() {
+                // Cross-tensor interactions create emergent behaviors
+                const tensorKeys = Object.keys(this.intelligenceTensor);
+                const crossInfluence = 0.005 * timeDilation;
+                
+                for (let i = 0; i < tensorKeys.length; i++) {
+                    for (let j = i + 1; j < tensorKeys.length; j++) {
+                        const tensorA = this.intelligenceTensor[tensorKeys[i]];
+                        const tensorB = this.intelligenceTensor[tensorKeys[j]];
+                        
+                        // Calculate interaction strength based on alignment
+                        const dotProduct = tensorA.x * tensorB.x + tensorA.y * tensorB.y;
+                        const magnitudeA = Math.sqrt(tensorA.x * tensorA.x + tensorA.y * tensorA.y);
+                        const magnitudeB = Math.sqrt(tensorB.x * tensorB.x + tensorB.y * tensorB.y);
+                        
+                        if (magnitudeA > 0 && magnitudeB > 0) {
+                            const alignment = dotProduct / (magnitudeA * magnitudeB);
+                            
+                            // Aligned tensors reinforce each other
+                            if (alignment > 0.5) {
+                                const reinforcement = alignment * crossInfluence;
+                                tensorA.x += tensorB.x * reinforcement;
+                                tensorA.y += tensorB.y * reinforcement;
+                                tensorB.x += tensorA.x * reinforcement;
+                                tensorB.y += tensorA.y * reinforcement;
+                            }
+                            // Opposing tensors create complex dynamics
+                            else if (alignment < -0.5) {
+                                const perturbation = Math.abs(alignment) * crossInfluence;
+                                tensorA.x += (Math.random() - 0.5) * perturbation;
+                                tensorA.y += (Math.random() - 0.5) * perturbation;
+                                tensorB.x += (Math.random() - 0.5) * perturbation;
+                                tensorB.y += (Math.random() - 0.5) * perturbation;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            applyTensorFieldInteractions() {
+                // Interact with nearby nodes' tensor fields
+                const interactionRadius = 80;
+                const fieldInfluence = 0.002 * fieldStrength * timeDilation;
+                
+                nodes.forEach(otherNode => {
+                    if (otherNode === this) return;
+                    
+                    const dx = otherNode.x - this.x;
+                    const dy = otherNode.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < interactionRadius) {
+                        const influence = fieldInfluence * (1 - distance / interactionRadius);
+                        
+                        // Each tensor component influences corresponding components in nearby nodes
+                        Object.keys(this.intelligenceTensor).forEach(tensorName => {
+                            if (otherNode.intelligenceTensor[tensorName]) {
+                                const myTensor = this.intelligenceTensor[tensorName];
+                                const otherTensor = otherNode.intelligenceTensor[tensorName];
+                                
+                                // Create field gradient effects
+                                const fieldGradientX = (otherTensor.x - myTensor.x) * influence;
+                                const fieldGradientY = (otherTensor.y - myTensor.y) * influence;
+                                
+                                myTensor.x += fieldGradientX;
+                                myTensor.y += fieldGradientY;
+                            }
+                        });
+                    }
+                });
+            }
+            
+            calculateEmergentProperties() {
+                // Calculate emergent properties from tensor interactions
+                const tensorKeys = Object.keys(this.intelligenceTensor);
+                let totalMagnitude = 0;
+                let alignmentSum = 0;
+                let complexityMeasure = 0;
+                
+                // Calculate tensor field characteristics
+                tensorKeys.forEach((tensorName, index) => {
+                    const tensor = this.intelligenceTensor[tensorName];
+                    const magnitude = Math.sqrt(tensor.x * tensor.x + tensor.y * tensor.y);
+                    totalMagnitude += magnitude;
+                    
+                    // Calculate alignment with other tensors
+                    tensorKeys.forEach((otherTensorName, otherIndex) => {
+                        if (index !== otherIndex) {
+                            const otherTensor = this.intelligenceTensor[otherTensorName];
+                            const otherMagnitude = Math.sqrt(otherTensor.x * otherTensor.x + otherTensor.y * otherTensor.y);
+                            
+                            if (magnitude > 0 && otherMagnitude > 0) {
+                                const dotProduct = tensor.x * otherTensor.x + tensor.y * otherTensor.y;
+                                const alignment = Math.abs(dotProduct / (magnitude * otherMagnitude));
+                                alignmentSum += alignment;
+                            }
+                        }
+                    });
+                    
+                    // Complexity from tensor variation
+                    complexityMeasure += Math.abs(tensor.x - tensor.y) + magnitude;
+                });
+                
+                const avgMagnitude = totalMagnitude / tensorKeys.length;
+                const avgAlignment = alignmentSum / (tensorKeys.length * (tensorKeys.length - 1));
+                
+                // Update emergent properties based on tensor dynamics
+                this.emergentProperties.consciousness_depth = Math.min(1.0, avgMagnitude * 0.8 + this.thoughtIntensity * 0.2);
+                this.emergentProperties.self_awareness = Math.min(1.0, avgAlignment * 0.6 + (this.state > 0 ? 0.4 : 0));
+                this.emergentProperties.adaptive_capacity = Math.min(1.0, complexityMeasure * 0.1 + this.velocity * 0.5);
+                this.emergentProperties.collective_intelligence = Math.min(1.0, 
+                    (this.clusterId >= 0 ? 0.5 : 0) + avgMagnitude * 0.3 + avgAlignment * 0.2);
+                
+                // Store for intelligence panel
+                this.calculatedEmergentProperties = {
+                    consciousness_depth: this.emergentProperties.consciousness_depth,
+                    self_awareness: this.emergentProperties.self_awareness,
+                    adaptive_capacity: this.emergentProperties.adaptive_capacity,
+                    collective_intelligence: this.emergentProperties.collective_intelligence
+                };
+            }
+        }
+        
+        // Universe class
+        class Universe {
+            constructor(id, centerX, centerY, resonanceCoeff) {
+                // Adjust coordinates for larger scale
+                this.id = id;
+                this.centerX = centerX || (Math.random() * width - width/2) / worldScale - viewOffset.x;
+                this.centerY = centerY || (Math.random() * height - height/2) / worldScale - viewOffset.y;
+                this.resonanceCoeff = resonanceCoeff; // λi
+                this.radius = Math.random() * 250 + 150; // Larger universes for larger world
+                this.nodes = [];
+            }
+            
+            update() {
+                // Universe resonance affects all nodes within
+                this.nodes.forEach(node => {
+                    const dist = Math.sqrt((node.x - this.centerX) ** 2 + (node.y - this.centerY) ** 2);
+                    if (dist < this.radius) {
+                        // The lambda coefficient is now part of the global C calculation,
+                        // but we can still use it for universe-specific visual effects.
+                        node.frequency = node.baseFrequency * (1 + this.resonanceCoeff * 0.2 * Math.sin(time * 0.05));
+                    }
+                });
+            }
+            
+            draw() {
+                // Don't draw universes outside the visible area (with buffer)
+                const screenX = this.centerX * worldScale + width/2 + viewOffset.x * worldScale;
+                const screenY = this.centerY * worldScale + height/2 + viewOffset.y * worldScale;
+                const screenRadius = this.radius * worldScale;
+                
+                if (screenX + screenRadius < -100 || screenX - screenRadius > width + 100 || 
+                    screenY + screenRadius < -100 || screenY - screenRadius > height + 100) {
+                    return;
+                }
+                
+                if (mode === 'multiverse') { // Red: Universe Boundaries
+                    ctx.save();
+                    ctx.strokeStyle = `hsla(0, 70%, 50%, 0.3)`;
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.arc(this.centerX, this.centerY, this.radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+        }
+        
+        // Cluster class to manage computational clusters
+        class NodeCluster {
+            constructor(id) {
+                this.id = id;
+                this.nodes = [];
+                this.centerNode = null;
+                this.centerX = 0;
+                this.centerY = 0;
+                this.recursionDepth = 0;
+                this.complexityScore = 0;
+                this.synchronized = false;
+                this.processingPower = 0;
+                this.lastSync = 0;
+                
+                // Collective tensor field for emergent group intelligence
+                this.collectiveTensorField = {
+                    attention: { x: 0, y: 0 },
+                    memory: { x: 0, y: 0 },
+                    reasoning: { x: 0, y: 0 },
+                    intuition: { x: 0, y: 0 },
+                    creativity: { x: 0, y: 0 }
+                };
+                
+                this.emergentGroupProperties = {
+                    collective_awareness: 0,
+                    group_coherence: 0,
+                    emergent_intelligence: 0,
+                    distributed_processing: 0
+                };
+            }
+            
+            update(deltaTime) {
+                if (this.nodes.length === 0) return;
+                
+                // Calculate cluster center
+                let sumX = 0, sumY = 0;
+                this.nodes.forEach(node => {
+                    sumX += node.x;
+                    sumY += node.y;
+                });
+                
+                this.centerX = sumX / this.nodes.length;
+                this.centerY = sumY / this.nodes.length;
+                
+                // Find node closest to center to be the central node
+                let minDistance = Infinity;
+                this.nodes.forEach(node => {
+                    const dx = node.x - this.centerX;
+                    const dy = node.y - this.centerY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        this.centerNode = node;
+                    }
+                });
+                
+                // Check for synchronization (phase alignment)
+                let phaseAlignment = 0;
+                let frequencyResonance = 0;
+                
+                for (let i = 0; i < this.nodes.length; i++) {
+                    for (let j = i + 1; j < this.nodes.length; j++) {
+                        // Phase alignment - closer to 1 means better aligned
+                        const phaseDiff = Math.abs(Math.sin(this.nodes[i].phase - this.nodes[j].phase));
+                        phaseAlignment += (1 - phaseDiff);
+                        
+                        // Frequency resonance
+                        const freqRatio = Math.min(this.nodes[i].frequency, this.nodes[j].frequency) / 
+                                          Math.max(this.nodes[i].frequency, this.nodes[j].frequency);
+                        frequencyResonance += freqRatio;
+                    }
+                }
+                
+                // Normalize values
+                const pairCount = (this.nodes.length * (this.nodes.length - 1)) / 2;
+                if (pairCount > 0) {
+                    phaseAlignment /= pairCount;
+                    frequencyResonance /= pairCount;
+                }
+                
+                // Calculate total processing power
+                this.processingPower = 0;
+                this.nodes.forEach(node => {
+                    this.processingPower += node.processingPower;
+                });
+                
+                // Synchronization status
+                this.synchronized = phaseAlignment > thresholds.phaseAlignment && 
+                                   frequencyResonance > thresholds.frequencyResonance;
+                
+                // Update recursion depth based on synchronization
+                if (this.synchronized) {
+                    this.lastSync += deltaTime;
+                    if (this.lastSync > 1) { // Need 1 second of stable synchronization
+                        this.recursionDepth = Math.min(5, this.recursionDepth + deltaTime * 0.2);
+                        
+                        // Propagate recursion level to all nodes in cluster
+                        this.nodes.forEach(node => {
+                            node.recursionLevel = Math.floor(this.recursionDepth);
+                        });
+                    }
+                } else {
+                    this.lastSync = 0;
+                    this.recursionDepth = Math.max(0, this.recursionDepth - deltaTime * 0.1);
+                }
+                
+                // Calculate complexity based on recursion, size, and synchronization
+                this.complexityScore = this.recursionDepth * this.nodes.length * phaseAlignment * frequencyResonance;
+                
+                // Update collective tensor field and emergent group properties
+                this.updateCollectiveTensorField();
+                this.calculateEmergentGroupProperties();
+            }
+            
+            draw() {
+                if (this.nodes.length < 2 || !this.synchronized) return;
+                
+                ctx.save();
+                
+                // Draw links between nodes in cluster
+                const hue = (this.id * 30) % 360;
+                const recursionIntensity = this.recursionDepth / 5; // 0 to 1
+                
+                for (let i = 0; i < this.nodes.length; i++) {
+                    const nodeA = this.nodes[i];
+                    
+                    // Draw links to other nodes in cluster
+                    for (let j = i + 1; j < this.nodes.length; j++) {
+                        const nodeB = this.nodes[j];
+                        
+                        const dx = nodeB.x - nodeA.x;
+                        const dy = nodeB.y - nodeA.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < thresholds.clusterProximity * 1.5) {
+                            // Enhanced computational connection visualization
+                            const pulseSpeed = 1 + this.recursionDepth;
+                            const pulse = Math.sin(time * pulseSpeed + i * j);
+                            const dataFlow = (pulse + 1) / 2; // 0 to 1
+                            
+                            // Base connection properties
+                            let connectionHue = hue;
+                            let connectionAlpha = 0.2 + 0.5 * recursionIntensity;
+                            let connectionWidth = 1 + recursionIntensity;
+                            let dashPattern = [];
+                            
+                            // Intelligence mode styling
+                            if (intelligenceMode === 'neural') {
+                                connectionHue = hue + 30;
+                                connectionAlpha = 0.3 + 0.6 * recursionIntensity;
+                                connectionWidth = 1.5 + recursionIntensity;
+                                dashPattern = [3, 2];
+                            } else if (intelligenceMode === 'quantum') {
+                                connectionHue = hue + 120;
+                                connectionAlpha = 0.2 + 0.7 * recursionIntensity;
+                                connectionWidth = 1 + recursionIntensity * 1.5;
+                                dashPattern = [1, 4, 6, 4];
+                            } else {
+                                connectionHue = hue + 60;
+                                dashPattern = [];
+                            }
+                            
+                            // Draw enhanced computational links
+                            ctx.beginPath();
+                            ctx.moveTo(nodeA.x, nodeA.y);
+                            ctx.lineTo(nodeB.x, nodeB.y);
+                            
+                            ctx.strokeStyle = `hsla(${connectionHue}, 100%, 70%, ${connectionAlpha})`;
+                            ctx.lineWidth = connectionWidth;
+                            ctx.setLineDash(dashPattern);
+                            ctx.stroke();
+                            ctx.setLineDash([]);
+                            
+                            // Enhanced data flow particles with intelligence indicators
+                            if (recursionIntensity > 0.3) {
+                                const particleCount = Math.floor(1 + recursionIntensity * 3);
+                                
+                                for (let p = 0; p < particleCount; p++) {
+                                    const particleOffset = (p / particleCount + dataFlow) % 1;
+                                    const particleX = nodeA.x + dx * particleOffset;
+                                    const particleY = nodeA.y + dy * particleOffset;
+                                    const particleSize = 2 + recursionIntensity * 2;
+                                    
+                                    // Particle color based on intelligence mode
+                                    let particleHue = connectionHue + 180;
+                                    if (intelligenceMode === 'quantum') {
+                                        particleHue += Math.sin(time * 10 + p) * 60;
+                                    }
+                                    
+                                    ctx.fillStyle = `hsla(${particleHue}, 100%, 80%, ${recursionIntensity})`;
+                                    ctx.beginPath();
+                                    
+                                    if (intelligenceMode === 'quantum') {
+                                        // Quantum particles as diamonds
+                                        ctx.save();
+                                        ctx.translate(particleX, particleY);
+                                        ctx.rotate(time * 2 + p);
+                                        ctx.rect(-particleSize/2, -particleSize/2, particleSize, particleSize);
+                                        ctx.restore();
+                                    } else {
+                                        // Regular circular particles
+                                        ctx.arc(particleX, particleY, particleSize, 0, Math.PI * 2);
+                                    }
+                                    ctx.fill();
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Enhanced cluster center indicator with intelligence visualization
+                if (this.recursionDepth > 1 && this.centerNode) {
+                    const centerRadius = 15 + this.recursionDepth * 5;
+                    const glowIntensity = 0.3 + recursionIntensity * 0.6;
+                    
+                    // Multi-layered glow effect
+                    for (let layer = 3; layer >= 1; layer--) {
+                        const gradient = ctx.createRadialGradient(
+                            this.centerX, this.centerY, 0,
+                            this.centerX, this.centerY, centerRadius * layer
+                        );
+                        
+                        const layerHue = (hue + layer * 20) % 360;
+                        const layerAlpha = glowIntensity / layer;
+                        
+                        gradient.addColorStop(0, `hsla(${layerHue}, 100%, 70%, ${layerAlpha})`);
+                        gradient.addColorStop(1, `hsla(${layerHue}, 100%, 70%, 0)`);
+                        
+                        ctx.fillStyle = gradient;
+                        ctx.beginPath();
+                        ctx.arc(this.centerX, this.centerY, centerRadius * layer, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    
+                    // Enhanced intelligence core visualization
+                    if (this.recursionDepth > 2) {
+                        const patternSize = 8 + this.recursionDepth * 3;
+                        const sides = Math.floor(6 + this.recursionDepth * 2);
+                        const rotationSpeed = 0.5 + this.recursionDepth * 0.3;
+                        
+                        // Outer geometric pattern
+                        ctx.strokeStyle = `hsla(${hue + 60}, 100%, 80%, ${0.8 * recursionIntensity})`;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        
+                        for (let i = 0; i < sides; i++) {
+                            const angle = (i / sides) * Math.PI * 2 + time * rotationSpeed;
+                            const nextAngle = ((i + 1) / sides) * Math.PI * 2 + time * rotationSpeed;
+                            const x1 = this.centerX + Math.cos(angle) * patternSize;
+                            const y1 = this.centerY + Math.sin(angle) * patternSize;
+                            const x2 = this.centerX + Math.cos(nextAngle) * patternSize;
+                            const y2 = this.centerY + Math.sin(nextAngle) * patternSize;
+                            
+                            ctx.moveTo(x1, y1);
+                            ctx.lineTo(x2, y2);
+                        }
+                        ctx.stroke();
+                        
+                        // Inner pattern for very high intelligence
+                        if (this.recursionDepth > 4) {
+                            const innerPatternSize = patternSize * 0.5;
+                            ctx.strokeStyle = `hsla(${hue + 120}, 100%, 90%, ${0.9 * recursionIntensity})`;
+                            ctx.lineWidth = 1.5;
+                            ctx.beginPath();
+                            
+                            for (let i = 0; i < sides; i++) {
+                                const angle = (i / sides) * Math.PI * 2 - time * rotationSpeed * 1.5;
+                                const x = this.centerX + Math.cos(angle) * innerPatternSize;
+                                const y = this.centerY + Math.sin(angle) * innerPatternSize;
+                                
+                                if (i === 0) {
+                                    ctx.moveTo(x, y);
+                                } else {
+                                    ctx.lineTo(x, y);
+                                }
+                            }
+                            ctx.closePath();
+                            ctx.stroke();
+                        }
+                    }
+                }
+                
+                ctx.restore();
+            }
+            
+            updateCollectiveTensorField() {
+                if (this.nodes.length === 0) return;
+                
+                // Aggregate tensor fields from all nodes in cluster
+                Object.keys(this.collectiveTensorField).forEach(tensorName => {
+                    let sumX = 0, sumY = 0;
+                    let activeNodes = 0;
+                    
+                    this.nodes.forEach(node => {
+                        if (node.intelligenceTensor[tensorName]) {
+                            sumX += node.intelligenceTensor[tensorName].x;
+                            sumY += node.intelligenceTensor[tensorName].y;
+                            activeNodes++;
+                        }
+                    });
+                    
+                    if (activeNodes > 0) {
+                        // Calculate collective field as weighted average with emergent amplification
+                        const amplification = 1 + (this.recursionDepth * 0.2);
+                        this.collectiveTensorField[tensorName].x = (sumX / activeNodes) * amplification;
+                        this.collectiveTensorField[tensorName].y = (sumY / activeNodes) * amplification;
+                    }
+                });
+            }
+            
+            calculateEmergentGroupProperties() {
+                if (this.nodes.length === 0) return;
+                
+                // Calculate collective awareness from tensor field coherence
+                let tensorCoherence = 0;
+                let tensorMagnitude = 0;
+                
+                Object.keys(this.collectiveTensorField).forEach(tensorName => {
+                    const tensor = this.collectiveTensorField[tensorName];
+                    const magnitude = Math.sqrt(tensor.x * tensor.x + tensor.y * tensor.y);
+                    tensorMagnitude += magnitude;
+                    
+                    // Check how well individual nodes align with collective field
+                    let alignment = 0;
+                    this.nodes.forEach(node => {
+                        if (node.intelligenceTensor[tensorName]) {
+                            const nodeTensor = node.intelligenceTensor[tensorName];
+                            const nodeMag = Math.sqrt(nodeTensor.x * nodeTensor.x + nodeTensor.y * nodeTensor.y);
+                            
+                            if (magnitude > 0 && nodeMag > 0) {
+                                const dotProduct = tensor.x * nodeTensor.x + tensor.y * nodeTensor.y;
+                                alignment += Math.abs(dotProduct / (magnitude * nodeMag));
+                            }
+                        }
+                    });
+                    
+                    tensorCoherence += alignment / this.nodes.length;
+                });
+                
+                const avgTensorMagnitude = tensorMagnitude / Object.keys(this.collectiveTensorField).length;
+                const avgTensorCoherence = tensorCoherence / Object.keys(this.collectiveTensorField).length;
+                
+                // Update emergent group properties
+                this.emergentGroupProperties.collective_awareness = Math.min(1.0, avgTensorMagnitude * 0.6 + this.synchronized ? 0.4 : 0);
+                this.emergentGroupProperties.group_coherence = Math.min(1.0, avgTensorCoherence);
+                this.emergentGroupProperties.emergent_intelligence = Math.min(1.0, this.recursionDepth * 0.2 + avgTensorMagnitude * 0.5 + avgTensorCoherence * 0.3);
+                this.emergentGroupProperties.distributed_processing = Math.min(1.0, (this.nodes.length / 10) * 0.4 + this.processingPower * 0.6);
+            }
+        }
+        
+        // Find and update clusters
+        function updateClusters(deltaTime) {
+            // Clear previous cluster assignments
+            consciousnessNodes.forEach(node => {
+                node.clusterId = -1;
+            });
+            
+            // Reset clusters
+            clusters = [];
+            
+            // Build new clusters based on proximity and phase/frequency alignment
+            const processed = new Set();
+            
+            consciousnessNodes.forEach(node => {
+                if (processed.has(node)) return;
+                
+                // Start a new potential cluster
+                const clusterNodes = [node];
+                processed.add(node);
+                
+                // Find all connected nodes (breadth-first search)
+                const queue = [node];
+                
+                while (queue.length > 0) {
+                    const current = queue.shift();
+                    
+                    // Find unprocessed nodes within proximity threshold
+                    consciousnessNodes.forEach(candidate => {
+                        if (processed.has(candidate)) return;
+                        
+                        const dx = candidate.x - current.x;
+                        const dy = candidate.y - current.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < thresholds.clusterProximity) {
+                            // Check phase and frequency compatibility
+                            const phaseDiff = Math.abs(Math.sin(current.phase - candidate.phase));
+                            const phaseCompatible = phaseDiff < 0.5; // Somewhat aligned phases
+                            
+                            const freqRatio = Math.min(current.frequency, candidate.frequency) / 
+                                            Math.max(current.frequency, candidate.frequency);
+                            const freqCompatible = freqRatio > 0.7; // Similar frequencies
+                            
+                            if (phaseCompatible && freqCompatible) {
+                                clusterNodes.push(candidate);
+                                queue.push(candidate);
+                                processed.add(candidate);
+                            }
+                        }
+                    });
+                }
+                
+                // Only create clusters with at least 3 nodes
+                if (clusterNodes.length >= 3) {
+                    const cluster = new NodeCluster(clusters.length);
+                    cluster.nodes = clusterNodes;
+                    
+                    // Assign nodes to this cluster
+                    clusterNodes.forEach(n => {
+                        n.clusterId = cluster.id;
+                    });
+                    
+                    clusters.push(cluster);
+                }
+            });
+            
+            // Update all clusters
+            clusters.forEach(cluster => {
+                cluster.update(deltaTime);
+            });
+            
+            // Calculate global thought complexity
+            if (clusters.length > 0) {
+                let totalComplexity = 0;
+                clusters.forEach(cluster => {
+                    totalComplexity += cluster.complexityScore;
+                });
+                globalThoughtComplexity = totalComplexity / clusters.length;
+            } else {
+                globalThoughtComplexity = 0;
+            }
+            
+            // Update UI
+            document.getElementById('clusterCount').textContent = clusters.length;
+            
+            const maxRecursion = clusters.length > 0 ? 
+                Math.max(...clusters.map(c => Math.floor(c.recursionDepth))) : 0;
+            document.getElementById('recursionDepth').textContent = maxRecursion;
+            
+            document.getElementById('thoughtComplexity').textContent = 
+                (isNaN(globalThoughtComplexity) ? 0 : globalThoughtComplexity).toFixed(1);
+        }
+        
+        // Set intelligence mode
+        function setIntelligenceMode(mode) {
+            intelligenceMode = mode;
+            document.querySelectorAll('[data-intel]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.intel === mode);
+            });
+            
+            // Adjust thresholds based on mode
+            switch(mode) {
+                case 'neural':
+                    thresholds.clusterProximity = 120;
+                    thresholds.phaseAlignment = 0.6;
+                    thresholds.frequencyResonance = 0.5;
+                    break;
+                case 'quantum':
+                    thresholds.clusterProximity = 150;
+                    thresholds.phaseAlignment = 0.5;
+                    thresholds.frequencyResonance = 0.4;
+                    break;
+                case 'basic':
+                default:
+                    thresholds.clusterProximity = 80;
+                    thresholds.phaseAlignment = 0.8;
+                    thresholds.frequencyResonance = 0.7;
+                    break;
+            }
+        }
+        
+        // Animation loop update
+        function animate(timestamp) {
+            try {
+                const deltaTime = Math.min(0.05, (timestamp - lastTime) / 1000); // in seconds, with cap
+                lastTime = timestamp;
+                time += deltaTime * params.timeDilation;
+
+                // Clear with fade effect
+                const clearAlpha = 0.08 + Math.sin(time * 0.1) * 0.02;
+                ctx.fillStyle = `rgba(10, 10, 26, ${clearAlpha})`;
+                ctx.fillRect(0, 0, width, height);
+
+                // Draw stars with pan/zoom
+                drawStars();
+                
+                // Draw attention field
+                drawAttentionField();
+                
+                // Update clusters with error handling
+                try {
+                    updateClusters(deltaTime);
+                } catch (e) {
+                    console.error("Error in cluster processing:", e);
+                    // Reset clusters if there's an error
+                    clusters = [];
+                }
+                
+                // Save context for all world-space drawing
+                ctx.save();
+                applyViewTransform();
+                
+                // Update and draw universes
+                universes.forEach(universe => {
+                    try {
+                        universe.update();
+                        universe.draw();
+                    } catch (e) {
+                        console.error("Error processing universe:", e);
+                    }
+                });
+                
+                ctx.restore();
+                
+                // Update consciousness nodes with performance optimization
+                const visibleNodes = [];
+                consciousnessNodes.forEach(node => {
+                    try {
+                        node.update(deltaTime);
+                        
+                        // Check if node is on screen before adding to visible nodes
+                        const screenX = node.x * worldScale + width/2 + viewOffset.x * worldScale;
+                        const screenY = node.y * worldScale + height/2 + viewOffset.y * worldScale;
+                        if (screenX > -50 && screenX < width + 50 && 
+                            screenY > -50 && screenY < height + 50) {
+                            visibleNodes.push(node);
+                        }
+                    } catch (e) {
+                        console.error("Error updating node:", e);
+                    }
+                });
+                
+                // Draw only visible nodes for better performance
+                ctx.save();
+                applyViewTransform();
+                
+                visibleNodes.forEach(node => {
+                    try {
+                        node.draw();
+                    } catch (e) {
+                        console.error("Error drawing node:", e);
+                    }
+                });
+                
+                // Draw connections
+                drawConnections();
+                
+                // Draw intelligence clusters
+                try {
+                    clusters.forEach(cluster => {
+                        cluster.draw();
+                    });
+                } catch (e) {
+                    console.error("Error drawing clusters:", e);
+                }
+                
+                ctx.restore();
+
+                // Update and draw shockwaves
+                updateAndDrawShockwaves(deltaTime);
+                
+                // Update pan indicator
+                updatePanIndicator();
+                
+                // Calculate global values
+                let totalConsciousnessRe = 0;
+                let totalConsciousnessIm = 0;
+                let totalAttention = 0;
+                let totalPhase = 0;
+                
+                consciousnessNodes.forEach(node => {
+                    // Global C is the integral (sum) of individual node C's, weighted by their universe's lambda
+                    const lambda = lambdas[node.universeId];
+                    totalConsciousnessRe += node.consciousness.re * lambda;
+                    totalConsciousnessIm += node.consciousness.im * lambda;
+
+                    totalAttention += node.attention || 0;
+                    totalPhase += node.phase || 0;
+                });
+                
+                const globalConsciousnessMagnitude = Math.sqrt(totalConsciousnessRe * totalConsciousnessRe + totalConsciousnessIm * totalConsciousnessIm);
+                globalResonance = consciousnessNodes.length > 0 ? globalConsciousnessMagnitude / consciousnessNodes.length : 0;
+                
+                // Update UI with safety checks for NaN values
+                document.getElementById('nodeCount').textContent = consciousnessNodes.length;
+                document.getElementById('resonance').textContent = (isNaN(globalResonance) ? 0 : globalResonance).toFixed(3);
+                document.getElementById('attention').textContent = (consciousnessNodes.length > 0 ? totalAttention / consciousnessNodes.length : 0).toFixed(3);
+                document.getElementById('phase').textContent = (consciousnessNodes.length > 0 ? (totalPhase / consciousnessNodes.length) * 180 / Math.PI % 360 : 0).toFixed(1);
+                
+                requestAnimationFrame(animate);
+            } catch (e) {
+                console.error("Critical error in animation loop:", e);
+            }
+        }
+        
+        // Calculate global statistics with stability checks
+        function calculateGlobalStats() {
+            let totalConsciousness = 0;
+            let totalAttention = 0;
+            let totalPhase = 0;
+            
+            consciousnessNodes.forEach(node => {
+                totalConsciousness += Math.abs(node.consciousness || 0);
+                totalAttention += node.attention || 0;
+                totalPhase += node.phase || 0;
+            });
+            
+            globalResonance = consciousnessNodes.length > 0 ? totalConsciousness / consciousnessNodes.length : 0;
+            
+            // Update UI safely
+            safeUpdateElement('nodeCount', consciousnessNodes.length);
+            safeUpdateElement('resonance', globalResonance.toFixed(3));
+            safeUpdateElement('attention', (consciousnessNodes.length > 0 ? totalAttention / consciousnessNodes.length : 0).toFixed(3));
+            safeUpdateElement('phase', (consciousnessNodes.length > 0 ? (totalPhase / consciousnessNodes.length) * 180 / Math.PI % 360 : 0).toFixed(1));
+            
+            // Update intelligence metrics
+            safeUpdateElement('clusterCount', clusters.length);
+            
+            const maxRecursion = clusters.length > 0 ? 
+                Math.max(...clusters.map(c => Math.floor(c.recursionDepth || 0))) : 0;
+            safeUpdateElement('recursionDepth', maxRecursion);
+            
+            safeUpdateElement('thoughtComplexity', globalThoughtComplexity.toFixed(1));
+        }
+        
+        // Safe element update to prevent errors if elements don't exist
+        function safeUpdateElement(id, value) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value;
+            }
+        }
+        
+        // Reset function with stability improvements
+        function reset() {
+            try {
+                // Reset clusters
+                clusters = [];
+                
+                // Initialize nodes and universes
+                init();
+                initializeAttentionField();
+            } catch (e) {
+                console.error("Error during reset:", e);
+                // Fallback reset for critical components
+                consciousnessNodes = [];
+                universes = [];
+                clusters = [];
+                initStars();
+            }
+        }
+        
+        // Improve error handling in pan and zoom functions
+        function handlePanStart(e) {
+            try {
+                if (e.button === 1 || e.buttons === 4 || (e.altKey && e.button === 0)) {
+                    isPanning = true;
+                    updateMousePosition(e);
+                    lastPanPoint.x = mouse.x;
+                    lastPanPoint.y = mouse.y;
+                    canvas.style.cursor = 'grabbing';
+                    e.preventDefault();
+                }
+            } catch (error) {
+                console.error("Error in pan start:", error);
+                // Reset pan state to avoid getting stuck
+                isPanning = false;
+                canvas.style.cursor = 'crosshair';
+            }
+        }
+        
+        function handlePanMove(e) {
+            try {
+                if (isPanning) {
+                    updateMousePosition(e);
+                    viewOffset.x += (mouse.x - lastPanPoint.x) / worldScale;
+                    viewOffset.y += (mouse.y - lastPanPoint.y) / worldScale;
+                    lastPanPoint.x = mouse.x;
+                    lastPanPoint.y = mouse.y;
+                    e.preventDefault();
+                }
+            } catch (error) {
+                console.error("Error in pan move:", error);
+                // Reset pan state to avoid getting stuck
+                isPanning = false;
+                canvas.style.cursor = 'crosshair';
+            }
+        }
+        
+        // More robust window resize handling
+        window.addEventListener('resize', () => {
+            try {
+                // Resize canvas
+                resize();
+                
+                // Refresh pan indicator
+                updatePanIndicator();
+            } catch (e) {
+                console.error("Error during window resize:", e);
+            }
+        });
+        
+        // Setup intelligence mode buttons with error handling
+        document.querySelectorAll('[data-intel]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                try {
+                    setIntelligenceMode(btn.dataset.intel);
+                } catch (e) {
+                    console.error("Error setting intelligence mode:", e);
+                    // Fallback to basic mode
+                    setIntelligenceMode('basic');
+                }
+            });
+        });
+        
+        // Initialize with error handling
+        function safeInitialize() {
+            try {
+                setupSliders();
+                resize();
+                init();
+                
+                // Setup intelligence modes
+                setIntelligenceMode('basic');
+                
+                // Start animation
+                requestAnimationFrame(animate);
+                
+                // Show tutorial on first visit
+                if (!localStorage.getItem('tutorialShown')) {
+                    showTutorial();
+                    localStorage.setItem('tutorialShown', 'true');
+                }
+            } catch (e) {
+                console.error("Critical initialization error:", e);
+                // Display error message to user
+                alert("There was an error initializing the simulation. Please refresh the page.");
+            }
+        }
+        
+        // Define missing globals
+        let clusters = [];
+        let intelligenceMode = 'basic';
+        let globalThoughtComplexity = 0;
+        let thresholds = {
+            clusterProximity: 80,
+            phaseAlignment: 0.8,
+            frequencyResonance: 0.7
+        };
+        
+        // Add missing functions
+        
+        
+        // Draw connections between nodes
+        function drawConnections() {
+            // Draw string connections from mouse to connected nodes
+            if (interactionMode === 'string' && mouse.isDown && connectedNodes.length > 0) {
+                const worldMouse = screenToWorld(mouse.x, mouse.y);
+                
+                connectedNodes.forEach((node) => {
+                    // Draw string
+                    ctx.beginPath();
+                    ctx.moveTo(node.x, node.y);
+                    ctx.lineTo(worldMouse.x, worldMouse.y);
+                    ctx.strokeStyle = `rgba(255, 220, 50, ${0.4 + 0.4 * Math.sin(time * 5)})`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                    
+                    // Apply spring force
+                    const dx = worldMouse.x - node.x;
+                    const dy = worldMouse.y - node.y;
+                    const distance = Math.sqrt(dx*dx + dy*dy);
+                    const angle = Math.atan2(dy, dx);
+                    const stringTension = distance * 0.001 * params.elasticity;
+                    node.vx += Math.cos(angle) * stringTension;
+                    node.vy += Math.sin(angle) * stringTension;
+                });
+            } else {
+                // Clear connected nodes if not in string mode
+                connectedNodes = [];
+            }
+            
+            // Draw regular node connections
+            for (let i = 0; i < consciousnessNodes.length; i++) {
+                for (let j = i + 1; j < consciousnessNodes.length; j++) {
+                    const node1 = consciousnessNodes[i];
+                    const node2 = consciousnessNodes[j];
+                    const dx = node1.x - node2.x;
+                    const dy = node1.y - node2.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 120 && node1.universeId === node2.universeId) {
+                        const opacity = (1 - distance / 120) * 0.4;
+                        const resonance = (node1.consciousness + node2.consciousness) / 2;
+                        const pulse = 0.5 + 0.5 * Math.sin(time * 5 + i);
+                        
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * Math.abs(resonance)})`;
+                        ctx.lineWidth = (Math.abs(resonance) * 2) * pulse + 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(node1.x, node1.y);
+                        ctx.lineTo(node2.x, node2.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+        
+        // Draw attention field
+        function drawAttentionField() {
+            if (mode === 'attention') { // Blue: Attention Fields
+                ctx.save();
+                applyViewTransform();
+                
+                attentionField.forEach(field => {
+                    // Update field intensity based on nearby nodes
+                    let influence = field.baseIntensity;
+                    consciousnessNodes.forEach(node => {
+                        const dist = Math.sqrt((node.x - field.x) ** 2 + (node.y - field.y) ** 2);
+                        if (dist < 100) {
+                            influence += node.attention * (1 - dist / 100) * 0.5;
+                        }
+                    });
+                    field.intensity = Math.min(1, influence);
+                    
+                    // Draw field visualization
+                    if (field.intensity > 0.1) {
+                        ctx.fillStyle = `rgba(0, 150, 255, ${field.intensity * 0.3})`;
+                        ctx.beginPath();
+                        ctx.arc(field.x, field.y, field.intensity * 15, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                });
+                
+                ctx.restore();
+            }
+        }
+        
+        // Update and draw shockwaves
+        function updateAndDrawShockwaves(deltaTime) {
+            ctx.save();
+            applyViewTransform();
+            
+            for (let i = shockwaves.length - 1; i >= 0; i--) {
+                const shockwave = shockwaves[i];
+                shockwave.radius += shockwave.speed * deltaTime;
+                shockwave.life -= deltaTime * 0.8;
+
+                if (shockwave.life <= 0) {
+                    shockwaves.splice(i, 1);
+                    continue;
+                }
+
+                // Visual effect
+                ctx.strokeStyle = `rgba(170, 0, 255, ${shockwave.life * 0.7})`;
+                ctx.lineWidth = 1 + shockwave.life * 3;
+                ctx.beginPath();
+                ctx.arc(shockwave.x, shockwave.y, shockwave.radius, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Affect nodes
+                consciousnessNodes.forEach(node => {
+                    const dist = Math.sqrt((node.x - shockwave.x)**2 + (node.y - shockwave.y)**2);
+                    if (Math.abs(dist - shockwave.radius) < 20) { // If node is on the shockwave front
+                        node.consciousness = 0;
+                        node.phase += Math.PI;
+                        const angle = Math.atan2(node.y - shockwave.y, node.x - shockwave.x);
+                        const pushForce = 5 * deltaTime * 60;
+                        node.vx += Math.cos(angle) * pushForce;
+                        node.vy += Math.sin(angle) * pushForce;
+                    }
+                });
+            }
+            
+            ctx.restore();
+        }
+        
+        // Update pan indicator
+        function updatePanIndicator() {
+            const indicator = document.getElementById('panIndicator');
+            if (Math.abs(viewOffset.x) > 5 || Math.abs(viewOffset.y) > 5) {
+                indicator.textContent = `Offset: ${Math.round(viewOffset.x)}, ${Math.round(viewOffset.y)} | Zoom: ${worldScale.toFixed(1)}x`;
+                indicator.style.opacity = "0.7";
+            } else {
+                indicator.textContent = "";
+                indicator.style.opacity = "0";
+            }
+        }
+        
+        // Handle mouse wheel zoom
+        function handleWheel(e) {
+            e.preventDefault();
+            // Calculate zoom direction
+            const zoomDirection = e.deltaY > 0 ? -1 : 1;
+            const zoomFactor = 0.1;
+            
+            // Get mouse position in world space before zoom
+            const mouseWorldBefore = screenToWorld(mouse.x, mouse.y);
+            
+            // Apply zoom
+            worldScale = Math.max(0.1, Math.min(5.0, worldScale + zoomDirection * zoomFactor));
+            
+            // Get new mouse position in world space after zoom
+            const mouseWorldAfter = screenToWorld(mouse.x, mouse.y);
+            
+            // Adjust view offset to keep mouse position fixed
+            viewOffset.x -= (mouseWorldAfter.x - mouseWorldBefore.x);
+            viewOffset.y -= (mouseWorldAfter.y - mouseWorldBefore.y);
+            
+            updatePanIndicator();
+        }
+
+        // Reset view
+        function resetView() {
+            viewOffset.x = 0;
+            viewOffset.y = 0;
+            worldScale = 1.0;
+            updatePanIndicator();
+        }
+        
+        // Handle pan end
+        function handlePanEnd() {
+            isPanning = false;
+            canvas.style.cursor = 'crosshair';
+        }
+        
+        // Update mouse position
+        function updateMousePosition(e) {
+            const rect = canvas.getBoundingClientRect();
+            if (e.touches && e.touches.length > 0) {
+                mouse.x = e.touches[0].clientX - rect.left;
+                mouse.y = e.touches[0].clientY - rect.top;
+            } else {
+                mouse.x = e.clientX - rect.left;
+                mouse.y = e.clientY - rect.top;
+            }
+        }
+        
+        // Set mode
+        function setMode(newMode) {
+            mode = newMode;
+            document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.btn[onclick="setMode('${newMode}')"]`).classList.add('active');
+        }
+        
+        // Quantum collapse
+        function quantumCollapse() {
+            const worldMouse = screenToWorld(mouse.x, mouse.y);
+            shockwaves.push({
+                x: worldMouse.x,
+                y: worldMouse.y,
+                radius: 0,
+                speed: 250,
+                life: 1
+            });
+        }
+        
+        // Setup sliders
+        function setupSliders() {
+            // Gravity slider
+            const gravitySlider = document.getElementById('gravitySlider');
+            gravitySlider.addEventListener('input', () => {
+                params.gravity = parseFloat(gravitySlider.value);
+                document.getElementById('gravityValue').textContent = params.gravity.toFixed(1);
+            });
+            
+            // Friction slider
+            const frictionSlider = document.getElementById('frictionSlider');
+            frictionSlider.addEventListener('input', () => {
+                params.friction = parseFloat(frictionSlider.value);
+                document.getElementById('frictionValue').textContent = params.friction.toFixed(2);
+            });
+            
+            // Elasticity slider
+            const elasticitySlider = document.getElementById('elasticitySlider');
+            elasticitySlider.addEventListener('input', () => {
+                params.elasticity = parseFloat(elasticitySlider.value);
+                document.getElementById('elasticityValue').textContent = params.elasticity.toFixed(1);
+            });
+            
+            // Time dilation slider
+            const timeSlider = document.getElementById('timeSlider');
+            timeSlider.addEventListener('input', () => {
+                params.timeDilation = parseFloat(timeSlider.value);
+                document.getElementById('timeValue').textContent = params.timeDilation.toFixed(1);
+            });
+            
+            // Field strength slider
+            const fieldSlider = document.getElementById('fieldSlider');
+            fieldSlider.addEventListener('input', () => {
+                params.fieldStrength = parseFloat(fieldSlider.value);
+                document.getElementById('fieldValue').textContent = params.fieldStrength.toFixed(1);
+            });
+            
+            // Interaction mode buttons
+            document.querySelectorAll('[data-mode]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setInteractionMode(btn.dataset.mode);
+                });
+            });
+        }
+
+        // Set interaction mode
+        function setInteractionMode(mode) {
+            interactionMode = mode;
+            document.querySelectorAll('[data-mode]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === mode);
+            });
+        }
+        
+        // Initialize
+        function init() {
+            consciousnessNodes = [];
+            universes = [];
+            connectedNodes = [];
+            
+            // Set universe weights (lambdas) from Dirichlet distribution for N=3
+            lambdas = sampleDirichlet([1, 1, 1]);
+            
+            // Create 3 universes
+            const universeCount = 3;
+            
+            for (let i = 0; i < universeCount; i++) {
+                universes.push(new Universe(
+                    i,
+                    undefined,
+                    undefined,
+                    lambdas[i] // Use the sampled lambda
+                ));
+            }
+            
+            // Create consciousness nodes
+            const nodeCount = 128; // Fixed grid size as per spec
+            
+            for (let i = 0; i < nodeCount; i++) {
+                const universeId = Math.floor(Math.random() * universes.length);
+                consciousnessNodes.push(new ConsciousnessNode(
+                    undefined, undefined, universeId
+                ));
+                universes[universeId].nodes.push(consciousnessNodes[consciousnessNodes.length - 1]);
+            }
+
+            // Calculate and normalize attention field A(x)
+            const sigma = (width * 10) * 0.2; // Sigma as 0.2 of world width
+            let totalAttention = 0;
+            consciousnessNodes.forEach(node => {
+                // Centered Gaussian blob at (0,0)
+                const d_sq = node.x * node.x + node.y * node.y;
+                node.attention = Math.exp(-d_sq / (2 * sigma * sigma));
+                totalAttention += node.attention;
+            });
+
+            // Normalize A(x) so the sum is 1
+            if (totalAttention > 0) {
+                consciousnessNodes.forEach(node => {
+                    node.attention /= totalAttention;
+                });
+            }
+
+            initStars();
+        }
+        
+        // Add event listeners
+        canvas.addEventListener('mousedown', (e) => { 
+            if (e.button === 0 && !e.altKey) { // Left mouse without alt
+                mouse.isDown = true;
+                updateMousePosition(e);
+            }
+            handlePanStart(e); 
+        });
+        
+        canvas.addEventListener('mouseup', (e) => { 
+            if (e.button === 0) mouse.isDown = false;
+            handlePanEnd(); 
+        });
+        
+        canvas.addEventListener('mouseleave', () => { 
+            mouse.isDown = false;
+            handlePanEnd(); 
+        });
+        
+        canvas.addEventListener('mousemove', (e) => { 
+            updateMousePosition(e);
+            handlePanMove(e);
+        });
+        
+        canvas.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+        
+        canvas.addEventListener('wheel', handleWheel, { passive: false });
+        
+        canvas.addEventListener('click', (e) => {
+            if (isPanning) return; // Don't create nodes when panning
+            
+            // Spawn new consciousness node at world coordinates
+            const worldPos = screenToWorld(mouse.x, mouse.y);
+            const universeId = Math.floor(Math.random() * universes.length);
+            const newNode = new ConsciousnessNode(worldPos.x, worldPos.y, universeId);
+
+            // Set its attention based on the Gaussian model
+            const sigma = (width * 10) * 0.2;
+            const d_sq = newNode.x * newNode.x + newNode.y * newNode.y;
+            newNode.attention = Math.exp(-d_sq / (2 * sigma * sigma));
+            // Note: This new node's attention is not normalized with the others.
+            // For a strict implementation, all A(x) should be recalculated and re-normalized.
+
+            consciousnessNodes.push(newNode);
+            universes[universeId].nodes.push(newNode);
+        });
+        
+        // Call safe initialization
+        safeInitialize();
+    </script>
+</body>
+</html>
