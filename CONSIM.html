@@ -450,7 +450,7 @@
             }
             
             .slider-container label {
-                font-size: 9px;
+                font-size: 11px;
             }
             
             .zoom-controls {
@@ -462,6 +462,51 @@
                 width: 35px;
                 height: 35px;
                 font-size: 16px;
+            }
+            
+            .controls {
+                gap: 6px;
+            }
+            
+            .btn {
+                font-size: 11px;
+                padding: 4px 8px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .equation {
+                font-size: 11px;
+                max-width: 200px;
+            }
+            
+            .ui {
+                font-size: 11px;
+            }
+            
+            .environment-panel {
+                min-width: 140px;
+            }
+            
+            .slider-container label {
+                font-size: 10px;
+            }
+            
+            .controls {
+                flex-wrap: wrap;
+                gap: 4px;
+                bottom: 5px;
+            }
+            
+            .btn {
+                font-size: 10px;
+                padding: 3px 6px;
+            }
+            
+            .zoom-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
             }
         }
     </style>
@@ -1201,12 +1246,20 @@
                     }
                 }
 
-                // Repulsion from other nodes
+                // Repulsion from other nodes with performance optimization
                 consciousnessNodes.forEach(otherNode => {
                     if (this === otherNode) return;
+                    
+                    // Quick distance check using squared distance for performance
                     const dx = otherNode.x - this.x;
                     const dy = otherNode.y - this.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const distanceSquared = dx * dx + dy * dy;
+                    const maxInteractionRadius = 200; // Max interaction distance
+                    
+                    // Skip expensive sqrt calculation if nodes are too far apart
+                    if (distanceSquared > maxInteractionRadius * maxInteractionRadius) return;
+                    
+                    const distance = Math.sqrt(distanceSquared);
                     const minDistance = this.radius + otherNode.radius + 10;
 
                     if (distance < minDistance) {
@@ -3074,6 +3127,83 @@
         });
         
         canvas.addEventListener('wheel', handleWheel, { passive: false });
+        
+        // Touch support for mobile devices
+        let lastTouchDistance = 0;
+        let touchStartTime = 0;
+        
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            touchStartTime = Date.now();
+            
+            if (e.touches.length === 1) {
+                // Single touch - treat as mouse down
+                const touch = e.touches[0];
+                mouse.x = touch.clientX;
+                mouse.y = touch.clientY;
+                mouse.isDown = true;
+                handlePanStart(touch);
+            } else if (e.touches.length === 2) {
+                // Two finger touch - prepare for pinch zoom
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
+            }
+        });
+        
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            
+            if (e.touches.length === 1) {
+                // Single touch - treat as mouse move
+                const touch = e.touches[0];
+                mouse.x = touch.clientX;
+                mouse.y = touch.clientY;
+                handlePanMove(touch);
+            } else if (e.touches.length === 2 && lastTouchDistance > 0) {
+                // Two finger pinch zoom
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (lastTouchDistance > 0) {
+                    const zoomFactor = distance / lastTouchDistance;
+                    const newScale = Math.max(0.1, Math.min(5.0, worldScale * zoomFactor));
+                    worldScale = newScale;
+                    lastTouchDistance = distance;
+                }
+            }
+        });
+        
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            
+            if (e.touches.length === 0) {
+                // All touches ended
+                const touchDuration = Date.now() - touchStartTime;
+                
+                if (touchDuration < 300 && !isPanning) {
+                    // Quick tap - create new node
+                    const worldPos = screenToWorld(mouse.x, mouse.y);
+                    const universeId = Math.floor(Math.random() * universes.length);
+                    const newNode = new ConsciousnessNode(worldPos.x, worldPos.y, universeId);
+                    
+                    const sigma = (width * 10) * 0.2;
+                    const d_sq = newNode.x * newNode.x + newNode.y * newNode.y;
+                    newNode.attention = Math.exp(-d_sq / (2 * sigma * sigma));
+                    
+                    consciousnessNodes.push(newNode);
+                    universes[universeId].nodes.push(newNode);
+                }
+                
+                mouse.isDown = false;
+                handlePanEnd();
+                lastTouchDistance = 0;
+            } else if (e.touches.length === 1) {
+                // One finger remaining, reset zoom distance
+                lastTouchDistance = 0;
+            }
+        });
         
         canvas.addEventListener('click', (e) => {
             if (isPanning) return; // Don't create nodes when panning
