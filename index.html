@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONSIM: Consciousness Manifold Simulator</title>
+    <style>
+        /* Base Styles */
+        :root {
+            --primary-color: #00ffaa;
+            --bg-dark: #0a0a0f;
+            --text-light: #cccccc;
+            --text-bright: #ffffff;
+            --border-color: #333;
+            --glass-bg: rgba(0, 255, 170, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            overflow: hidden;
+            user-select: none;
+            font-size: 14px;
+        }
+
+        /* Component Styles */
+        .main-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle at center, #111133, #000000);
+            cursor: grab;
+        }
+
+        canvas:active {
+            cursor: grabbing;
+        }
+
+        /* UI Elements */
+        .ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 15px;
+            min-width: 200px;
+        }
+
+        .equation {
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        /* Controls */
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mode-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            max-width: 300px;
+        }
+
+        .btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--primary-color);
+            color: var(--text-bright);
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            min-width: 80px;
+        }
+
+        .btn:hover {
+            background: var(--primary-color);
+            color: var(--bg-dark);
+            transform: scale(1.05);
+        }
+
+        .btn.active {
+            background: var(--primary-color);
+            color: var(--bg-dark);
+        }
+
+        .help-btn {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: var(--glass-bg);
+            border: 1px solid var(--primary-color);
+            color: var(--text-bright);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .help-btn:hover {
+            background: var(--primary-color);
+            color: var(--bg-dark);
+        }
+
+        /* Environment Panel */
+        .environment-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 15px;
+            max-width: 300px;
+        }
+
+        .environment-panel h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .slider-group {
+            margin-bottom: 10px;
+        }
+
+        .slider-group label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .slider {
+            width: 100%;
+            height: 4px;
+            background: var(--border-color);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Intelligence Panel */
+        .intelligence-panel {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 15px;
+            min-width: 200px;
+        }
+
+        .intelligence-panel h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        /* Zoom Controls */
+        .zoom-controls {
+            position: absolute;
+            bottom: 50%;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--glass-bg);
+            border: 1px solid var(--primary-color);
+            color: var(--text-bright);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .zoom-btn:hover {
+            background: var(--primary-color);
+            color: var(--bg-dark);
+            transform: scale(1.1);
+        }
+
+        /* Legend */
+        .legend {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            z-index: 100;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 15px;
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .legend h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        /* Tutorial Overlay */
+        .tutorial-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tutorial-content {
+            background: var(--bg-dark);
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            text-align: center;
+            position: relative;
+        }
+
+        .tutorial-content h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .tutorial-content p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .tutorial-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .tutorial-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .tutorial-close:hover {
+            color: var(--primary-color);
+        }
+
+        /* Thought Bubble */
+        .thought-bubble {
+            position: absolute;
+            background: var(--glass-bg);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            padding: 10px 15px;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 200;
+            max-width: 200px;
+        }
+
+        .thought-bubble.show {
+            opacity: 1;
+        }
+
+        /* FPS Counter */
+        .fps-counter {
+            position: absolute;
+            top: 20px;
+            right: 350px;
+            z-index: 100;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .ui, .environment-panel, .intelligence-panel {
+                font-size: 12px;
+                padding: 10px;
+                min-width: 150px;
+            }
+
+            .controls {
+                top: 10px;
+                right: 10px;
+            }
+
+            .mode-controls {
+                max-width: 200px;
+            }
+
+            .btn {
+                padding: 6px 8px;
+                font-size: 10px;
+                min-width: 60px;
+            }
+
+            .equation {
+                font-size: 14px;
+            }
+
+            .legend {
+                font-size: 10px;
+                padding: 10px;
+            }
+
+            .tutorial-content {
+                margin: 20px;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .ui {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                position: relative;
+                margin-bottom: 10px;
+            }
+
+            .main-container {
+                flex-direction: column;
+            }
+
+            .environment-panel {
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+                position: relative;
+            }
+
+            .intelligence-panel {
+                bottom: 10px;
+                right: 10px;
+                position: relative;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <canvas id="canvas"></canvas>
+
+        <!-- FPS Counter -->
+        <div class="fps-counter" id="fps">60 FPS</div>
+
+        <!-- Main UI Panel -->
+        <div class="ui">
+            <div class="equation">C = ∫ A(x)Φ(x)e^(iτ(x)) dμ(x)</div>
+            <div>Consciousness: <span id="consciousness">0.00</span></div>
+            <div>Global Resonance: <span id="globalResonance">0.00</span></div>
+            <div>Active Nodes: <span id="activeNodes">0</span></div>
+        </div>
+
+        <!-- Help Button -->
+        <button class="help-btn" onclick="showTutorial()">Help & Tutorial</button>
+
+        <!-- Mode Controls -->
+        <div class="controls">
+            <div class="mode-controls">
+                <button class="btn active" onclick="setMode('consciousness')" data-mode="consciousness">Consciousness</button>
+                <button class="btn" onclick="setMode('attention')" data-mode="attention">Attention</button>
+                <button class="btn" onclick="setMode('frequency')" data-mode="frequency">Frequency</button>
+                <button class="btn" onclick="setMode('temporal')" data-mode="temporal">Temporal</button>
+                <button class="btn" onclick="setMode('multiverse')" data-mode="multiverse">Multiverse</button>
+                <button class="btn" onclick="resetSimulation()">Reset</button>
+                <button class="btn" onclick="togglePause()">Pause</button>
+            </div>
+        </div>
+
+        <!-- Zoom Controls -->
+        <div class="zoom-controls">
+            <button class="zoom-btn" onclick="zoomIn()">+</button>
+            <button class="zoom-btn" onclick="zoomOut()">-</button>
+        </div>
+
+        <!-- Environment Panel -->
+        <div class="environment-panel">
+            <h3>Environment</h3>
+            <div class="slider-group">
+                <label for="gravity">Gravity: <span id="gravityValue">1.0</span></label>
+                <input type="range" id="gravity" class="slider" min="0" max="2" step="0.1" value="1.0" onchange="updateParam('gravity', this.value)">
+            </div>
+            <div class="slider-group">
+                <label for="friction">Friction: <span id="frictionValue">0.99</span></label>
+                <input type="range" id="friction" class="slider" min="0.9" max="1" step="0.01" value="0.99" onchange="updateParam('friction', this.value)">
+            </div>
+            <div class="slider-group">
+                <label for="fieldStrength">Field Strength: <span id="fieldStrengthValue">1.0</span></label>
+                <input type="range" id="fieldStrength" class="slider" min="0" max="3" step="0.1" value="1.0" onchange="updateParam('fieldStrength', this.value)">
+            </div>
+            <div class="slider-group">
+                <label for="timeDilation">Time Dilation: <span id="timeDilationValue">1.0</span></label>
+                <input type="range" id="timeDilation" class="slider" min="0.1" max="3" step="0.1" value="1.0" onchange="updateParam('timeDilation', this.value)">
+            </div>
+        </div>
+
+        <!-- Intelligence Panel -->
+        <div class="intelligence-panel">
+            <h3>Intelligence Metrics</h3>
+            <div class="stat">
+                <span>Clusters:</span>
+                <span id="clusterCount">0</span>
+            </div>
+            <div class="stat">
+                <span>Recursion:</span>
+                <span id="recursionDepth">0</span>
+            </div>
+            <div class="stat">
+                <span>Complexity:</span>
+                <span id="thoughtComplexity">0.00</span>
+            </div>
+            <div class="stat">
+                <span>Coherence:</span>
+                <span id="phaseCoherence">0.00</span>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <h4>Node Types</h4>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #00ffaa;"></div>
+                <span>Active Consciousness</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ff6b6b;"></div>
+                <span>High Attention</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4ecdc4;"></div>
+                <span>Frequency Resonance</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ffe66d;"></div>
+                <span>Temporal Flow</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ff8b94;"></div>
+                <span>Multiverse Bridge</span>
+            </div>
+        </div>
+
+        <!-- Thought Bubble -->
+        <div class="thought-bubble" id="thoughtBubble"></div>
+
+        <!-- Tutorial Overlay -->
+        <div class="tutorial-overlay" id="tutorialOverlay">
+            <div class="tutorial-content">
+                <button class="tutorial-close" onclick="hideTutorial()">&times;</button>
+                <div id="tutorialContent">
+                    <!-- Tutorial content will be populated by JavaScript -->
+                </div>
+                <div class="tutorial-nav">
+                    <button class="btn" onclick="prevTutorialPage()" id="prevBtn" style="visibility: hidden;">Previous</button>
+                    <span id="pageIndicator">1 / 4</span>
+                    <button class="btn" onclick="nextTutorialPage()" id="nextBtn">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global State Object (encapsulating all global variables)
+        const state = {
+            width: 0,
+            height: 0,
+            consciousnessNodes: [],
+            universes: [],
+            clusters: [],
+            mouse: { x: 0, y: 0, isDown: false, lastX: 0, lastY: 0 },
+            camera: { x: 0, y: 0 },
+            worldScale: 1.0,
+            worldSize: 2000,
+            stars: [],
+            mode: 'consciousness',
+            isPaused: false,
+            currentTutorialPage: 0,
+            maxTutorialPages: 4,
+            params: {
+                gravity: 1.0,
+                friction: 0.99,
+                elasticity: 0.8,
+                timeDilation: 1.0,
+                fieldStrength: 1.0
+            },
+            thresholds: {
+                consciousness: 0.3,
+                attention: 0.5,
+                frequency: 40.0,
+                temporal: 0.8,
+                multiverse: 0.6
+            },
+            lambdas: [0.33, 0.33, 0.34],
+            intelligenceMode: 'tensor',
+            globalResonance: 0,
+            thoughtComplexity: 0,
+            frameCount: 0,
+            lastFPSTime: performance.now()
+        };
+
+        // Default parameters constant for easy resetting
+        const DEFAULT_PARAMS = {
+            gravity: 1.0,
+            friction: 0.99,
+            elasticity: 0.8,
+            timeDilation: 1.0,
+            fieldStrength: 1.0
+        };
+
+        // Canvas and context
+        let canvas, ctx;
+
+        // Distance cache for performance optimization
+        const distanceCache = new Map();
+        let cacheClearCounter = 0;
+
+        // Mathematical utility functions
+        function sampleDirichlet(alpha) {
+            const samples = alpha.map(a => sampleGamma(a, 1));
+            const sum = samples.reduce((a, b) => a + b, 0) || 1; // Avoid division by zero
+            return samples.map(s => s / sum);
+        }
+
+        function sampleGamma(shape, scale) {
+            if (shape < 1) {
+                return sampleGamma(shape + 1, scale) * Math.pow(Math.random(), 1 / shape);
+            }
+            
+            const d = shape - 1/3;
+            const c = 1 / Math.sqrt(9 * d);
+            
+            while (true) {
+                let x, v;
+                do {
+                    x = sampleNormal(0, 1);
+                    v = 1 + c * x;
+                } while (v <= 0);
+                
+                v = v * v * v;
+                const u = Math.random();
+                
+                if (u < 1 - 0.0331 * x * x * x * x) {
+                    return d * v * scale;
+                }
+                
+                if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) {
+                    return d * v * scale;
+                }
+            }
+        }
+
+        function sampleNormal(mean, stddev) {
+            let u = 0, v = 0;
+            while (u === 0) u = Math.random();
+            while (v === 0) v = Math.random();
+            const z = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+            return z * stddev + mean;
+        }
+
+        // Tutorial system with keyboard support
+        const tutorialPages = [
+            {
+                title: "Welcome to CONSIM",
+                content: "This is the Consciousness Manifold Simulator. Each node represents a point of consciousness with amplitude, frequency, and phase. Click anywhere to add new nodes and watch consciousness emerge!"
+            },
+            {
+                title: "Interaction Controls",
+                content: "Left-click to add nodes. Right-click for quantum collapse. Use mouse wheel to zoom. Drag to pan the view. Try different modes in the top-right controls to see various aspects of consciousness."
+            },
+            {
+                title: "Environment Parameters",
+                content: "Adjust the sliders on the bottom-left to change physics parameters. Gravity affects node attraction, friction controls energy dissipation, and field strength modifies consciousness coupling."
+            },
+            {
+                title: "Consciousness Metrics",
+                content: "Monitor the intelligence panel on the bottom-right to see emergent properties. Clusters show group formation, recursion indicates feedback loops, and complexity measures thought depth."
+            }
+        ];
+
+        function showTutorial() {
+            state.currentTutorialPage = 0;
+            updateTutorialPage();
+            document.getElementById('tutorialOverlay').style.display = 'flex';
+        }
+
+        function hideTutorial() {
+            document.getElementById('tutorialOverlay').style.display = 'none';
+            localStorage.setItem('tutorialShown', 'true');
+        }
+
+        function nextTutorialPage() {
+            if (state.currentTutorialPage < state.maxTutorialPages - 1) {
+                state.currentTutorialPage++;
+                updateTutorialPage();
+            }
+        }
+
+        function prevTutorialPage() {
+            if (state.currentTutorialPage > 0) {
+                state.currentTutorialPage--;
+                updateTutorialPage();
+            }
+        }
+
+        function updateTutorialPage() {
+            const page = tutorialPages[state.currentTutorialPage];
+            if (!page) return;
+
+            const content = document.getElementById('tutorialContent');
+            content.innerHTML = `
+                <h2>${page.title}</h2>
+                <p>${page.content}</p>
+            `;
+
+            document.getElementById('pageIndicator').textContent = `${state.currentTutorialPage + 1} / ${state.maxTutorialPages}`;
+            document.getElementById('prevBtn').style.visibility = state.currentTutorialPage === 0 ? 'hidden' : 'visible';
+            document.getElementById('nextBtn').textContent = state.currentTutorialPage === state.maxTutorialPages - 1 ? 'Close' : 'Next';
+            
+            if (state.currentTutorialPage === state.maxTutorialPages - 1) {
+                document.getElementById('nextBtn').onclick = hideTutorial;
+            } else {
+                document.getElementById('nextBtn').onclick = nextTutorialPage;
+            }
+        }
+
+        // Keyboard navigation for tutorial
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('tutorialOverlay').style.display === 'flex') {
+                if (e.key === 'ArrowRight' || e.key === 'Space') {
+                    e.preventDefault();
+                    nextTutorialPage();
+                }
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    prevTutorialPage();
+                }
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    hideTutorial();
+                }
+            }
+        });
+
+        // Canvas setup and resize with debouncing
+        let resizeTimeout;
+        function setupCanvas() {
+            canvas = document.getElementById('canvas');
+            ctx = canvas.getContext('2d');
+            resize();
+            
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(resize, 100);
+            });
+        }
+
+        function resize() {
+            state.width = window.innerWidth;
+            state.height = window.innerHeight;
+            canvas.width = state.width;
+            canvas.height = state.height;
+            
+            // Reinitialize stars and attention field after resize
+            initStars();
+            initializeAttentionField();
+        }
+
+        // Starfield with dynamic density based on zoom
+        function initStars() {
+            state.stars = [];
+            const starCount = Math.min(1000, Math.floor((state.worldSize * state.worldSize / 5000) * state.worldScale));
+            
+            for (let i = 0; i < starCount; i++) {
+                state.stars.push({
+                    x: (Math.random() - 0.5) * state.worldSize,
+                    y: (Math.random() - 0.5) * state.worldSize,
+                    brightness: Math.random() * 0.5 + 0.1
+                });
+            }
+        }
+
+        function drawStars() {
+            if (!ctx) return;
+            
+            ctx.save();
+            ctx.globalAlpha = 0.6;
+            
+            state.stars.forEach(star => {
+                const screenX = (star.x - state.camera.x) * state.worldScale + state.width / 2;
+                const screenY = (star.y - state.camera.y) * state.worldScale + state.height / 2;
+                
+                // Cull stars outside visible area
+                if (screenX < -10 || screenX > state.width + 10 || screenY < -10 || screenY > state.height + 10) {
+                    return;
+                }
+                
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.brightness})`;
+                ctx.fillRect(screenX, screenY, 1, 1);
+            });
+            
+            ctx.restore();
+        }
+
+        // Initialize attention field
+        function initializeAttentionField() {
+            // Initialize any global attention patterns here
+        }
+
+        // Consciousness Node Class (modularized for better maintainability)
+        class ConsciousnessNode {
+            constructor(x, y) {
+                this.id = Math.random().toString(36).substr(2, 9);
+                this.x = x;
+                this.y = y;
+                this.vx = 0;
+                this.vy = 0;
+                this.radius = 5;
+                this.mass = 1;
+                
+                // Consciousness properties
+                this.amplitude = Math.random() * 0.8 + 0.2;
+                this.frequency = 40 + (Math.random() - 0.5) * 10; // Gamma range
+                this.phase = Math.random() * Math.PI * 2;
+                this.attention = Math.random() * 0.5 + 0.3;
+                
+                // Intelligence tensors (simplified)
+                this.intelligence = {
+                    logic: Math.random(),
+                    reasoning: Math.random(),
+                    intuition: Math.random(),
+                    memory: Math.random()
+                };
+                
+                // Emergent properties
+                this.emergentProperties = {
+                    consciousness_depth: 0,
+                    temporal_coherence: 0,
+                    multiverse_resonance: 0
+                };
+                
+                this.age = 0;
+                this.energy = 1.0;
+            }
+
+            updatePhysics(deltaTime) {
+                // Apply gravity and forces
+                this.vx *= state.params.friction;
+                this.vy *= state.params.friction;
+                
+                // Node-to-node interactions
+                state.consciousnessNodes.forEach(other => {
+                    if (other === this) return;
+                    
+                    const dx = other.x - this.x;
+                    const dy = other.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 100 && distance > 0) {
+                        const force = state.params.gravity * this.mass * other.mass / (distance * distance);
+                        const fx = (dx / distance) * force;
+                        const fy = (dy / distance) * force;
+                        
+                        this.vx += fx * deltaTime;
+                        this.vy += fy * deltaTime;
+                    }
+                });
+                
+                // Update position
+                this.x += this.vx * deltaTime * state.params.timeDilation;
+                this.y += this.vy * deltaTime * state.params.timeDilation;
+                
+                // Boundary conditions
+                const boundary = state.worldSize / 2;
+                if (Math.abs(this.x) > boundary) {
+                    this.x = Math.sign(this.x) * boundary;
+                    this.vx *= -state.params.elasticity;
+                }
+                if (Math.abs(this.y) > boundary) {
+                    this.y = Math.sign(this.y) * boundary;
+                    this.vy *= -state.params.elasticity;
+                }
+            }
+
+            updateConsciousness(deltaTime) {
+                this.age += deltaTime;
+                this.phase += this.frequency * deltaTime * 0.001; // Convert to radians per ms
+                
+                // Calculate consciousness based on Core EQ
+                const consciousness = this.amplitude * this.attention * Math.cos(this.phase);
+                this.consciousness = Math.abs(consciousness);
+                
+                // Update emergent properties
+                this.calculateEmergentProperties();
+            }
+
+            updateIntelligence() {
+                // Simple intelligence evolution
+                Object.keys(this.intelligence).forEach(key => {
+                    this.intelligence[key] += (Math.random() - 0.5) * 0.01;
+                    this.intelligence[key] = Math.max(0, Math.min(1, this.intelligence[key]));
+                });
+            }
+
+            calculateEmergentProperties() {
+                // Calculate consciousness depth
+                const avgMagnitude = (this.amplitude + this.attention) / 2;
+                this.emergentProperties.consciousness_depth = isNaN(avgMagnitude) ? 0 : Math.min(1.0, avgMagnitude * 0.8);
+                
+                // Calculate temporal coherence based on phase stability
+                this.emergentProperties.temporal_coherence = Math.cos(this.phase * 2) * 0.5 + 0.5;
+                
+                // Calculate multiverse resonance
+                this.emergentProperties.multiverse_resonance = state.lambdas.reduce((sum, lambda, i) => {
+                    return sum + lambda * Math.sin(this.phase + i * Math.PI / 3);
+                }, 0) * 0.5 + 0.5;
+            }
+
+            update(deltaTime) {
+                this.updatePhysics(deltaTime);
+                this.updateConsciousness(deltaTime);
+                this.updateIntelligence();
+            }
+
+            getColor() {
+                switch (state.mode) {
+                    case 'consciousness':
+                        const intensity = this.consciousness;
+                        return `rgba(0, 255, 170, ${intensity})`;
+                    case 'attention':
+                        return `rgba(255, 107, 107, ${this.attention})`;
+                    case 'frequency':
+                        const freqNorm = (this.frequency - 30) / 40; // Normalize 30-70 Hz range
+                        return `rgba(78, 205, 196, ${Math.max(0, Math.min(1, freqNorm))})`;
+                    case 'temporal':
+                        return `rgba(255, 230, 109, ${this.emergentProperties.temporal_coherence})`;
+                    case 'multiverse':
+                        return `rgba(255, 139, 148, ${this.emergentProperties.multiverse_resonance})`;
+                    default:
+                        return 'rgba(0, 255, 170, 0.8)';
+                }
+            }
+
+            draw() {
+                if (!ctx) return;
+                
+                const screenX = (this.x - state.camera.x) * state.worldScale + state.width / 2;
+                const screenY = (this.y - state.camera.y) * state.worldScale + state.height / 2;
+                
+                // Cull nodes outside screen
+                const margin = 50;
+                if (screenX < -margin || screenX > state.width + margin || 
+                    screenY < -margin || screenY > state.height + margin) {
+                    return;
+                }
+                
+                ctx.save();
+                
+                // Draw node
+                ctx.beginPath();
+                ctx.arc(screenX, screenY, this.radius * state.worldScale, 0, Math.PI * 2);
+                ctx.fillStyle = this.getColor();
+                ctx.fill();
+                
+                // Draw consciousness aura in consciousness mode
+                if (state.mode === 'consciousness' && this.consciousness > 0.3) {
+                    ctx.beginPath();
+                    ctx.arc(screenX, screenY, (this.radius + 10) * state.worldScale, 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(0, 255, 170, ${this.consciousness * 0.3})`;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+                
+                ctx.restore();
+            }
+        }
+
+        // Universe Class for multiverse mode
+        class Universe {
+            constructor(id, center, resonanceCoeff = 0.33) {
+                this.id = id;
+                this.center = center;
+                this.resonanceCoeff = resonanceCoeff || 0.33; // Ensure always defined
+                this.radius = 200;
+                this.nodes = [];
+            }
+
+            update() {
+                // Update universe-specific properties
+                this.nodes = state.consciousnessNodes.filter(node => {
+                    const dx = node.x - this.center.x;
+                    const dy = node.y - this.center.y;
+                    return Math.sqrt(dx * dx + dy * dy) < this.radius;
+                });
+            }
+
+            draw() {
+                if (!ctx || state.mode !== 'multiverse') return;
+                
+                const screenX = (this.center.x - state.camera.x) * state.worldScale + state.width / 2;
+                const screenY = (this.center.y - state.camera.y) * state.worldScale + state.height / 2;
+                
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(screenX, screenY, this.radius * state.worldScale, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(255, 139, 148, ${this.resonanceCoeff})`;
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        // Node Cluster Class with performance optimizations
+        class NodeCluster {
+            constructor(nodes) {
+                this.nodes = nodes;
+                this.centerNode = nodes[0] || null;
+                this.coherence = 0;
+                this.phaseAlignment = 0;
+                this.id = Math.random().toString(36).substr(2, 9);
+            }
+
+            getDistance(nodeA, nodeB) {
+                const key = `${Math.min(nodeA.id, nodeB.id)},${Math.max(nodeA.id, nodeB.id)}`;
+                if (!distanceCache.has(key)) {
+                    const dx = nodeB.x - nodeA.x;
+                    const dy = nodeB.y - nodeA.y;
+                    distanceCache.set(key, Math.sqrt(dx * dx + dy * dy));
+                }
+                return distanceCache.get(key);
+            }
+
+            update() {
+                if (this.nodes.length === 0) return;
+                
+                // Calculate center
+                let totalX = 0, totalY = 0;
+                this.nodes.forEach(node => {
+                    totalX += node.x;
+                    totalY += node.y;
+                });
+                
+                const center = {
+                    x: totalX / this.nodes.length,
+                    y: totalY / this.nodes.length
+                };
+
+                // Calculate coherence and phase alignment
+                let totalCoherence = 0;
+                let totalPhase = 0;
+                let pairCount = 0;
+
+                for (let i = 0; i < this.nodes.length; i++) {
+                    for (let j = i + 1; j < this.nodes.length; j++) {
+                        const distance = this.getDistance(this.nodes[i], this.nodes[j]);
+                        if (distance < 100) {
+                            const phaseDiff = Math.abs(this.nodes[i].phase - this.nodes[j].phase);
+                            const coherence = Math.cos(phaseDiff);
+                            totalCoherence += coherence;
+                            totalPhase += phaseDiff;
+                            pairCount++;
+                        }
+                    }
+                }
+
+                this.coherence = pairCount > 0 ? totalCoherence / pairCount : 0;
+                this.phaseAlignment = pairCount > 0 ? 1 - (totalPhase / pairCount) / Math.PI : 0;
+            }
+
+            draw() {
+                if (!ctx || this.nodes.length < 2) return;
+                
+                ctx.save();
+                ctx.strokeStyle = 'rgba(0, 255, 170, 0.3)';
+                ctx.lineWidth = 1;
+                
+                // Draw connections between nodes in cluster
+                for (let i = 0; i < this.nodes.length; i++) {
+                    for (let j = i + 1; j < this.nodes.length; j++) {
+                        const nodeA = this.nodes[i];
+                        const nodeB = this.nodes[j];
+                        
+                        if (this.getDistance(nodeA, nodeB) < 100) {
+                            const screenX1 = (nodeA.x - state.camera.x) * state.worldScale + state.width / 2;
+                            const screenY1 = (nodeA.y - state.camera.y) * state.worldScale + state.height / 2;
+                            const screenX2 = (nodeB.x - state.camera.x) * state.worldScale + state.width / 2;
+                            const screenY2 = (nodeB.y - state.camera.y) * state.worldScale + state.height / 2;
+                            
+                            ctx.beginPath();
+                            ctx.moveTo(screenX1, screenY1);
+                            ctx.lineTo(screenX2, screenY2);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                
+                ctx.restore();
+            }
+        }
+
+        // Animation loop with performance monitoring and error boundaries
+        let lastFrame = 0;
+        function animate(timestamp) {
+            try {
+                if (state.isPaused) {
+                    requestAnimationFrame(animate);
+                    return;
+                }
+
+                // Frame rate limiting (~60 FPS)
+                if (timestamp - lastFrame < 16) {
+                    requestAnimationFrame(animate);
+                    return;
+                }
+                
+                const deltaTime = timestamp - lastFrame;
+                lastFrame = timestamp;
+                
+                // Update FPS counter
+                updateFPS(timestamp);
+                
+                // Clear canvas
+                if (ctx) {
+                    ctx.clearRect(0, 0, state.width, state.height);
+                    
+                    // Draw starfield
+                    drawStars();
+                    
+                    // Update and draw universes
+                    state.universes.forEach(universe => {
+                        universe.update();
+                        universe.draw();
+                    });
+                    
+                    // Update and draw nodes
+                    state.consciousnessNodes.forEach(node => {
+                        node.update(deltaTime);
+                        node.draw();
+                    });
+                    
+                    // Update and draw clusters
+                    updateClusters();
+                    state.clusters.forEach(cluster => {
+                        cluster.update();
+                        cluster.draw();
+                    });
+                    
+                    // Update UI
+                    updateUI();
+                }
+                
+                // Clear cache periodically to prevent memory leaks
+                cacheClearCounter++;
+                if (cacheClearCounter > 1000) {
+                    distanceCache.clear();
+                    cacheClearCounter = 0;
+                }
+                
+            } catch (error) {
+                console.error('Animation error:', error);
+            }
+            
+            requestAnimationFrame(animate);
+        }
+
+        function updateFPS(timestamp) {
+            state.frameCount++;
+            if (timestamp - state.lastFPSTime > 1000) {
+                const fps = Math.round(state.frameCount * 1000 / (timestamp - state.lastFPSTime));
+                document.getElementById('fps').textContent = `${fps} FPS`;
+                state.frameCount = 0;
+                state.lastFPSTime = timestamp;
+            }
+        }
+
+        function updateClusters() {
+            try {
+                // Simple clustering based on proximity and phase similarity
+                state.clusters = [];
+                const processed = new Set();
+                
+                state.consciousnessNodes.forEach((node, i) => {
+                    if (processed.has(i)) return;
+                    
+                    const cluster = [node];
+                    processed.add(i);
+                    
+                    state.consciousnessNodes.forEach((other, j) => {
+                        if (i === j || processed.has(j)) return;
+                        
+                        const dx = other.x - node.x;
+                        const dy = other.y - node.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        const phaseDiff = Math.abs(other.phase - node.phase);
+                        
+                        if (distance < 80 && phaseDiff < Math.PI / 4) {
+                            cluster.push(other);
+                            processed.add(j);
+                        }
+                    });
+                    
+                    if (cluster.length > 1) {
+                        state.clusters.push(new NodeCluster(cluster));
+                    }
+                });
+            } catch (error) {
+                console.error('Clustering error:', error);
+            }
+        }
+
+        function updateUI() {
+            try {
+                // Calculate global metrics
+                const totalConsciousness = state.consciousnessNodes.reduce((sum, node) => {
+                    return sum + (node.consciousness || 0);
+                }, 0);
+                
+                const avgConsciousness = state.consciousnessNodes.length > 0 ? 
+                    totalConsciousness / state.consciousnessNodes.length : 0;
+                
+                // Calculate global resonance (avoiding NaN)
+                const resonanceSum = state.consciousnessNodes.reduce((sum, node) => {
+                    const resonance = node.amplitude * Math.cos(node.phase);
+                    return sum + (isNaN(resonance) ? 0 : resonance);
+                }, 0);
+                
+                state.globalResonance = state.consciousnessNodes.length > 0 ? 
+                    resonanceSum / state.consciousnessNodes.length : 0;
+                
+                // Calculate thought complexity
+                const complexitySum = state.consciousnessNodes.reduce((sum, node) => {
+                    const complexity = Object.values(node.intelligence).reduce((s, v) => s + v, 0) / 4;
+                    return sum + (isNaN(complexity) ? 0 : complexity);
+                }, 0);
+                
+                state.thoughtComplexity = state.consciousnessNodes.length > 0 ? 
+                    complexitySum / state.consciousnessNodes.length : 0;
+                
+                // Update UI elements
+                document.getElementById('consciousness').textContent = avgConsciousness.toFixed(2);
+                document.getElementById('globalResonance').textContent = state.globalResonance.toFixed(2);
+                document.getElementById('activeNodes').textContent = state.consciousnessNodes.length;
+                document.getElementById('clusterCount').textContent = state.clusters.length;
+                document.getElementById('thoughtComplexity').textContent = state.thoughtComplexity.toFixed(2);
+                
+                // Calculate phase coherence
+                const phaseCoherence = state.clusters.reduce((sum, cluster) => {
+                    return sum + cluster.coherence;
+                }, 0) / Math.max(1, state.clusters.length);
+                
+                document.getElementById('phaseCoherence').textContent = (isNaN(phaseCoherence) ? 0 : phaseCoherence).toFixed(2);
+                
+                // Estimate recursion depth (simplified)
+                const recursionDepth = Math.floor(state.thoughtComplexity * 10);
+                document.getElementById('recursionDepth').textContent = recursionDepth;
+                
+            } catch (error) {
+                console.error('UI update error:', error);
+            }
+        }
+
+        // Event handlers with improved touch support
+        function setupEventListeners() {
+            // Mouse events
+            canvas.addEventListener('mousedown', handlePanStart);
+            canvas.addEventListener('mousemove', handlePanMove);
+            canvas.addEventListener('mouseup', handlePanEnd);
+            canvas.addEventListener('wheel', handleZoom);
+            canvas.addEventListener('click', handleClick);
+            canvas.addEventListener('contextmenu', handleRightClick);
+            
+            // Touch events with pinch-to-zoom
+            canvas.addEventListener('touchstart', handleTouchStart);
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', handleTouchEnd);
+            
+            // Prevent default touch behaviors
+            canvas.addEventListener('touchstart', e => e.preventDefault());
+            canvas.addEventListener('touchmove', e => e.preventDefault());
+            
+            // Focus events for quantum collapse
+            canvas.addEventListener('focus', () => canvas.focused = true);
+            canvas.addEventListener('blur', () => canvas.focused = false);
+        }
+
+        let lastTouchDistance = 0;
+        let touches = [];
+
+        function handleTouchStart(e) {
+            touches = Array.from(e.touches);
+            if (touches.length === 1) {
+                handlePanStart(e);
+            }
+        }
+
+        function handleTouchMove(e) {
+            touches = Array.from(e.touches);
+            
+            if (touches.length === 2) {
+                // Pinch to zoom
+                const dx = touches[0].clientX - touches[1].clientX;
+                const dy = touches[0].clientY - touches[1].clientY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (lastTouchDistance) {
+                    const zoomDirection = distance > lastTouchDistance ? 1 : -1;
+                    state.worldScale = Math.max(0.1, Math.min(5.0, state.worldScale + zoomDirection * 0.05));
+                }
+                lastTouchDistance = distance;
+                e.preventDefault();
+            } else if (touches.length === 1) {
+                handlePanMove(e);
+            }
+        }
+
+        function handleTouchEnd(e) {
+            lastTouchDistance = 0;
+            touches = [];
+            handlePanEnd(e);
+        }
+
+        function handlePanStart(e) {
+            state.mouse.isDown = true;
+            const rect = canvas.getBoundingClientRect();
+            
+            // Handle both mouse and touch events properly
+            const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+            const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+            
+            state.mouse.lastX = clientX - rect.left;
+            state.mouse.lastY = clientY - rect.top;
+        }
+
+        function handlePanMove(e) {
+            if (!state.mouse.isDown) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+            const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+            
+            const currentX = clientX - rect.left;
+            const currentY = clientY - rect.top;
+            
+            const deltaX = currentX - state.mouse.lastX;
+            const deltaY = currentY - state.mouse.lastY;
+            
+            state.camera.x -= deltaX / state.worldScale;
+            state.camera.y -= deltaY / state.worldScale;
+            
+            state.mouse.lastX = currentX;
+            state.mouse.lastY = currentY;
+        }
+
+        function handlePanEnd(e) {
+            state.mouse.isDown = false;
+        }
+
+        function handleZoom(e) {
+            e.preventDefault();
+            const zoomSpeed = 0.1;
+            const zoomDirection = e.deltaY > 0 ? -1 : 1;
+            
+            state.worldScale = Math.max(0.1, Math.min(5.0, state.worldScale + zoomDirection * zoomSpeed));
+        }
+
+        function handleClick(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Convert screen coordinates to world coordinates
+            const worldX = (x - state.width / 2) / state.worldScale + state.camera.x;
+            const worldY = (y - state.height / 2) / state.worldScale + state.camera.y;
+            
+            // Add new consciousness node
+            const node = new ConsciousnessNode(worldX, worldY);
+            state.consciousnessNodes.push(node);
+            
+            // Show thought bubble hint for new users
+            showThoughtBubble("New consciousness node created!", x, y);
+        }
+
+        function handleRightClick(e) {
+            e.preventDefault();
+            
+            if (canvas.focused !== false) { // Avoid unintended effects when not focused
+                quantumCollapse(e);
+            }
+        }
+
+        function quantumCollapse(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const worldX = (x - state.width / 2) / state.worldScale + state.camera.x;
+            const worldY = (y - state.height / 2) / state.worldScale + state.camera.y;
+            
+            // Create shockwave effect
+            state.consciousnessNodes.forEach(node => {
+                const dx = node.x - worldX;
+                const dy = node.y - worldY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 200) {
+                    const force = 50 / (distance + 1);
+                    node.vx += (dx / distance) * force;
+                    node.vy += (dy / distance) * force;
+                    
+                    // Quantum phase shift
+                    node.phase += Math.random() * Math.PI;
+                    node.amplitude *= 0.8 + Math.random() * 0.4;
+                }
+            });
+            
+            showThoughtBubble("Quantum collapse!", x, y);
+        }
+
+        // Thought bubble implementation
+        function showThoughtBubble(text, x, y) {
+            const bubble = document.getElementById('thoughtBubble');
+            bubble.textContent = text;
+            bubble.style.left = x + 'px';
+            bubble.style.top = y + 'px';
+            bubble.classList.add('show');
+            
+            setTimeout(() => {
+                bubble.classList.remove('show');
+            }, 2000);
+        }
+
+        // Mode switching
+        function setMode(mode) {
+            state.mode = mode;
+            
+            // Update button states
+            document.querySelectorAll('.btn[data-mode]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+            
+            showThoughtBubble(`Switched to ${mode} mode`, state.width / 2, 100);
+        }
+
+        // Parameter updating
+        function updateParam(param, value) {
+            state.params[param] = parseFloat(value);
+            document.getElementById(param + 'Value').textContent = value;
+        }
+
+        // Zoom controls
+        function zoomIn() {
+            state.worldScale = Math.min(5.0, state.worldScale * 1.2);
+        }
+
+        function zoomOut() {
+            state.worldScale = Math.max(0.1, state.worldScale / 1.2);
+        }
+
+        // Simulation controls
+        function resetSimulation() {
+            state.consciousnessNodes = [];
+            state.clusters = [];
+            state.universes = [];
+            state.camera = { x: 0, y: 0 };
+            state.worldScale = 1.0;
+            state.params = { ...DEFAULT_PARAMS };
+            
+            // Reset UI sliders
+            Object.keys(DEFAULT_PARAMS).forEach(key => {
+                const slider = document.getElementById(key);
+                if (slider) {
+                    slider.value = DEFAULT_PARAMS[key];
+                    document.getElementById(key + 'Value').textContent = DEFAULT_PARAMS[key];
+                }
+            });
+            
+            // Initialize default universes for multiverse mode
+            initializeUniverses();
+            
+            showThoughtBubble("Simulation reset", state.width / 2, state.height / 2);
+        }
+
+        function togglePause() {
+            state.isPaused = !state.isPaused;
+            document.querySelector('button[onclick="togglePause()"]').textContent = 
+                state.isPaused ? 'Resume' : 'Pause';
+        }
+
+        // Initialize universes for multiverse mode
+        function initializeUniverses() {
+            state.universes = [
+                new Universe(0, { x: -300, y: 0 }, state.lambdas[0]),
+                new Universe(1, { x: 300, y: 0 }, state.lambdas[1]),
+                new Universe(2, { x: 0, y: 300 }, state.lambdas[2])
+            ];
+        }
+
+        // Save and load state functionality
+        function saveState() {
+            const stateData = {
+                nodes: state.consciousnessNodes,
+                universes: state.universes,
+                params: state.params,
+                camera: state.camera,
+                worldScale: state.worldScale
+            };
+            
+            const dataStr = JSON.stringify(stateData);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'consim_state.json';
+            link.click();
+        }
+
+        // Initialization
+        function init() {
+            setupCanvas();
+            setupEventListeners();
+            initStars();
+            initializeUniverses();
+            
+            // Update lambda weights using Dirichlet sampling
+            state.lambdas = sampleDirichlet([1, 1, 1]);
+            
+            // Show tutorial for first-time users
+            if (!localStorage.getItem('tutorialShown')) {
+                setTimeout(showTutorial, 1000);
+            }
+            
+            // Start animation loop
+            animate(0);
+        }
+
+        // Start the application
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
