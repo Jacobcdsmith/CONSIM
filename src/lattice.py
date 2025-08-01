@@ -9,9 +9,17 @@ GPU-optimized with NumPy/PyTorch FFT operations for real-time performance.
 """
 
 import numpy as np
-import torch
-import torch.nn.functional as F
 from typing import List, Dict, Tuple, Optional
+
+# Optional PyTorch import for GPU acceleration
+try:
+    import torch
+    import torch.nn.functional as F
+    HAS_TORCH = True
+except ImportError:
+    HAS_TORCH = False
+    torch = None
+    F = None
 import time
 import asyncio
 from dataclasses import dataclass, field
