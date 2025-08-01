@@ -39,7 +39,7 @@ connected_clients: List[WebSocket] = []
 
 # Simulation state
 simulation_running = False
-target_fps = 60
+target_fps = 10  # Reduce from 60fps to 10fps to prevent blocking
 frame_time = 1.0 / target_fps
 
 class ParameterUpdate(BaseModel):
@@ -72,9 +72,16 @@ async def startup_event():
     """Initialize the simulation on startup."""
     global simulation_running
     simulation_running = True
-    # Start the simulation loop
+    logger.info("Consciousness lattice engine initialized")
+    
+    # Defer simulation loop start to avoid blocking startup
+    asyncio.create_task(delayed_simulation_start())
+
+async def delayed_simulation_start():
+    """Start simulation loop after a short delay."""
+    await asyncio.sleep(0.1)  # Short delay to ensure startup completes
     asyncio.create_task(simulation_loop())
-    logger.info("Consciousness lattice engine started")
+    logger.info("Simulation loop started")
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -98,11 +105,11 @@ async def simulation_loop():
             # Update lattice
             global_stats = lattice.update(delta_time)
             
-            # Get complete state for transmission
-            state = lattice.get_state_for_transmission()
-            
-            # Send to all connected clients
+            # Only get state and serialize if we have connected clients
             if connected_clients:
+                # Get complete state for transmission
+                state = lattice.get_state_for_transmission()
+                
                 try:
                     # Safe JSON serialization with explicit type handling
                     state_json = json.dumps(state, ensure_ascii=False, separators=(',', ':'))
@@ -124,11 +131,10 @@ async def simulation_loop():
                 for client in disconnected_clients:
                     connected_clients.remove(client)
             
-            # Control frame rate
+            # Control frame rate - ensure we always sleep to prevent blocking
             elapsed = time.time() - current_time
-            sleep_time = max(0, frame_time - elapsed)
-            if sleep_time > 0:
-                await asyncio.sleep(sleep_time)
+            sleep_time = max(0.01, frame_time - elapsed)  # Minimum 10ms sleep
+            await asyncio.sleep(sleep_time)
                 
         except Exception as e:
             logger.error(f"Error in simulation loop: {e}")
