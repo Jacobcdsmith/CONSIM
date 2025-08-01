@@ -111,8 +111,22 @@ async def simulation_loop():
                 state = lattice.get_state_for_transmission()
                 
                 try:
+                    # Custom JSON serializer for numpy types and ConsciousnessNode objects
+                    def json_serializer(obj):
+                        if hasattr(obj, 'to_dict'):  # ConsciousnessNode, Universe objects
+                            return obj.to_dict()
+                        elif hasattr(obj, 'tolist'):  # numpy arrays
+                            return obj.tolist()
+                        elif hasattr(obj, 'item'):  # numpy scalars
+                            return obj.item()
+                        elif hasattr(obj, '__float__'):  # numpy floats
+                            return float(obj)
+                        elif hasattr(obj, '__int__'):  # numpy ints
+                            return int(obj)
+                        raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
+                        
                     # Safe JSON serialization with explicit type handling
-                    state_json = json.dumps(state, ensure_ascii=False, separators=(',', ':'))
+                    state_json = json.dumps(state, ensure_ascii=False, separators=(',', ':'), default=json_serializer)
                 except (TypeError, ValueError) as e:
                     logger.error(f"JSON serialization error: {e}")
                     # Skip this frame if serialization fails
@@ -151,7 +165,26 @@ async def websocket_endpoint(websocket: WebSocket):
         # Send initial state
         try:
             initial_state = lattice.get_state_for_transmission()
-            initial_json = json.dumps(initial_state, ensure_ascii=False, separators=(',', ':'))
+            # Debug: check what we're trying to serialize
+            logger.info(f"Attempting to serialize state with keys: {list(initial_state.keys())}")
+            logger.info(f"Node count: {len(initial_state.get('nodes', []))}")
+            
+            # Use a custom JSON serializer that handles numpy types
+            def json_serializer(obj):
+                """Custom JSON serializer for numpy types and ConsciousnessNode objects."""
+                if hasattr(obj, 'to_dict'):  # ConsciousnessNode, Universe objects
+                    return obj.to_dict()
+                elif hasattr(obj, 'tolist'):  # numpy arrays
+                    return obj.tolist()
+                elif hasattr(obj, 'item'):  # numpy scalars
+                    return obj.item()
+                elif hasattr(obj, '__float__'):  # numpy floats
+                    return float(obj)
+                elif hasattr(obj, '__int__'):  # numpy ints
+                    return int(obj)
+                raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
+                
+            initial_json = json.dumps(initial_state, ensure_ascii=False, separators=(',', ':'), default=json_serializer)
             await websocket.send_text(initial_json)
         except (TypeError, ValueError) as e:
             logger.error(f"Failed to send initial state: {e}")

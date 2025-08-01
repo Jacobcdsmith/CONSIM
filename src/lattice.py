@@ -539,10 +539,10 @@ class ConsciousnessLattice:
         consciousness_magnitude = np.sqrt(total_consciousness_re**2 + total_consciousness_im**2)
         
         return {
-            'consciousness_magnitude': consciousness_magnitude,
-            'global_resonance': consciousness_magnitude / len(self.nodes) if self.nodes else 0,
-            'average_attention': total_attention / len(self.nodes) if self.nodes else 0,
-            'average_phase_degrees': (total_phase / len(self.nodes) * 180 / np.pi) % 360 if self.nodes else 0,
+            'consciousness_magnitude': float(consciousness_magnitude),  # Convert numpy to Python float
+            'global_resonance': float(consciousness_magnitude / len(self.nodes) if self.nodes else 0),
+            'average_attention': float(total_attention / len(self.nodes) if self.nodes else 0),
+            'average_phase_degrees': float((total_phase / len(self.nodes) * 180 / np.pi) % 360 if self.nodes else 0),
             'node_count': len(self.nodes),
             'cluster_count': len(self.clusters),
             'time': self.time

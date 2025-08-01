@@ -10,6 +10,14 @@
 
 class ConsciousnessFieldRenderer {
     constructor(options = {}) {
+        // Check if THREE.js is available
+        this.hasThreeJS = typeof THREE !== 'undefined';
+        
+        if (!this.hasThreeJS) {
+            console.warn('THREE.js not available, using 2D fallback renderer');
+            this.use2DRenderer = true;
+        }
+        
         this.options = {
             latticeSize: options.latticeSize || 128,
             complexField: options.complexField !== false,
@@ -39,14 +47,20 @@ class ConsciousnessFieldRenderer {
         // Cluster connections
         this.clusterConnections = [];
         
-        // Camera controls
-        this.cameraTarget = new THREE.Vector3(0, 0, 0);
-        this.cameraPosition = new THREE.Vector3(0, 0, 500);
-        this.zoom = 1.0;
+        // Camera controls (only if THREE.js available)
+        if (this.hasThreeJS) {
+            this.cameraTarget = new THREE.Vector3(0, 0, 0);
+            this.cameraPosition = new THREE.Vector3(0, 0, 500);
+            this.mouse = new THREE.Vector2();
+            this.raycaster = new THREE.Raycaster();
+        } else {
+            // 2D fallback
+            this.cameraTarget = { x: 0, y: 0, z: 0 };
+            this.cameraPosition = { x: 0, y: 0, z: 500 };
+            this.mouse = { x: 0, y: 0 };
+        }
         
-        // Mouse interaction
-        this.mouse = new THREE.Vector2();
-        this.raycaster = new THREE.Raycaster();
+        this.zoom = 1.0;
         this.isMouseDown = false;
         this.currentMode = 'consciousness';
         this.interactionMode = 'push';
@@ -63,13 +77,19 @@ class ConsciousnessFieldRenderer {
         // Get canvas
         this.canvas = document.getElementById('canvas');
         
-        // Setup Three.js scene
-        this.setupScene();
-        this.setupCamera();
-        this.setupRenderer();
-        this.setupLighting();
-        this.setupMaterials();
-        this.setupGeometry();
+        if (this.hasThreeJS) {
+            // Setup Three.js scene
+            this.setupScene();
+            this.setupCamera();
+            this.setupRenderer();
+            this.setupLighting();
+            this.setupMaterials();
+            this.setupGeometry();
+        } else {
+            // Setup 2D fallback
+            this.setup2DRenderer();
+        }
+        
         this.setupEventListeners();
         
         // Start render loop
@@ -108,6 +128,19 @@ class ConsciousnessFieldRenderer {
         
         // Enable additive blending for glow effects
         this.renderer.capabilities.logarithmicDepthBuffer = true;
+    }
+    
+    setup2DRenderer() {
+        // Setup 2D canvas fallback renderer
+        this.ctx = this.canvas.getContext('2d');
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        
+        // Set canvas style
+        this.canvas.style.width = '100%';
+        this.canvas.style.height = '100%';
+        
+        console.log('Using 2D fallback renderer');
     }
 
     setupLighting() {
@@ -341,7 +374,13 @@ class ConsciousnessFieldRenderer {
         const nodes = state.nodes;
         const nodeCount = Math.min(nodes.length, this.maxNodes);
         
-        // Update instance count
+        // Store nodes for 2D renderer
+        this.nodes = nodes;
+        
+        // If we don't have THREE.js, we're done (2D renderer will use this.nodes)
+        if (!this.hasThreeJS) return;
+        
+        // Update instance count for THREE.js
         this.nodeInstances.count = nodeCount;
         
         // Update instance data
@@ -569,13 +608,22 @@ class ConsciousnessFieldRenderer {
         
         const time = Date.now() * 0.001;
         
-        // Update shader uniforms
-        this.nodeMaterial.uniforms.time.value = time;
-        if (this.attentionFieldMaterial) {
-            this.attentionFieldMaterial.uniforms.time.value = time;
-        }
-        if (this.universeMaterial) {
-            this.universeMaterial.uniforms.time.value = time;
+        if (this.hasThreeJS) {
+            // Update shader uniforms for THREE.js
+            this.nodeMaterial.uniforms.time.value = time;
+            if (this.attentionFieldMaterial) {
+                this.attentionFieldMaterial.uniforms.time.value = time;
+            }
+            if (this.universeMaterial) {
+                this.universeMaterial.uniforms.time.value = time;
+            }
+            
+            // Render scene
+            this.renderer.clear();
+            this.renderer.render(this.scene, this.camera);
+        } else {
+            // 2D rendering fallback
+            this.render2D();
         }
         
         // Update FPS counter
@@ -586,10 +634,59 @@ class ConsciousnessFieldRenderer {
             this.lastFPSUpdate = Date.now();
             document.getElementById('fps').textContent = this.fps;
         }
+    }
+    
+    render2D() {
+        // Simple 2D fallback rendering
+        if (!this.ctx) return;
         
-        // Render scene
-        this.renderer.clear();
-        this.renderer.render(this.scene, this.camera);
+        const width = this.canvas.width;
+        const height = this.canvas.height;
+        
+        // Clear canvas
+        this.ctx.fillStyle = '#000011';
+        this.ctx.fillRect(0, 0, width, height);
+        
+        // If we have nodes, render them as simple circles
+        if (this.nodes && this.nodes.length > 0) {
+            this.ctx.save();
+            
+            for (let i = 0; i < this.nodes.length; i++) {
+                const node = this.nodes[i];
+                if (!node) continue;
+                
+                // Convert world position to screen position
+                const screenX = (node.x + 100) * (width / 200) || width / 2;
+                const screenY = (node.y + 100) * (height / 200) || height / 2;
+                
+                // Render node as circle
+                this.ctx.beginPath();
+                this.ctx.arc(screenX, screenY, node.radius || 3, 0, Math.PI * 2);
+                
+                // Color based on consciousness magnitude
+                const magnitude = Math.sqrt((node.consciousness_re || 0) ** 2 + (node.consciousness_im || 0) ** 2);
+                const hue = ((node.phase || 0) * 180 / Math.PI) % 360;
+                const saturation = Math.min(magnitude * 50, 100);
+                const lightness = 40 + Math.min(magnitude * 30, 40);
+                
+                this.ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                this.ctx.fill();
+                
+                // Glow effect
+                this.ctx.shadowColor = this.ctx.fillStyle;
+                this.ctx.shadowBlur = 10;
+                this.ctx.fill();
+                this.ctx.shadowBlur = 0;
+            }
+            
+            this.ctx.restore();
+        }
+        
+        // Render info text
+        this.ctx.fillStyle = '#00ff88';
+        this.ctx.font = '14px monospace';
+        this.ctx.fillText('2D Fallback Renderer', 10, 30);
+        this.ctx.fillText(`Nodes: ${this.nodes ? this.nodes.length : 0}`, 10, 50);
     }
 
     dispose() {
