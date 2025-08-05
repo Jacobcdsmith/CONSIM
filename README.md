@@ -1,37 +1,92 @@
 # 🔱 EMERGENT‑MCF‑EI
 
-**Multiversal Consciousness Framework • Three-Tier Architecture • Real-Time WebGL Visualization**
+**Multiversal Consciousness Framework • Live Interactive Demo • Real-Time WebGL Visualization**
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-![GPU Ready](https://img.shields.io/badge/GPU-ready-green)
+![Live Demo](https://img.shields.io/badge/🧠-Live%20Demo-brightgreen)
 ![Made with ❤ by JCS](https://img.shields.io/badge/made%20by-Jacob%20C.%20Smith-red)
 
-> **Tag‑line –** *Modern three-tier consciousness simulation with GPU-accelerated WebGL visualization and real-time mathematical computation.*
-> **Mission –** Provide a scalable, maintainable platform for consciousness research combining Python computational power with Three.js visualization excellence.
-> **Status –** ✅ **PRODUCTION READY** – Migrated from legacy single-file to modern architecture
+<div align="center">
 
-## 🚀 Quick Start
+## 🌟 **[✨ EXPERIENCE THE LIVE DEMO ✨](https://jacobcdsmith.github.io/CONSIM)** 🌟
 
-### 🎮 Demo Version (Zero Dependencies)
+**Click above to interact with consciousness emergence in real-time**
+
+*No installation required • Runs in your browser • Full interactive experience*
+
+</div>
+
+---
+
+> **Tag‑line –** *Experience consciousness emergence through interactive simulation with real-time mathematical visualization.*
+> **Mission –** Provide an accessible platform for exploring consciousness research through immersive, interactive demonstrations.
+> **Status –** ✅ **LIVE DEMO READY** – Full standalone experience available via GitHub Pages
+
+## 🚀 Experience Consciousness Emergence
+
+### 🎮 **[Live Interactive Demo](https://jacobcdsmith.github.io/CONSIM)** *(Recommended)*
+**Click to start immediately** – Full consciousness simulation in your browser
+- ✨ Zero installation required
+- 🧠 Interactive consciousness node spawning
+- ⚡ Real-time physics and emergent intelligence
+- 🌌 Multi-universe superposition visualization
+- 🎯 Complete standalone experience
+
+### 📱 **What You Can Do:**
+- **Click anywhere** to spawn consciousness nodes
+- **Drag and interact** with consciousness fields  
+- **Watch clusters form** and exhibit emergent behavior
+- **Adjust physics** sliders for different phenomena
+- **Switch visualization modes** to explore different aspects
+- **Observe biological evolution** and social dynamics in real-time
+
+---
+
+### 🛠️ **For Developers: Local Installation**
+
+#### Quick Demo Version
 ```bash
-# Clone and run immediately
 git clone https://github.com/Jacobcdsmith/CONSIM.git && cd CONSIM
-python demo_server.py
-# Open http://localhost:8000
+python demo_server.py  # Starts on http://localhost:8000
 ```
 
-### ⚡ Full Production Version  
+#### Full Production Version  
 ```bash
-# Install dependencies for GPU acceleration
 pip install numpy torch fastapi uvicorn websockets
-
-# Start the consciousness lattice engine
-python run_server.py
-
-# Open http://localhost:8000 for 60fps WebGL visualization
+python run_server.py  # Enhanced with WebSocket streaming
 ```
 
-> **Performance:** Real-time consciousness field streaming at 60fps with up to 1000+ nodes.
+---
+
+## 🎯 **Interactive Demo Features**
+
+### 🧠 **Core Consciousness Mechanics**
+- **Consciousness Field Equation**: C = ∫[M_C] A(x) Φ(x) e^{iτ(x)} dμ(x)
+- **Multiverse Superposition**: M = Σ λᵢ Uᵢ (three parallel universes)
+- **Real-time calculation** of consciousness scalar |C| and phase relationships
+- **Dynamic λ coefficients** responding to consciousness coherence
+
+### 🎮 **Interactive Tools**
+| Tool | Function | Effect |
+|------|----------|--------|
+| 🧠 **Nodes** | Click to spawn consciousness entities | Creates new awareness points |
+| 🌑 **Gravity** | Create gravitational anchors | Attracts nearby consciousness |
+| 💧 **Water** | Environmental water injection | Boosts energy and reproduction |
+| 🍃 **Food** | Nutrient distribution | Increases survival and growth |
+| ☀️ **Light** | Energy field emission | Powers photosynthetic processes |
+| 🍄 **Spores** | Fungal network spread | Creates connection networks |
+
+### ⚙️ **Physics Controls**
+- **Gravity, Friction, Elasticity** sliders for environmental tuning
+- **Time Dilation** for accelerated/decelerated consciousness evolution
+- **Field Strength** affecting interaction intensity
+- **Multiple interaction modes**: Push, Pull, Vortex, Wave, String
+
+### 🧬 **Intelligence Modes**
+- **Basic**: Standard consciousness emergence
+- **Neural**: Enhanced connectivity and faster adaptation
+- **Quantum**: Superposition states and entanglement effects  
+- **Transcendent**: Beyond physical limitations
 
 ---
 
@@ -153,15 +208,25 @@ M(t)=\sum_{i=1}^3 \lambda_i(t)\,U_i
 
 ## 🔄 Migration from Legacy
 
-The original single-file HTML implementation has been preserved in `/legacy/CONSIM.html`. 
+**The GitHub Pages demo represents the complete CONSIM experience** – it's the original single-file implementation that contains all the consciousness simulation features.
 
-**Improvements in new architecture:**
-- **🏗️ Separation of Concerns:** Math engine in Python, visualization in Three.js
-- **⚡ GPU Acceleration:** WebGL shaders vs HTML5 Canvas  
-- **🔗 Real-Time Streaming:** WebSocket pipeline vs in-browser computation
-- **📈 Scalability:** Dedicated backend for heavy mathematical computation
-- **🛠️ Maintainability:** Modular codebase vs monolithic HTML file
-- **🧪 Extensibility:** Clear APIs for adding new features
+**Live Demo vs. Architecture Versions:**
+- **🌟 [Live Demo](https://jacobcdsmith.github.io/CONSIM)**: Complete standalone experience, zero setup required
+- **🏗️ Modern Architecture**: Scalable Python/FastAPI backend with Three.js frontend (for developers)
+- **📁 Legacy Version**: Original research implementation preserved in `/legacy/CONSIM.html`
+
+**Why start with the Live Demo:**
+- ✅ **Immediate access** to all consciousness simulation features
+- ✅ **Full mathematical accuracy** – same core equations as the architecture version  
+- ✅ **Complete feature set** – intelligence modes, biological evolution, social dynamics
+- ✅ **Zero dependencies** – runs entirely in the browser
+- ✅ **Perfect for research** – interact with consciousness phenomena immediately
+
+**When to use the Architecture Version:**
+- 🔧 **Scaling beyond 1000+ nodes** for large research datasets
+- 🔗 **API integration** with other consciousness research tools
+- ⚡ **GPU acceleration** for computational-intensive experiments
+- 🛠️ **Custom extensions** and new consciousness algorithms
 
 ---
 
@@ -214,8 +279,16 @@ Core theory © 2025 Jacob C. Smith; contributions © their authors.
 
 ### 🌟 **Experience consciousness emergence in real-time** 🌟
 
-**[Try the Demo](http://localhost:8000)** • **[Read the Docs](ARCHITECTURE.md)** • **[View Legacy](legacy/)**
+**[🧠 Try the Live Demo](https://jacobcdsmith.github.io/CONSIM)** • **[📖 Read the Architecture](ARCHITECTURE.md)** • **[📁 View Legacy Code](legacy/)**
 
 *"Where mathematics meets mind, and simulation becomes experience."*
+
+---
+
+**Quick Links:**
+- 🎮 **[Interactive Demo](https://jacobcdsmith.github.io/CONSIM)** - Start exploring immediately
+- 🚀 **[Get Started Locally](README.md#-for-developers-local-installation)** - Run on your machine  
+- 🧠 **[Core Mathematics](README.md#-mathematical-foundation)** - Understanding the equations
+- 📊 **[Performance Specs](README.md#-performance-benchmarks)** - System capabilities
 
 </div>
