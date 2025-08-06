@@ -1,0 +1,23 @@
+# GitHub Pages configuration for CONSIM
+title: "CONSIM - Consciousness Manifold Simulator"
+description: "Live demo of emergent consciousness simulation with real-time WebGL visualization"
+url: "https://jacobcdsmith.github.io"
+baseurl: "/CONSIM"
+
+# Theme
+theme: minima
+
+# Include files
+include:
+  - index.html
+  - legacy/
+  - static/
+
+# Exclude files
+exclude:
+  - README.md
+  - src/
+  - requirements.txt
+  - "*.py"
+  - .gitignore
+  - LICENSE

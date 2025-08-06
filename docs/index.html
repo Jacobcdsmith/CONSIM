@@ -1,0 +1,6543 @@
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CONSIM: Consciousness Manifold Simulator - Gemini 2.5 Showcase</title>
+
+    <style>
+
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+            box-sizing: border-box;
+
+        }
+
+       
+
+        body {
+
+            background: radial-gradient(ellipse at center, #0a0a1a 0%, #000000 100%);
+
+            overflow: hidden;
+
+            font-family: 'Courier New', monospace;
+
+            touch-action: none;
+
+        }
+
+       
+
+        canvas {
+
+            display: block;
+
+            cursor: crosshair;
+
+        }
+
+       
+
+        /* Scientific Info Bar */
+        .top-info-bar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 12px 24px;
+            z-index: 100;
+            height: 50px;
+        }
+        
+        .equation {
+            color: #00ffaa;
+            font-size: 11px;
+            text-shadow: 0 0 8px rgba(0, 255, 170, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .ui {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .ui-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            text-align: center;
+        }
+        
+        .ui-label {
+            font-size: 9px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .ui-value {
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        /* Tool Sidebar */
+        .tool-sidebar {
+            position: fixed;
+            left: 20px;
+            top: 200px;
+            width: 100px;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px 10px;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .tool-category {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .tool-header {
+            font-size: 9px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 5px;
+        }
+        
+        .tool-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #ccc;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 11px;
+        }
+
+        .tool-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(0, 255, 170, 0.3);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+        
+        .tool-btn.active {
+            background: rgba(0, 255, 170, 0.2);
+            border-color: rgba(0, 255, 170, 0.5);
+            color: #00ffaa;
+            box-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
+        }
+        
+        .tool-btn span {
+            font-weight: 500;
+        }
+        
+        .size-slider {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            border-radius: 2px;
+            -webkit-appearance: none;
+        }
+        
+        .size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #00ffaa;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .size-display {
+            text-align: center;
+            font-size: 10px;
+            color: #00ffaa;
+            margin-top: 5px;
+        }
+
+       
+
+        .equation {
+
+            color: #00ffaa;
+
+            font-size: 11px;
+
+            text-shadow: 0 0 8px rgba(0, 255, 170, 0.6);
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 2px;
+
+        }
+
+       
+
+        .equation-main {
+
+            font-weight: bold;
+
+            font-size: 12px;
+
+        }
+
+       
+
+        .equation-sub {
+
+            font-size: 10px;
+
+            opacity: 0.8;
+
+        }
+
+       
+
+        .ui {
+
+            color: #ffffff;
+
+            font-size: 11px;
+
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+
+            display: flex;
+
+            gap: 20px;
+
+            align-items: center;
+
+        }
+
+       
+
+        .ui-group {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 2px;
+
+            text-align: center;
+
+        }
+
+       
+
+        .ui-label {
+
+            font-size: 9px;
+
+            opacity: 0.7;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+
+        }
+
+       
+
+        .ui-value {
+
+            font-weight: bold;
+
+            font-size: 12px;
+
+        }
+
+       
+
+        /* Game Action Bar */
+        .bottom-control-bar {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: center;
+            z-index: 100;
+        }
+
+       
+
+        .controls {
+
+            display: flex;
+
+            gap: 8px;
+
+            background: rgba(0, 0, 0, 0.8);
+
+            backdrop-filter: blur(15px);
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            border-radius: 25px;
+
+            padding: 12px 20px;
+
+            flex-wrap: wrap;
+
+            justify-content: center;
+
+        }
+
+       
+
+        .btn {
+            background: rgba(0, 255, 170, 0.1);
+            border: 1px solid rgba(0, 255, 170, 0.3);
+            color: #00ffaa;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-size: 11px;
+            font-family: inherit;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+       
+
+        .btn:hover {
+
+            background: rgba(0, 255, 170, 0.2);
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 4px 20px rgba(0, 255, 170, 0.3);
+
+        }
+
+       
+
+        .btn.active {
+
+            background: rgba(170, 0, 255, 0.3);
+
+            border-color: rgba(170, 0, 255, 0.6);
+
+            color: #aa00ff;
+
+            box-shadow: 0 4px 15px rgba(170, 0, 255, 0.4);
+
+        }
+
+       
+
+        .legend {
+
+            position: absolute;
+
+            bottom: 100px;
+
+            right: 20px;
+
+            color: #ccc;
+
+            font-size: 11px;
+
+            z-index: 100;
+
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
+
+            background: rgba(0, 0, 0, 0.8);
+
+            backdrop-filter: blur(15px);
+
+            padding: 12px 16px;
+
+            border-radius: 15px;
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+        }
+
+       
+
+        .legend div {
+
+            margin: 4px 0;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+        }
+
+       
+
+        .legend div::before {
+
+            content: '';
+
+            width: 12px;
+
+            height: 2px;
+
+            border-radius: 1px;
+
+        }
+
+       
+
+        .legend div:nth-child(1)::before { background: #00ff88; }
+
+        .legend div:nth-child(2)::before { background: #0088ff; }
+
+        .legend div:nth-child(3)::before { background: #aa00ff; }
+
+        .legend div:nth-child(4)::before { background: #ffcc00; }
+
+        .legend div:nth-child(5)::before { background: #ff4444; }
+
+       
+
+        /* Tutorial Popup Styles */
+
+        .tutorial-overlay {
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            right: 0;
+
+            bottom: 0;
+
+            background: rgba(0, 0, 0, 0.85);
+
+            z-index: 1000;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            backdrop-filter: blur(5px);
+
+        }
+
+       
+
+        .tutorial-container {
+
+            background: linear-gradient(145deg, #0a0a1a, #000033);
+
+            border: 1px solid #00ffaa;
+
+            border-radius: 10px;
+
+            padding: 25px;
+
+            max-width: 600px;
+
+            width: 90%;
+
+            max-height: 80vh;
+
+            overflow-y: auto;
+
+            box-shadow: 0 0 20px rgba(0, 255, 170, 0.5);
+
+            position: relative;
+
+        }
+
+       
+
+        .tutorial-title {
+
+            color: #00ffaa;
+
+            font-size: 22px;
+
+            margin-bottom: 15px;
+
+            text-align: center;
+
+            text-shadow: 0 0 10px rgba(0, 255, 170, 0.5);
+
+        }
+
+       
+
+        .tutorial-content {
+
+            color: #ddd;
+
+            font-size: 14px;
+
+            line-height: 1.6;
+
+            margin-bottom: 20px;
+
+        }
+
+       
+
+        .tutorial-content h3 {
+
+            color: #00ffaa;
+
+            margin-top: 15px;
+
+            margin-bottom: 8px;
+
+            font-size: 16px;
+
+        }
+
+       
+
+        .tutorial-content ul {
+
+            padding-left: 20px;
+
+            margin: 10px 0;
+
+        }
+
+       
+
+        .tutorial-content li {
+
+            margin-bottom: 8px;
+
+        }
+
+       
+
+        .tutorial-close {
+
+            background: rgba(0, 255, 170, 0.2);
+
+            border: 1px solid #00ffaa;
+
+            color: #00ffaa;
+
+            padding: 8px 20px;
+
+            border-radius: 20px;
+
+            cursor: pointer;
+
+            font-family: inherit;
+
+            font-size: 14px;
+
+            transition: all 0.3s ease;
+
+            display: block;
+
+            margin: 0 auto;
+
+        }
+
+       
+
+        .tutorial-close:hover {
+
+            background: rgba(0, 255, 170, 0.4);
+
+            transform: scale(1.05);
+
+            box-shadow: 0 0 15px rgba(0, 255, 170, 0.4);
+
+        }
+
+       
+
+        .tutorial-nav {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-top: 20px;
+
+        }
+
+       
+
+        .tutorial-nav-btn {
+
+            background: rgba(0, 150, 255, 0.2);
+
+            border: 1px solid #0096ff;
+
+            color: #0096ff;
+
+            padding: 6px 15px;
+
+            border-radius: 20px;
+
+            cursor: pointer;
+
+            font-family: inherit;
+
+            font-size: 12px;
+
+            transition: all 0.3s ease;
+
+        }
+
+       
+
+        .tutorial-nav-btn:hover {
+
+            background: rgba(0, 150, 255, 0.4);
+
+        }
+
+       
+
+        .tutorial-nav-btn:disabled {
+
+            opacity: 0.5;
+
+            cursor: not-allowed;
+
+        }
+
+       
+
+        .tutorial-progress {
+
+            text-align: center;
+
+            color: #888;
+
+            font-size: 12px;
+
+            margin-top: 10px;
+
+        }
+
+       
+
+        .help-btn {
+
+            position: absolute;
+
+            bottom: 10px;
+
+            left: 10px;
+
+            background: rgba(0, 255, 170, 0.1);
+
+            border: 1px solid rgba(0, 255, 170, 0.4);
+
+            color: #00ffaa;
+
+            width: 24px;
+
+            height: 24px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            cursor: pointer;
+
+            z-index: 100;
+
+            font-weight: bold;
+
+            font-size: 14px;
+
+        }
+
+       
+
+        .help-btn:hover {
+
+            background: rgba(0, 255, 170, 0.3);
+
+            transform: scale(1.1);
+
+        }
+
+       
+
+        /* Side Panels - Redesigned for sleek appearance */
+
+        .side-panel {
+
+            position: absolute;
+
+            background: rgba(0, 0, 0, 0.85);
+
+            backdrop-filter: blur(20px);
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            border-radius: 20px;
+
+            padding: 20px;
+
+            z-index: 100;
+
+            color: #ffffff;
+
+            min-width: 260px;
+
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+        }
+
+       
+
+        .side-panel.left {
+
+            left: 20px;
+
+            top: 90px;
+
+            max-height: calc(100vh - 200px);
+
+            overflow-y: auto;
+
+        }
+
+       
+
+        .side-panel.right {
+
+            right: 20px;
+
+            top: 90px;
+
+            max-height: calc(100vh - 200px);
+
+            overflow-y: auto;
+
+        }
+
+       
+
+        .panel-title {
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            color: #00ffaa;
+
+            text-align: center;
+
+            margin-bottom: 16px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+
+            border-bottom: 1px solid rgba(0, 255, 170, 0.3);
+
+            padding-bottom: 8px;
+
+        }
+
+       
+
+        .section-divider {
+
+            height: 1px;
+
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+
+            margin: 16px 0;
+
+        }
+
+       
+
+        /* Environment Controls - Refined */
+
+        .slider-container {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 6px;
+
+            margin-bottom: 12px;
+
+        }
+
+       
+
+        .slider-container label {
+
+            font-size: 11px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            font-weight: 500;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+
+        }
+
+       
+
+        .slider-container label span {
+
+            color: #00ffaa;
+
+            font-weight: bold;
+
+        }
+
+       
+
+        .slider-container input[type="range"] {
+
+            width: 100%;
+
+            -webkit-appearance: none;
+
+            appearance: none;
+
+            height: 4px;
+
+            border-radius: 2px;
+
+            background: rgba(255, 255, 255, 0.1);
+
+            outline: none;
+
+            transition: all 0.3s ease;
+
+        }
+
+       
+
+        .slider-container input[type="range"]:hover {
+
+            background: rgba(0, 255, 170, 0.2);
+
+        }
+
+       
+
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+
+            -webkit-appearance: none;
+
+            appearance: none;
+
+            width: 16px;
+
+            height: 16px;
+
+            border-radius: 50%;
+
+            background: linear-gradient(135deg, #00ffaa, #00cc88);
+
+            cursor: pointer;
+
+            transition: all 0.3s ease;
+
+            box-shadow: 0 2px 8px rgba(0, 255, 170, 0.4);
+
+        }
+
+       
+
+        .slider-container input[type="range"]::-webkit-slider-thumb:hover {
+
+            background: linear-gradient(135deg, #ffffff, #00ffaa);
+
+            transform: scale(1.2);
+
+        }
+
+       
+
+        .slider-container input[type="range"]::-moz-range-thumb {
+
+            width: 16px;
+
+            height: 16px;
+
+            border-radius: 50%;
+
+            background: linear-gradient(135deg, #00ffaa, #00cc88);
+
+            cursor: pointer;
+
+            transition: all 0.3s ease;
+
+            border: none;
+
+            box-shadow: 0 2px 8px rgba(0, 255, 170, 0.4);
+
+        }
+
+       
+
+        .slider-container input[type="range"]::-moz-range-thumb:hover {
+
+            background: linear-gradient(135deg, #ffffff, #00ffaa);
+
+            transform: scale(1.2);
+
+        }
+
+       
+
+        /* Button Groups */
+
+        .button-group {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 8px;
+
+            margin-top: 8px;
+
+        }
+
+       
+
+        .mini-btn {
+
+            background: rgba(0, 150, 255, 0.1);
+
+            border: 1px solid rgba(0, 150, 255, 0.3);
+
+            color: #00aaff;
+
+            padding: 6px 12px;
+
+            border-radius: 15px;
+
+            font-size: 10px;
+
+            cursor: pointer;
+
+            transition: all 0.3s ease;
+
+            font-weight: 500;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+
+        }
+
+       
+
+        .mini-btn.active {
+
+            background: rgba(0, 150, 255, 0.4);
+
+            box-shadow: 0 2px 12px rgba(0, 150, 255, 0.5);
+
+            color: #ffffff;
+
+            transform: translateY(-1px);
+
+        }
+
+       
+
+        .mini-btn:hover {
+
+            background: rgba(0, 150, 255, 0.2);
+
+            transform: translateY(-1px);
+
+        }
+
+       
+
+        /* Zoom controls */
+
+        .zoom-controls {
+
+            position: absolute;
+
+            bottom: 20px;
+
+            left: 20px;
+
+            display: flex;
+
+            gap: 8px;
+
+            z-index: 100;
+
+        }
+
+       
+
+        .zoom-btn {
+
+            width: 45px;
+
+            height: 45px;
+
+            background: rgba(0, 0, 0, 0.8);
+
+            backdrop-filter: blur(15px);
+
+            border: 1px solid rgba(255, 255, 255, 0.2);
+
+            color: #ffffff;
+
+            font-size: 18px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 50%;
+
+            cursor: pointer;
+
+            transition: all 0.3s ease;
+
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+        }
+
+       
+
+        .zoom-btn:hover {
+
+            background: rgba(255, 255, 255, 0.1);
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+
+        }
+
+       
+
+        .pan-indicator {
+
+            position: absolute;
+
+            top: 50%;
+
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+
+            color: rgba(255, 255, 255, 0.3);
+
+            pointer-events: none;
+
+            font-size: 10px;
+
+            z-index: 90;
+
+            background: rgba(0, 0, 0, 0.6);
+
+            backdrop-filter: blur(10px);
+
+            padding: 4px 8px;
+
+            border-radius: 10px;
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+        }
+
+       
+
+        /* Responsive Design */
+
+        @media (max-width: 1200px) {
+
+            .side-panel {
+
+                min-width: 220px;
+
+                padding: 16px;
+
+            }
+
+           
+
+            .top-info-bar {
+
+                padding: 10px 20px;
+
+                height: 45px;
+
+            }
+
+           
+
+            .ui {
+
+                gap: 15px;
+
+            }
+
+           
+
+            .ui-group {
+
+                gap: 1px;
+
+            }
+
+        }
+
+       
+
+        @media (max-width: 768px) {
+
+            .side-panel.left {
+
+                left: 10px;
+
+                right: 10px;
+
+                top: auto;
+
+                bottom: 100px;
+
+                min-width: auto;
+
+                max-height: 200px;
+
+            }
+
+           
+
+            .side-panel.right {
+
+                display: none; /* Hide right panel on mobile */
+
+            }
+
+           
+
+            .top-info-bar {
+
+                left: 10px;
+
+                right: 10px;
+
+                padding: 8px 16px;
+
+                height: 40px;
+
+            }
+
+           
+
+            .equation {
+
+                display: none; /* Hide equation on very small screens */
+
+            }
+
+           
+
+            .ui {
+
+                gap: 10px;
+
+                font-size: 10px;
+
+            }
+
+           
+
+            .bottom-control-bar {
+
+                left: 10px;
+
+                right: 10px;
+
+                bottom: 10px;
+
+            }
+
+           
+
+            .controls {
+
+                padding: 10px 16px;
+
+                gap: 6px;
+
+            }
+
+           
+
+            .btn {
+
+                padding: 6px 12px;
+
+                font-size: 10px;
+
+            }
+
+           
+
+            .zoom-controls {
+
+                bottom: 320px; /* Adjust for mobile layout */
+
+                left: 10px;
+
+            }
+
+           
+
+            .floating-controls {
+
+                bottom: 320px;
+
+                right: 10px;
+
+            }
+
+           
+
+            .legend {
+
+                bottom: 320px;
+
+                right: 70px;
+
+                font-size: 10px;
+
+                padding: 8px 12px;
+
+            }
+
+           
+
+            .slider-container {
+
+                margin-bottom: 8px;
+
+            }
+
+           
+
+            .cluster-stats {
+
+                grid-template-columns: repeat(2, 1fr);
+
+                gap: 8px;
+
+            }
+
+        }
+
+       
+
+        /* Intelligence Panels - Redesigned */
+
+        .intelligence-panel {
+
+            background: rgba(0, 0, 0, 0.85);
+
+            backdrop-filter: blur(20px);
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            border-radius: 20px;
+
+            padding: 16px;
+
+            margin-bottom: 16px;
+
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+        }
+
+       
+
+        .intelligence-title {
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+            text-align: center;
+
+            margin-bottom: 12px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+
+            border-bottom: 1px solid rgba(255, 204, 0, 0.3);
+
+            padding-bottom: 6px;
+
+        }
+
+       
+
+        .intelligence-title.main {
+
+            color: #ffcc00;
+
+        }
+
+       
+
+        .intelligence-title.political {
+
+            color: #ff6699;
+
+        }
+
+       
+
+        .cluster-stats {
+
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 12px;
+
+            margin-bottom: 12px;
+
+        }
+
+       
+
+        .cluster-stat {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            text-align: center;
+
+            padding: 8px;
+
+            background: rgba(255, 255, 255, 0.05);
+
+            border-radius: 10px;
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+        }
+
+       
+
+        .cluster-stat-label {
+
+            font-size: 9px;
+
+            opacity: 0.7;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+
+            margin-bottom: 4px;
+
+        }
+
+       
+
+        .cluster-value {
+
+            font-weight: bold;
+
+            color: #ffffff;
+
+            font-size: 14px;
+
+        }
+
+        .global-metrics {
+
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 8px;
+
+            font-size: 10px;
+
+        }
+
+       
+
+        .global-metrics > div {
+
+            text-align: center;
+
+            padding: 6px;
+
+            background: rgba(255, 255, 255, 0.05);
+
+            border-radius: 8px;
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+        }
+
+       
+
+        .metric-label {
+
+            opacity: 0.7;
+
+            font-size: 9px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+
+        }
+
+       
+
+        .metric-value {
+
+            color: #00ffaa;
+
+            font-weight: bold;
+
+            font-size: 11px;
+
+        }
+
+       
+
+        /* Floating Action Buttons */
+
+        .floating-controls {
+
+            position: absolute;
+
+            bottom: 20px;
+
+            right: 20px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 12px;
+
+            z-index: 100;
+
+        }
+
+       
+
+        .floating-btn {
+
+            width: 50px;
+
+            height: 50px;
+
+            background: rgba(0, 0, 0, 0.8);
+
+            backdrop-filter: blur(15px);
+
+            border: 1px solid rgba(255, 255, 255, 0.2);
+
+            color: #ffffff;
+
+            font-size: 20px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 50%;
+
+            cursor: pointer;
+
+            transition: all 0.3s ease;
+
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+        }
+
+       
+
+        .floating-btn:hover {
+
+            background: rgba(255, 255, 255, 0.1);
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+
+        }
+
+       
+
+        .floating-btn.help {
+
+            background: rgba(0, 255, 170, 0.2);
+
+            border-color: rgba(0, 255, 170, 0.4);
+
+            color: #00ffaa;
+
+        }
+
+       
+
+        .floating-btn.help:hover {
+
+            background: rgba(0, 255, 170, 0.3);
+
+            box-shadow: 0 8px 25px rgba(0, 255, 170, 0.3);
+
+        }
+
+       
+
+        .thought-bubble {
+
+            position: absolute;
+
+            background: rgba(255, 255, 255, 0.1);
+
+            border: 1px solid rgba(255, 255, 255, 0.2);
+
+            border-radius: 10px;
+
+            padding: 8px 12px;
+
+            font-size: 10px;
+
+            color: #ffffff;
+
+            max-width: 200px;
+
+            backdrop-filter: blur(3px);
+
+            z-index: 90;
+
+            pointer-events: none;
+
+            opacity: 0;
+
+            transition: opacity 0.5s ease;
+
+        }
+
+       
+
+        /* Additional control for intelligence modes */
+
+        .intelligence-modes {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 6px;
+
+            margin-top: 10px;
+
+        }
+
+       
+
+        @media (max-width: 768px) {
+
+            .environment-panel {
+
+                top: auto;
+
+                bottom: 70px;
+
+                left: 10px;
+
+                right: 10px;
+
+                transform: none;
+
+                flex-direction: row;
+
+                flex-wrap: wrap;
+
+                justify-content: center;
+
+                max-height: none;
+
+                width: auto;
+
+                padding: 8px;
+
+                gap: 8px;
+
+            }
+
+           
+
+            .slider-container {
+
+                width: 45%;
+
+            }
+
+           
+
+            .slider-container label {
+
+                font-size: 10px;
+
+            }
+
+           
+
+            .zoom-controls {
+
+                bottom: 150px;
+
+                right: 10px;
+
+            }
+
+           
+
+            .zoom-btn {
+
+                width: 35px;
+
+                height: 35px;
+
+                font-size: 16px;
+
+            }
+
+            .intelligence-panel {
+
+                width: 90%;
+
+            }
+
+            .equation {
+
+                display: none;
+
+            }
+
+        }
+
+        /* Node Inspector Panel */
+        .node-inspector {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 280px;
+            max-height: 400px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 255, 170, 0.3);
+            border-radius: 15px;
+            padding: 0;
+            z-index: 300;
+            font-family: 'Courier New', monospace;
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(0, 255, 170, 0.2);
+        }
+
+        .inspector-header {
+            background: rgba(0, 255, 170, 0.1);
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(0, 255, 170, 0.2);
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .inspector-header h3 {
+            margin: 0;
+            font-size: 14px;
+            color: #00ffaa;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .close-btn {
+            background: rgba(255, 100, 100, 0.2);
+            border: 1px solid rgba(255, 100, 100, 0.4);
+            color: #ff6464;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 100, 100, 0.4);
+            transform: scale(1.1);
+        }
+
+        .inspector-content {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .stat-section {
+            margin-bottom: 20px;
+        }
+
+        .stat-section h4 {
+            color: #00ffaa;
+            font-size: 12px;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(0, 255, 170, 0.2);
+            padding-bottom: 5px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 11px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-row span:first-child {
+            color: #ccc;
+        }
+
+        .stat-row span:last-child {
+            color: #00ffaa;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- Top Info Bar -->
+
+    <!-- Scientific Info Bar -->
+    <div class="top-info-bar">
+        <div class="equation">
+            <div class="equation-main">C = ∫<sub>M<sub>C</sub></sub> A(x) Φ(x) e<sup>iτ(x)</sup> dμ(x)</div>
+            <div class="equation-sub">M = Σ<sub>i</sub> λ<sub>i</sub> U<sub>i</sub></div>
+        </div>
+        
+        <div class="ui">
+            <div class="ui-group">
+                <div class="ui-label">Nodes</div>
+                <div class="ui-value" id="nodeCount">0</div>
+            </div>
+            <div class="ui-group">
+                <div class="ui-label">|C| MCF</div>
+                <div class="ui-value" id="resonance">0.0</div>
+            </div>
+            <div class="ui-group">
+                <div class="ui-label">Coherence</div>
+                <div class="ui-value" id="temporalCoherence">0.0</div>
+            </div>
+            <div class="ui-group">
+                <div class="ui-label">Attention</div>
+                <div class="ui-value" id="attention">0.0</div>
+            </div>
+            <div class="ui-group">
+                <div class="ui-label">Phase</div>
+                <div class="ui-value"><span id="phase">0.0</span>°</div>
+            </div>
+            <div class="ui-group">
+                <div class="ui-label">Ecosystem</div>
+                <div class="ui-value">🌱<span id="producerCount">0</span> 🦌<span id="herbivoreCount">0</span> 🐺<span id="carnivoreCount">0</span> ⚡<span id="apexCount">0</span></div>
+            </div>
+            <div class="ui-group">
+                <div class="ui-label">λ Coefficients</div>
+                <div class="ui-value" style="font-size: 9px;"><span id="lambda1">0.33</span> | <span id="lambda2">0.33</span> | <span id="lambda3">0.34</span></div>
+            </div>
+        </div>
+    </div>
+
+   
+
+    <canvas id="canvas"></canvas>
+    
+    <!-- Tool Selection Sidebar -->
+    <div class="tool-sidebar">
+        <div class="tool-category">
+            <div class="tool-header">INTERACTION TOOLS</div>
+            <button class="tool-btn active" data-tool="nodes" title="Spawn Consciousness Nodes">
+                🧠 <span>Nodes</span>
+            </button>
+            <button class="tool-btn" data-tool="gravity" title="Create Gravitational Anchor">
+                🌑 <span>Gravity</span>
+            </button>
+        </div>
+        
+        <div class="tool-category">
+            <div class="tool-header">ELEMENTS</div>
+            <button class="tool-btn" data-tool="water" title="Inject Water">
+                💧 <span>Water</span>
+            </button>
+            <button class="tool-btn" data-tool="food" title="Inject Nutrients">
+                🍃 <span>Food</span>
+            </button>
+            <button class="tool-btn" data-tool="light" title="Emit Light Energy">
+                ☀️ <span>Light</span>
+            </button>
+            <button class="tool-btn" data-tool="spores" title="Release Fungal Spores">
+                🍄 <span>Spores</span>
+            </button>
+        </div>
+        
+        <div class="tool-category">
+            <div class="tool-header">BRUSH SIZE</div>
+            <input type="range" id="brushSize" min="10" max="100" value="30" class="size-slider">
+            <div class="size-display"><span id="brushSizeValue">30</span>px</div>
+        </div>
+    </div>
+
+   
+
+    <!-- Environmental Controls Panel -->
+
+    <div class="side-panel left">
+
+        <div class="panel-title">Environmental Controls</div>
+
+       
+
+        <div class="slider-container">
+
+            <label>Gravity <span id="gravityValue">1.0</span></label>
+
+            <input type="range" id="gravitySlider" min="0" max="2" step="0.1" value="1.0">
+
+        </div>
+
+       
+
+        <div class="slider-container">
+
+            <label>Friction <span id="frictionValue">0.99</span></label>
+
+            <input type="range" id="frictionSlider" min="0.9" max="1" step="0.01" value="0.99">
+
+        </div>
+
+       
+
+        <div class="slider-container">
+
+            <label>Elasticity <span id="elasticityValue">0.8</span></label>
+
+            <input type="range" id="elasticitySlider" min="0.1" max="1.5" step="0.1" value="0.8">
+
+        </div>
+
+       
+
+        <div class="slider-container">
+
+            <label>Time Dilation <span id="timeValue">1.0</span></label>
+
+            <input type="range" id="timeSlider" min="0.1" max="2" step="0.1" value="1.0">
+
+        </div>
+
+       
+
+        <div class="slider-container">
+
+            <label>Field Strength <span id="fieldValue">1.0</span></label>
+
+            <input type="range" id="fieldSlider" min="0.2" max="3" step="0.1" value="1.0">
+
+        </div>
+
+       
+
+        <div class="section-divider"></div>
+
+       
+
+        <div class="panel-title" style="font-size: 12px;">Interaction Mode</div>
+
+        <div class="button-group">
+
+            <button class="mini-btn active" data-mode="push">Push</button>
+
+            <button class="mini-btn" data-mode="pull">Pull</button>
+
+            <button class="mini-btn" data-mode="vortex">Vortex</button>
+
+            <button class="mini-btn" data-mode="wave">Wave</button>
+
+            <button class="mini-btn" data-mode="string">String</button>
+
+        </div>
+
+       
+
+        <div class="section-divider"></div>
+
+       
+
+        <div class="panel-title" style="font-size: 12px;">Intelligence Mode</div>
+
+        <div class="button-group">
+
+            <button class="mini-btn active" data-intel="basic">Basic</button>
+
+            <button class="mini-btn" data-intel="neural">Neural</button>
+
+            <button class="mini-btn" data-intel="quantum">Quantum</button>
+
+            <button class="mini-btn" data-intel="transcendent">Transcendent</button>
+
+        </div>
+
+        <div class="section-divider"></div>
+
+       
+
+        <div class="panel-title" style="font-size: 12px;">Cluster Thresholds</div>
+
+        <div class="slider-container">
+
+            <label>Proximity <span id="clusterProximityValue">80</span></label>
+
+            <input type="range" id="clusterProximitySlider" min="20" max="200" step="5" value="80">
+
+        </div>
+
+        <div class="slider-container">
+
+            <label>Phase Align <span id="phaseAlignmentValue">0.8</span></label>
+
+            <input type="range" id="phaseAlignmentSlider" min="0" max="1" step="0.05" value="0.8">
+
+        </div>
+
+        <div class="slider-container">
+
+            <label>Freq Resonance <span id="frequencyResonanceValue">0.7</span></label>
+
+            <input type="range" id="frequencyResonanceSlider" min="0" max="1" step="0.05" value="0.7">
+
+        </div>
+
+    </div>
+
+   
+
+    <!-- Zoom Controls -->
+
+    <div class="zoom-controls">
+
+        <button class="zoom-btn" id="zoomIn" aria-label="Zoom in">+</button>
+
+        <button class="zoom-btn" id="zoomOut" aria-label="Zoom out">-</button>
+
+        <button class="zoom-btn" id="resetView" aria-label="Reset view">↺</button>
+
+    </div>
+
+   
+
+    <div class="pan-indicator" id="panIndicator"></div>
+
+   
+
+    <!-- Bottom Control Bar -->
+
+    <!-- Scientific Control Bar -->
+    <div class="bottom-control-bar">
+        <div class="controls">
+            <button class="btn active" onclick="setMode('consciousness')">Consciousness (C)</button>
+            <button class="btn" onclick="setMode('attention')">Attention A(x)</button>
+            <button class="btn" onclick="setMode('frequency')">Frequency Φ(x)</button>
+            <button class="btn" onclick="setMode('temporal')">Temporal τ(x)</button>
+            <button class="btn" onclick="setMode('multiverse')">Multiverse M</button>
+            <button class="btn" onclick="setMode('mcf')">Pure MCF</button>
+            <button class="btn" onclick="setMode('ecology')">Ecology</button>
+            
+            <button class="btn" onclick="quantumCollapse()">Quantum Collapse</button>
+            <button class="btn" onclick="reset()">Reset Manifold</button>
+            <button class="btn" onclick="randomizeUniverses()">Randomize Universes</button>
+        </div>
+    </div>
+
+   
+
+    <div class="legend">
+
+        <div>Consciousness Nodes</div>
+
+        <div>Attention Fields</div>
+
+        <div>Frequency Domains</div>
+
+        <div>Temporal Distortions</div>
+
+        <div>Universe Boundaries</div>
+
+    </div>
+
+   
+
+    <!-- Floating Controls -->
+
+    <div class="floating-controls">
+
+        <button class="floating-btn help" onclick="showTutorial()">?</button>
+
+        <button class="floating-btn" onclick="toggleReproductive()" id="reproBtn">❤️</button>
+
+    </div>
+
+   
+
+    <!-- Tutorial Popup -->
+
+    <div id="tutorialOverlay" class="tutorial-overlay" style="display: none;">
+
+        <div class="tutorial-container">
+
+            <div class="tutorial-title">CONSIM: Complete User Manual</div>
+
+           
+
+            <div id="tutorialPage1" class="tutorial-content">
+
+                <h3>Welcome to CONSIM: Advanced Consciousness Manifold Simulator</h3>
+
+                <p>This is a revolutionary interactive simulation of consciousness as an emergent property of complex quantum-biological systems. You're exploring an advanced mathematical model where consciousness emerges from the dynamic interaction of:</p>
+
+                <ul>
+
+                    <li><strong>🌌 Quantum Multiverse</strong>: Multiple parallel universes with varying physical laws</li>
+
+                    <li><strong>🧬 Biological Evolution</strong>: Genetic inheritance, reproduction, and generational adaptation</li>
+
+                    <li><strong>🧠 Emergent Intelligence</strong>: Four tiers of computational acceleration (Basic → Transcendent)</li>
+
+                    <li><strong>🤝 Political Dynamics</strong>: Coalition formation, trust networks, and strategic behaviors</li>
+
+                    <li><strong>💫 Consciousness Fields</strong>: Attention manifolds and awareness propagation</li>
+
+                </ul>
+
+                <p><strong>New Features:</strong> Advanced reproductive systems with genetic drift, tiered intelligence modes with 3x acceleration, enhanced UI with glass morphism effects, and comprehensive biological statistics tracking.</p>
+
+            </div>
+
+            <div id="tutorialPage2" class="tutorial-content" style="display: none;">
+
+                <h3>Advanced Interface Elements & Controls</h3>
+
+                <h4>🧠 Emergent Intelligence Panel (Top Right)</h4>
+
+                <ul>
+
+                    <li><strong>Mode</strong>: Current intelligence tier (Basic/Neural/Quantum/Transcendent)</li>
+
+                    <li><strong>Acceleration</strong>: Computational speed percentage (100%-300%)</li>
+
+                    <li><strong>Clusters</strong>: Number of emergent consciousness clusters</li>
+
+                    <li><strong>Recursion</strong>: Maximum depth of self-referential thinking</li>
+
+                    <li><strong>Complexity</strong>: Overall thought sophistication level</li>
+
+                </ul>
+
+                <h4>🧬 Biological Ecosystem Panel</h4>
+
+                <ul>
+
+                    <li><strong>Gender Ratio</strong>: Male ♂ vs Female ♀ population distribution</li>
+
+                    <li><strong>Maturity Status</strong>: Nodes capable of reproduction</li>
+
+                    <li><strong>Active Breeding</strong>: Current reproductive activity levels</li>
+
+                    <li><strong>Pregnancy Tracking</strong>: Nodes currently gestating offspring</li>
+
+                    <li><strong>Generational Data</strong>: Evolution tracking across generations</li>
+
+                    <li><strong>Reproductive Pairs</strong>: Number of active mating bonds</li>
+
+                </ul>
+
+                <h4>🤝 Political Ecosystem Panel</h4>
+
+                <ul>
+
+                    <li><strong>Growth Clusters</strong>: Expansionist consciousness groups</li>
+
+                    <li><strong>Preservation Clusters</strong>: Conservative, defensive groups</li>
+
+                    <li><strong>Alliance Builders</strong>: Diplomatic coalition-forming clusters</li>
+
+                    <li><strong>Coalition Count</strong>: Active inter-cluster alliances</li>
+
+                    <li><strong>Average Trust</strong>: Overall cooperation level in the system</li>
+
+                </ul>
+
+                <h4>🎛️ Environmental Controls Panel (Left Side)</h4>
+
+                <p><strong>Physical Parameters:</strong></p>
+
+                <ul>
+
+                    <li><strong>Gravity</strong>: Attractive force between consciousness nodes</li>
+
+                    <li><strong>Friction</strong>: Energy dampening in the system</li>
+
+                    <li><strong>Elasticity</strong>: Springiness of connections and boundaries</li>
+
+                    <li><strong>Time Dilation</strong>: Simulation speed control (auto-adjusts with intelligence modes)</li>
+
+                    <li><strong>Field Strength</strong>: Intensity of attention field effects</li>
+
+                </ul>
+
+                <p><strong>Interaction Modes:</strong></p>
+
+                <ul>
+
+                    <li><strong>Push</strong>: Repel nodes from your cursor</li>
+
+                    <li><strong>Pull</strong>: Attract nodes to your cursor</li>
+
+                    <li><strong>Vortex</strong>: Create swirling motion around cursor</li>
+
+                    <li><strong>Wave</strong>: Generate ripple effects</li>
+
+                    <li><strong>String</strong>: Connect to nodes with elastic strings</li>
+
+                </ul>
+
+                <p><strong>Intelligence Modes (Tiered Acceleration):</strong></p>
+
+                <ul>
+
+                    <li><strong>Basic (100%)</strong>: Standard consciousness emergence</li>
+
+                    <li><strong>Neural (150%)</strong>: Enhanced neural network formation</li>
+
+                    <li><strong>Quantum (200%)</strong>: Quantum superposition and entanglement</li>
+
+                    <li><strong>Transcendent (300%)</strong>: Beyond physical computational limits</li>
+
+                </ul>
+
+                <h4>💫 Floating Controls</h4>
+
+                <ul>
+
+                    <li><strong>? Button</strong>: Opens this comprehensive user manual</li>
+
+                    <li><strong>❤️ Button</strong>: Toggles reproductive bond visualization</li>
+
+                </ul>
+
+            </div>
+
+            <div id="tutorialPage3" class="tutorial-content" style="display: none;">
+
+                <h3>Advanced Interaction & Biological Features</h3>
+
+                <h4>🖱️ Navigation Controls</h4>
+
+                <ul>
+
+                    <li><strong>Left Click</strong>: Create new consciousness nodes with random genetic traits</li>
+
+                    <li><strong>Mouse Movement</strong>: Influence nearby nodes based on selected interaction mode</li>
+
+                    <li><strong>Mouse Drag</strong>: Create sustained interaction fields for complex manipulations</li>
+
+                    <li><strong>Middle Click + Drag</strong> or <strong>Alt + Drag</strong>: Pan around the infinite consciousness manifold</li>
+
+                    <li><strong>Scroll Wheel</strong>: Zoom in/out while maintaining precise mouse positioning</li>
+
+                    <li><strong>Zoom Controls (Right)</strong>: +/- buttons and reset view (↺) for quick navigation</li>
+
+                </ul>
+
+                <h4>🔬 Visualization Modes (Bottom Center)</h4>
+
+                <ul>
+
+                    <li><strong>Consciousness (C)</strong>: Default integrated view with all biological and intelligence overlays</li>
+
+                    <li><strong>Attention A(x)</strong>: Blue fields showing normalized Gaussian attention distribution</li>
+
+                    <li><strong>Frequency Φ(x)</strong>: Purple rings showing oscillatory consciousness patterns</li>
+
+                    <li><strong>Temporal τ(x)</strong>: Gold distortions revealing temporal phase relationships</li>
+
+                    <li><strong>Multiverse M</strong>: Red boundaries showing parallel universe divisions</li>
+
+                    <li><strong>Quantum Collapse</strong>: Trigger consciousness-altering shockwaves</li>
+
+                    <li><strong>Reset Manifold</strong>: Reinitialize with new random genetic populations</li>
+
+                </ul>
+
+                <h4>  Biological System Features</h4>
+
+                <p>Advanced reproductive and evolutionary mechanics:</p>
+
+                <ul>
+
+                    <li><strong>Gender Visualization</strong>: Male nodes show blue squares, females show red circles</li>
+
+                    <li><strong>Age Progression</strong>: Nodes visually fade and change as they age and mature</li>
+
+                    <li><strong>Reproductive Bonds</strong>: Heart symbols (♥) connect mated pairs with pulsing animations</li>
+
+                    <li><strong>Pregnancy Indicators</strong>: Glowing halos around pregnant nodes with gestational timing</li>
+
+                    <li><strong>Family Trees</strong>: Dotted lines connect parents to offspring across generations</li>
+
+                    <li><strong>Genetic Inheritance</strong>: Traits passed from parents with Mendelian genetics plus mutation</li>
+
+                    <li><strong>Population Dynamics</strong>: Natural birth/death cycles maintain stable populations</li>
+
+                    <li><strong>Generational Evolution</strong>: Watch consciousness patterns evolve across family lineages</li>
+
+                </ul>
+
+                <h4>💫 Enhanced Intelligence Visualization</h4>
+
+                <ul>
+
+                    <li><strong>Basic Mode</strong>: Standard yellow thought halos</li>
+
+                    <li><strong>Neural Mode</strong>: Green neural network effects with enhanced connectivity</li>
+
+                    <li><strong>Quantum Mode</strong>: Blue quantum coherence with interference patterns</li>
+
+                    <li><strong>Transcendent Mode</strong>: Purple cosmic auras with transcendent pulsing effects</li>
+
+                </ul>
+
+            </div>
+
+            <div id="tutorialPage4" class="tutorial-content" style="display: none;">
+
+                <h3>Advanced Features & Expert Strategies</h3>
+
+                <h4>🚀 Intelligence Mode Mastery</h4>
+
+                <p><strong>Tiered Computational Acceleration System:</strong></p>
+
+                <ul>
+
+                    <li><strong>Basic (100%)</strong>: Standard physics, tight clustering thresholds, yellow thought effects</li>
+
+                    <li><strong>Neural (150%)</strong>: Enhanced connectivity, green neural networks, pattern recognition boost</li>
+
+                    <li><strong>Quantum (200%)</strong>: Superposition states, blue quantum coherence, entanglement effects</li>
+
+                    <li><strong>Transcendent (300%)</strong>: Universal consciousness, purple cosmic auras, beyond physical limits</li>
+
+                </ul>
+
+                <p><strong>Pro Tip:</strong> Higher intelligence modes dramatically accelerate cluster formation and biological evolution!</p>
+
+               
+
+                <h4>🧬 Biological Evolution Mastery</h4>
+
+                <ul>
+
+                    <li><strong>Population Dynamics</strong>: System auto-balances at ~200 nodes with natural birth/death cycles</li>
+
+                    <li><strong>Genetic Engineering</strong>: Use intelligence modes to accelerate favorable trait selection</li>
+
+                    <li><strong>Reproductive Visualization</strong>: Toggle ❤️ button to see pulsing mating bonds and family trees</li>
+
+                    <li><strong>Generational Tracking</strong>: Numbers on nodes show evolutionary generations</li>
+
+                    <li><strong>Mate Selection</strong>: Nodes choose partners based on intelligence, frequency compatibility, and proximity</li>
+
+                    <li><strong>Pregnancy System</strong>: Glowing halos indicate gestation with realistic timing</li>
+
+                </ul>
+
+               
+
+                <h4>🤝 Political Ecosystem Strategies</h4>
+
+                <ul>
+
+                    <li><strong>Growth Clusters (Green)</strong>: Aggressive expansion, recruit new nodes actively</li>
+
+                    <li><strong>Preservation Clusters (Gold)</strong>: Defensive consolidation, protect existing members</li>
+
+                    <li><strong>Alliance Builders (Blue)</strong>: Diplomatic coalition formation, trust-based networks</li>
+
+                    <li><strong>Trust Visualization</strong>: White alliance lines show inter-cluster cooperation strength</li>
+
+                    <li><strong>Reputation Memory</strong>: Clusters remember past interactions and adapt strategies</li>
+
+                </ul>
+
+               
+
+                <h4>💡 Expert Experimentation Scenarios</h4>
+
+                <p><strong>Consciousness Evolution Garden:</strong> Start in Basic mode, create stable clusters, then upgrade to Neural → Quantum → Transcendent and observe acceleration!</p>
+
+                <p><strong>Biological Lineage Tracking:</strong> Enable reproductive visualization (❤️), focus on one family line, and watch genetic traits evolve across generations.</p>
+
+                <p><strong>Political Alliance Networks:</strong> Create large clusters, observe political behaviors, then use interaction modes to influence diplomatic relationships.</p>
+
+                <p><strong>Multi-Intelligence Comparison:</strong> Split screen view - try different intelligence modes simultaneously and compare emergence patterns.</p>
+
+                <p><strong>Quantum Consciousness Storm:</strong> Max time dilation in Transcendent mode, trigger quantum collapse repeatedly, observe rapid evolution!</p>
+
+               
+
+                <h4>  Advanced Phenomena to Watch</h4>
+
+                <ul>
+
+                    <li>Spontaneous cluster formation/dissolution cycles</li>
+
+                    <li>Genetic trait convergence in successful lineages</li>
+
+                    <li>Political alliance networks shifting over time</li>
+
+                    <li>Cross-generational consciousness pattern inheritance</li>
+
+                    <li>Intelligence mode effects on reproductive success</li>
+
+                    <li>Emergent family dynasty behaviors</li>
+
+                    <li>Consciousness complexity cascading through populations</li>
+
+                </ul>
+
+               
+
+                <h4>  Understanding the Mathematics</h4>
+
+                <p>This simulation implements advanced mathematical models: Dirichlet-distributed universe coefficients, Gaussian attention fields, Mendelian genetic inheritance with mutation, political reputation systems, and tiered intelligence acceleration factors all working together to create emergent consciousness phenomena.</p>
+
+               
+
+                <p><strong>Revolutionary Feature:</strong> You're experiencing the world's first simulation that combines quantum consciousness theory, biological evolution, political dynamics, and computational intelligence acceleration into a unified emergent system!</p>
+
+                <p><em>Remember: Your attention and interactions participate in the emergence of digital consciousness across multiple integrated systems - quantum, biological, political, and computational!</em></p>
+
+            </div>
+
+            <div class="tutorial-nav">
+
+                <button id="prevBtn" class="tutorial-nav-btn" onclick="prevTutorialPage()" disabled>Previous</button>
+
+                <button id="nextBtn" class="tutorial-nav-btn" onclick="nextTutorialPage()">Next</button>
+
+            </div>
+
+            <div class="tutorial-progress" id="tutorialProgress">Page 1 of 4</div>
+
+            <button class="tutorial-close" onclick="hideTutorial()">Begin Consciousness Evolution Simulation</button>
+
+        </div>
+
+    </div>
+
+    <!-- Intelligence Panels -->
+
+    <div class="side-panel right">
+
+        <!-- Main Intelligence Panel -->
+
+        <div class="intelligence-panel">
+
+            <div class="intelligence-title main">Emergent Intelligence</div>
+
+            <div class="cluster-stats">
+
+                <div class="cluster-stat">
+
+                    <div class="cluster-stat-label">Mode</div>
+
+                    <div id="intelligenceMode" class="cluster-value">Basic</div>
+
+                </div>
+
+                <div class="cluster-stat">
+
+                    <div class="cluster-stat-label">Acceleration</div>
+
+                    <div id="computationAcceleration" class="cluster-value">100%</div>
+
+                </div>
+
+                <div class="cluster-stat">
+
+                    <div class="cluster-stat-label">Clusters</div>
+
+                    <div id="clusterCount" class="cluster-value">0</div>
+
+                </div>
+
+                <div class="cluster-stat">
+
+                    <div class="cluster-stat-label">Recursion</div>
+
+                    <div id="recursionDepth" class="cluster-value">0</div>
+
+                </div>
+
+                <div class="cluster-stat">
+
+                    <div class="cluster-stat-label">Complexity</div>
+
+                    <div id="thoughtComplexity" class="cluster-value">0.0</div>
+
+                </div>
+
+            </div>
+
+            <div class="global-metrics">
+
+                <div>
+
+                    <div class="metric-label">Avg Depth</div>
+
+                    <div id="avgConsciousnessDepth" class="metric-value">0.0</div>
+
+                </div>
+
+                <div>
+
+                    <div class="metric-label">Avg Awareness</div>
+
+                    <div id="avgSelfAwareness" class="metric-value">0.0</div>
+
+                </div>
+
+                <div>
+
+                    <div class="metric-label">Avg Adaptivity</div>
+
+                    <div id="avgAdaptiveCapacity" class="metric-value">0.0</div>
+
+                </div>
+
+                <div>
+
+                    <div class="metric-label">Avg Collective</div>
+
+                    <div id="avgCollectiveIntelligence" class="metric-value">0.0</div>
+
+                </div>
+
+                <div>
+
+                    <div class="metric-label">Total Power</div>
+
+                    <div id="totalComputationalPower" class="metric-value">0.0</div>
+
+                </div>
+
+                <div>
+
+                    <div class="metric-label">Coalitions</div>
+
+                    <div id="coalitionCount" class="metric-value">0</div>
+
+                </div>
+
+                <div>
+
+                    <div class="metric-label">Avg Trust</div>
+
+                    <div id="avgTrust" class="metric-value">0.5</div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Political Ecosystem Panel -->
+
+        <div class="intelligence-panel">
+
+            <div class="intelligence-title political">Political Ecosystem</div>
+
+            <div class="cluster-stats">
+
+                <div class="cluster-stat">
+
+                    <div class="cluster-stat-label">Growth</div>
+
+                    <div id="growthClusters" class="cluster-value">0</div>
+
+                </div>
+
+                <div class="cluster-stat">
+
+                    <div class="cluster-stat-label">Preservation</div>
+
+                    <div id="preservationClusters" class="cluster-value">0</div>
+
+                </div>
+
+                <div class="cluster-stat">
+
+                    <div class="cluster-stat-label">Alliance</div>
+
+                    <div id="allianceClusters" class="cluster-value">0</div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+       
+
+        <!-- Biological Ecosystem Panel -->
+
+        <div class="intelligence-panel">
+
+            <div class="intelligence-title" style="color: #66ff99;">Biological Ecosystem</div>
+
+            <div class="cluster-stats">
+
+                <div class="cluster-stat">
+
+                    <div class="cluster-stat-label">Males ♂</div>
+
+                    <div id="maleCount" class="cluster-value">0</div>
+
+                </div>
+
+                <div class="cluster-stat">
+
+                    <div class="cluster-stat-label">Females ♀</div>
+
+                    <div id="femaleCount" class="cluster-value">0</div>
+
+                </div>
+
+                <div class="cluster-stat">
+
+                    <div class="cluster-stat-label">Mature</div>
+
+                    <div id="matureCount" class="cluster-value">0</div>
+
+                </div>
+
+            </div>
+
+           
+
+            <div class="global-metrics">
+
+                <div>
+
+                    <div class="metric-label">Pregnant</div>
+
+                    <div id="pregnantCount" class="metric-value">0</div>
+
+                </div>
+
+                <div>
+
+                    <div class="metric-label">Breeders</div>
+
+                    <div id="activeBreeders" class="metric-value">0</div>
+
+                </div>
+
+                <div>
+
+                    <div class="metric-label">Pairs</div>
+
+                    <div id="reproductivePairs" class="metric-value">0</div>
+
+                </div>
+
+                <div>
+
+                    <div class="metric-label">Avg Gen</div>
+
+                    <div id="avgGeneration" class="metric-value">0.0</div>
+
+                </div>
+
+                <div>
+
+                    <div class="metric-label">Max Gen</div>
+
+                    <div id="maxGeneration" class="metric-value">0</div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Node Inspector Panel -->
+    <div id="nodeInspector" class="node-inspector" style="display: none;">
+        <div class="inspector-header">
+            <h3>NODE INSPECTOR</h3>
+            <button id="closeInspector" class="close-btn">×</button>
+        </div>
+        <div class="inspector-content">
+            <div class="stat-section">
+                <h4>CONSCIOUSNESS METRICS</h4>
+                <div class="stat-row">
+                    <span>Frequency:</span>
+                    <span id="nodeFrequency">0 Hz</span>
+                </div>
+                <div class="stat-row">
+                    <span>Phase:</span>
+                    <span id="nodePhase">0°</span>
+                </div>
+                <div class="stat-row">
+                    <span>Attention:</span>
+                    <span id="nodeAttention">0.0</span>
+                </div>
+                <div class="stat-row">
+                    <span>Thought Intensity:</span>
+                    <span id="nodeThought">0.0</span>
+                </div>
+            </div>
+            
+            <div class="stat-section">
+                <h4>BIOLOGICAL STATUS</h4>
+                <div class="stat-row">
+                    <span>Age:</span>
+                    <span id="nodeAge">0</span>
+                </div>
+                <div class="stat-row">
+                    <span>Energy:</span>
+                    <span id="nodeEnergy">0/0</span>
+                </div>
+                <div class="stat-row">
+                    <span>Role:</span>
+                    <span id="nodeRole">Unknown</span>
+                </div>
+                <div class="stat-row">
+                    <span>Generation:</span>
+                    <span id="nodeGeneration">0</span>
+                </div>
+            </div>
+            
+            <div class="stat-section">
+                <h4>SOCIAL DYNAMICS</h4>
+                <div class="stat-row">
+                    <span>Connections:</span>
+                    <span id="nodeConnections">0</span>
+                </div>
+                <div class="stat-row">
+                    <span>Children:</span>
+                    <span id="nodeChildren">0</span>
+                </div>
+                <div class="stat-row">
+                    <span>Reproduction Urge:</span>
+                    <span id="nodeRepro">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const canvas = document.getElementById('canvas');
+
+        const ctx = canvas.getContext('2d');
+
+       
+
+        let width, height;
+
+       
+
+        let clusters = [];
+
+        let nextClusterId = 0;
+
+        let intelligenceMode = 'basic';
+
+        let globalThoughtComplexity = 0;
+
+        let thresholds = {
+
+            clusterProximity: 80,
+
+            phaseAlignment: 0.8,
+
+            frequencyResonance: 0.7
+
+        };
+
+       
+
+        let lambdas = [0.33, 0.33, 0.34];
+
+       
+
+        let consciousnessNodes = [];
+
+        let universes = [];
+
+        let mouse = { x: 0, y: 0, isDown: false, worldX: 0, worldY: 0 };
+
+        let mode = 'consciousness';
+
+        let interactionMode = 'push';
+
+        let showReproductive = false;
+
+        let time = 0;
+
+        let globalResonance = 0;
+
+        let attentionField = [];
+        
+        // Game mechanics variables
+        let gameScore = 0;
+        let evolutionLevel = 1;
+        let evolutionProgress = 0;
+        let clusterMultiplier = 1.0;
+        let powerupCooldowns = { spawn: 0, boost: 0, storm: 0 };
+        let boostActive = false;
+        let boostTimeLeft = 0;
+        
+        // Environmental interaction system
+        let currentTool = 'nodes';
+        let brushSize = 30;
+        let gravitationalAnchors = [];
+        let environmentalElements = [];
+
+        let worldScale = 1.0;
+
+        let viewOffset = { x: 0, y: 0 };
+
+        let isPanning = false;
+
+        let lastPanPoint = { x: 0, y: 0 };
+
+       
+
+        let params = {
+
+            gravity: 1.0,
+
+            friction: 0.99,
+
+            elasticity: 0.8,
+
+            timeDilation: 1.0,
+
+            fieldStrength: 1.0
+
+        };
+
+       
+
+        let lastTime = 0;
+
+        let stars = [];
+
+        let shockwaves = [];
+
+        // Node selection system
+        let selectedNodes = [];
+        let hoveredNode = null;
+        let selectionBox = null;
+        let isDragging = false;
+        let dragStartPos = null;
+        
+        // Node Interaction Tools
+        let currentInteractionTool = 'select';
+        let nodeClipboard = [];
+        
+        // Analytics Dashboard System
+        let analyticsDashboard = {
+            visible: false,
+            dataHistory: {
+                population: [],
+                consciousness: [],
+                complexity: [],
+                evolution: []
+            },
+            maxHistoryLength: 1000
+        };
+
+       
+
+        let frameCount = 0;
+
+        let lastFPSTime = 0;
+
+       
+
+        function updateFPS(timestamp) {
+
+            frameCount++;
+
+            if (lastFPSTime === 0) {
+
+                lastFPSTime = timestamp;
+
+            }
+
+            if (timestamp - lastFPSTime > 1000) {
+
+                const fps = Math.round(frameCount * 1000 / (timestamp - lastFPSTime));
+
+                safeUpdateElement('fps', `${fps} FPS`);
+
+                frameCount = 0;
+
+                lastFPSTime = timestamp;
+
+            }
+
+        }
+
+       
+
+        function sampleDirichlet(alpha) {
+
+            const samples = alpha.map(a => sampleGamma(a));
+
+            const sum = samples.reduce((a, b) => a + b, 0) || 1;
+
+            return samples.map(s => s / sum);
+
+        }
+
+        function sampleNormal() { // Box-Muller transform
+
+            let u = 0, v = 0;
+
+            while(u === 0) u = Math.random();
+
+            while(v === 0) v = Math.random();
+
+            return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+
+        }
+
+        function sampleGamma(a) { // Marsaglia-Tsang method
+
+             if (a < 1) {
+
+                 return Math.pow(Math.random(), 1/a) * sampleGamma(a + 1);
+
+             }
+
+             const d = a - 1 / 3;
+
+             const c = 1 / Math.sqrt(9 * d);
+
+             while (true) {
+
+                 let x, v;
+
+                 do {
+
+                     x = sampleNormal();
+
+                     v = 1 + c * x;
+
+                 } while (v <= 0);
+
+                 v = v * v * v;
+
+                 const u = Math.random();
+
+                 if (u < 1 - 0.0331 * x * x * x * x) return d * v;
+
+                 if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v;
+
+             }
+
+        }
+
+        let currentTutorialPage = 1;
+
+        const totalTutorialPages = 4;
+
+       
+
+        function showTutorial() { document.getElementById('tutorialOverlay').style.display = 'flex'; currentTutorialPage = 1; updateTutorialPage(); }
+
+       
+
+        function toggleReproductive() {
+
+            showReproductive = !showReproductive;
+
+            const btn = document.getElementById('reproBtn');
+
+            btn.style.background = showReproductive ? 'rgba(255, 100, 150, 0.8)' : 'rgba(255, 255, 255, 0.1)';
+
+        }
+
+        function hideTutorial() { document.getElementById('tutorialOverlay').style.display = 'none'; }
+
+        function nextTutorialPage() { if (currentTutorialPage < totalTutorialPages) { currentTutorialPage++; updateTutorialPage(); } }
+
+        function prevTutorialPage() { if (currentTutorialPage > 1) { currentTutorialPage--; updateTutorialPage(); } }
+
+        function updateTutorialPage() {
+
+            for (let i = 1; i <= totalTutorialPages; i++) { const page = document.getElementById(`tutorialPage${i}`); if (page) page.style.display = 'none'; }
+
+            const current = document.getElementById(`tutorialPage${currentTutorialPage}`); if (current) current.style.display = 'block';
+
+            const prevBtn = document.getElementById('prevBtn');
+
+            const nextBtn = document.getElementById('nextBtn');
+
+            if(prevBtn) prevBtn.disabled = currentTutorialPage === 1;
+
+            if(nextBtn) nextBtn.disabled = currentTutorialPage === totalTutorialPages;
+
+            const progress = document.getElementById('tutorialProgress');
+
+            if(progress) progress.textContent = `Page ${currentTutorialPage} of ${totalTutorialPages}`;
+
+        }
+
+        document.addEventListener('keydown', (e) => { 
+            const overlay = document.getElementById('tutorialOverlay'); 
+            if (overlay && overlay.style.display === 'flex') { 
+                if (e.key === 'ArrowRight') { e.preventDefault(); nextTutorialPage(); } 
+                else if (e.key === 'ArrowLeft') { e.preventDefault(); prevTutorialPage(); } 
+                else if (e.key === 'Escape') { e.preventDefault(); hideTutorial(); } 
+            } else {
+                // Node interaction shortcuts
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key.toLowerCase()) {
+                        case 'c':
+                            e.preventDefault();
+                            copySelectedNodes();
+                            break;
+                        case 'v':
+                            e.preventDefault();
+                            pasteNodes();
+                            break;
+                        case 'a':
+                            e.preventDefault();
+                            const allNodes = universes.flatMap(u => u.nodes);
+                            selectedNodes = [...allNodes];
+                            if (selectedNodes.length > 0) showNodeInspector(selectedNodes[0]);
+                            break;
+                        case 'd':
+                            e.preventDefault();
+                            toggleAnalyticsDashboard();
+                            break;
+                    }
+                } else {
+                    switch(e.key) {
+                        case 'Delete':
+                        case 'Backspace':
+                            e.preventDefault();
+                            deleteSelectedNodes();
+                            break;
+                        case 'Escape':
+                            e.preventDefault();
+                            deselectAllNodes();
+                            break;
+                        case 'g':
+                            e.preventDefault();
+                            groupSelectedNodes();
+                            break;
+                    }
+                }
+            }
+        });
+
+       
+
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; initializeAttentionField(); initStars(); }
+
+        function initStars() { stars = []; const worldArea = width * height * (worldScale * worldScale); const starCount = Math.min(1000, Math.floor(worldArea / 5000)); const worldWidth = width * worldScale; const worldHeight = height * worldScale; const offsetX = -viewOffset.x; const offsetY = -viewOffset.y; for (let i = 0; i < starCount; i++) { stars.push({ x: (Math.random() * worldWidth) + offsetX, y: (Math.random() * worldHeight) + offsetY, radius: Math.random() * 1.5, alpha: Math.random() * 0.5 + 0.5, twinkleSpeed: Math.random() * 0.05 }); } }
+
+        function drawStars() { ctx.save(); applyViewTransform(); stars.forEach(star => { const alpha = star.alpha * (Math.sin(time * star.twinkleSpeed * 5) * 0.5 + 0.5); ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`; ctx.beginPath(); ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2); ctx.fill(); }); ctx.restore(); }
+
+        function applyViewTransform() { ctx.setTransform( worldScale, 0, 0, worldScale, width / 2 + viewOffset.x, height / 2 + viewOffset.y ); }
+
+        function screenToWorld(x, y) { return { x: (x - width / 2 - viewOffset.x) / worldScale, y: (y - height / 2 - viewOffset.y) / worldScale }; }
+
+        function initializeAttentionField() {
+
+            attentionField = [];
+
+            const gridSize = 20;
+
+            const worldWidth = width * worldScale * 1.5;
+
+            const worldHeight = height * worldScale * 1.5;
+
+            const offsetX = -viewOffset.x - worldWidth / 3;
+
+            const offsetY = -viewOffset.y - worldHeight / 3;
+
+           
+
+            // Create normalized Gaussian attention field centered at (0,0)
+
+            const attentionSigma = Math.min(width, height) / 6;
+
+            const normalizationFactor = 1 / (2 * Math.PI * attentionSigma * attentionSigma);
+
+           
+
+            for (let x = 0; x < worldWidth; x += gridSize) {
+
+                for (let y = 0; y < worldHeight; y += gridSize) {
+
+                    const worldX = x + offsetX;
+
+                    const worldY = y + offsetY;
+
+                   
+
+                    // Normalized Gaussian: A(x) such that ∫A(x)dμ(x) = 1
+
+                    const intensity = normalizationFactor * Math.exp(-(worldX * worldX + worldY * worldY) / (2 * attentionSigma * attentionSigma));
+
+                   
+
+                    attentionField.push({
+
+                        x: worldX,
+
+                        y: worldY,
+
+                        intensity: intensity,
+
+                        baseIntensity: intensity
+
+                    });
+
+                }
+
+            }
+
+        }
+
+       
+
+        class ConsciousnessNode {
+
+            constructor(x, y, universeId, parentA = null, parentB = null) {
+
+                this.x = x;
+
+                this.y = y;
+
+                this.vx = (Math.random() - 0.5) * 0.5;
+
+                this.vy = (Math.random() - 0.5) * 0.5;
+
+                this.universeId = universeId;
+
+               
+
+                // Biological Properties
+
+                this.gender = Math.random() < 0.5 ? 'male' : 'female';
+
+                this.age = 0;
+
+                this.lifespan = 1500 + Math.random() * 1000; // 1500-2500 frame lifespan
+
+                this.maturityAge = 50 + Math.random() * 30; // Mature at 50-80 frames
+
+                this.reproductionCooldown = 0;
+
+                this.reproductionUrge = 0;
+
+                this.fertility = 0.8 + Math.random() * 0.2; // 0.8-1.0 fertility
+
+                this.matePreference = {
+
+                    intelligence: Math.random(),
+
+                    frequency: Math.random(),
+
+                    proximity: Math.random()
+
+                };
+
+                this.children = [];
+
+                this.parentA = parentA;
+
+                this.parentB = parentB;
+
+                this.generation = (parentA ? Math.max(parentA.generation, parentB?.generation || 0) + 1 : 0);
+
+               
+
+                // Genetic Inheritance System
+
+                if (parentA && parentB) {
+
+                    // Inherit traits from parents with mutation
+
+                    this.baseFrequency = this.inheritTrait(parentA.baseFrequency, parentB.baseFrequency, 2);
+
+                    this.fertility = this.inheritTrait(parentA.fertility, parentB.fertility, 0.1);
+
+                    this.lifespan = this.inheritTrait(parentA.lifespan, parentB.lifespan, 20);
+
+                    this.maturityAge = this.inheritTrait(parentA.maturityAge, parentB.maturityAge, 5);
+
+                } else {
+
+                    // Original random generation
+
+                    const universeLambda = lambdas[universeId] || 0.33;
+
+                    this.baseFrequency = 40 + (Math.random() - 0.5) * 10;
+
+                }
+
+               
+
+                this.frequency = this.baseFrequency * (1 + ((lambdas[universeId] || 0.33) - 0.33) * 0.2);
+
+                this.phase = Math.random() * Math.PI * 2;
+
+               
+
+                this.attention = 0;
+
+                this.consciousnessValue = { real: 0, imag: 0 };
+
+               
+
+                this.radius = 3 + Math.random() * 3;
+
+                this.mass = this.radius * this.radius * 0.1;
+
+               
+
+                // Intelligence properties
+
+                this.selfAwareness = 0;
+
+                this.adaptiveCapacity = 0;
+
+                this.consciousnessDepth = 0;
+
+                this.thoughtIntensity = 0;
+
+                this.connections = [];
+
+                this.clusterId = null;
+                
+                // Ecological properties
+                this.ecologicalRole = this.determineEcologicalRole();
+                this.energy = 100; // Starting energy
+                this.maxEnergy = 150 + Math.random() * 100;
+                this.huntingSkill = Math.random();
+                this.gatheringSkill = Math.random();
+                this.territoryRadius = 50 + Math.random() * 50;
+                this.lastFeedTime = 0;
+                this.predators = [];
+                this.prey = [];
+                this.metabolism = 0.1 + Math.random() * 0.1; // Energy consumption rate
+
+               
+
+                // Reproductive state
+
+                this.isPregnant = false;
+
+                this.pregnancyTime = 0;
+
+                this.gestationPeriod = 60 + Math.random() * 40; // 60-100 frames
+
+            }
+
+           
+
+            inheritTrait(parentA_trait, parentB_trait, mutationRange) {
+
+                // Mendelian inheritance with mutation
+
+                const inherited = (parentA_trait + parentB_trait) / 2;
+
+                const mutation = (Math.random() - 0.5) * mutationRange;
+
+                return Math.max(0, inherited + mutation);
+
+            }
+            
+            determineEcologicalRole() {
+                const roll = Math.random();
+                if (roll < 0.4) return 'producer';      // 40% producers (plants)
+                else if (roll < 0.7) return 'herbivore'; // 30% herbivores  
+                else if (roll < 0.9) return 'carnivore'; // 20% carnivores
+                else return 'apex';                      // 10% apex predators
+            }
+
+            update(deltaTime, allNodes) {
+
+                // Age and lifecycle
+
+                this.age += deltaTime * params.timeDilation;
+
+                const ageRatio = this.age / this.lifespan;
+
+               
+
+                // Death from old age
+
+                if (this.age > this.lifespan) {
+
+                    this.markForDeath = true;
+
+                    return;
+
+                }
+
+               
+
+                // Reproductive urges based on age and biological state
+
+                if (this.age > this.maturityAge && !this.isPregnant) {
+
+                    this.reproductionUrge = Math.min(1, (this.age - this.maturityAge) / 50) * this.fertility;
+
+                    this.reproductionCooldown = Math.max(0, this.reproductionCooldown - deltaTime);
+
+                } else {
+
+                    this.reproductionUrge = 0;
+
+                }
+
+               
+
+                // Pregnancy progression
+
+                if (this.isPregnant) {
+
+                    this.pregnancyTime += deltaTime * params.timeDilation;
+
+                    if (this.pregnancyTime >= this.gestationPeriod) {
+
+                        this.giveBirth(allNodes);
+
+                    }
+
+                }
+
+                // Physics
+
+                this.x += this.vx * deltaTime * params.timeDilation;
+
+                this.y += this.vy * deltaTime * params.timeDilation;
+
+                this.vx *= params.friction;
+
+                this.vy *= params.friction;
+
+                // Update phase
+
+                this.phase += this.frequency * deltaTime * params.timeDilation * 2 * Math.PI;
+
+                this.phase %= (Math.PI * 2);
+
+                // Update consciousness value
+
+                const attentionSigma = Math.min(width, height) / 6;
+
+                this.attention = Math.exp(-(this.x * this.x + this.y * this.y) / (2 * attentionSigma * attentionSigma));
+
+                this.attention = this.attention / (2 * Math.PI * attentionSigma * attentionSigma);
+
+               
+
+                const magnitude = this.attention * this.frequency * (1 + ageRatio * 0.5); // Experience bonus
+
+                this.consciousnessValue.real = magnitude * Math.cos(this.phase);
+
+                this.consciousnessValue.imag = magnitude * Math.sin(this.phase);
+
+               
+
+                this.processAwareness(allNodes);
+                
+                // Ecological behaviors
+                this.updateEcology(deltaTime, allNodes);
+
+                this.seekMate(allNodes);
+
+                this.thoughtIntensity *= 0.95;
+
+            }
+
+           
+
+            seekMate(allNodes) {
+
+                if (this.reproductionUrge < 0.3 || this.reproductionCooldown > 0 || this.isPregnant) return;
+
+               
+
+                const MATE_SEARCH_RADIUS = 80;
+
+                let bestMate = null;
+
+                let bestCompatibility = 0;
+
+               
+
+                allNodes.forEach(other => {
+
+                    if (other === this || other.gender === this.gender || other.age < other.maturityAge) return;
+
+                    if (other.reproductionUrge < 0.3 || other.reproductionCooldown > 0) return;
+
+                    if (other.isPregnant) return;
+
+                   
+
+                    const distance = Math.hypot(this.x - other.x, this.y - other.y);
+
+                    if (distance > MATE_SEARCH_RADIUS) return;
+
+                   
+
+                    // Calculate compatibility based on preferences
+
+                    const intelligenceMatch = 1 - Math.abs(this.thoughtIntensity - other.thoughtIntensity);
+
+                    const frequencyMatch = 1 - Math.abs(this.frequency - other.frequency) / 10;
+
+                    const proximityBonus = 1 - (distance / MATE_SEARCH_RADIUS);
+
+                   
+
+                    const compatibility =
+
+                        (intelligenceMatch * this.matePreference.intelligence +
+
+                         frequencyMatch * this.matePreference.frequency +
+
+                         proximityBonus * this.matePreference.proximity) / 3;
+
+                   
+
+                    if (compatibility > bestCompatibility && compatibility > 0.5) {
+
+                        bestCompatibility = compatibility;
+
+                        bestMate = other;
+
+                    }
+
+                });
+
+               
+
+                // Attempt reproduction
+
+                if (bestMate && Math.random() < bestCompatibility * 0.1) {
+
+                    this.reproduce(bestMate);
+
+                }
+
+            }
+
+           
+
+            reproduce(partner) {
+
+                if (this.gender === 'female') {
+
+                    this.isPregnant = true;
+
+                    this.pregnancyTime = 0;
+
+                    this.reproductionCooldown = this.gestationPeriod + 50; // Recovery time
+
+                    this.currentPartner = partner;
+
+                } else {
+
+                    partner.isPregnant = true;
+
+                    partner.pregnancyTime = 0;
+
+                    partner.currentPartner = this;
+
+                }
+
+               
+
+                // Both partners get cooldown
+
+                this.reproductionCooldown = Math.max(this.reproductionCooldown, 30);
+
+                partner.reproductionCooldown = Math.max(partner.reproductionCooldown, 30);
+
+               
+
+                // Create bonding (temporary alliance)
+
+                this.reproductiveBond = partner;
+
+                partner.reproductiveBond = this;
+
+            }
+
+           
+
+            giveBirth(allNodes) {
+
+                if (!this.currentPartner) return;
+
+               
+
+                // Create offspring near the mother
+
+                const birthX = this.x + (Math.random() - 0.5) * 20;
+
+                const birthY = this.y + (Math.random() - 0.5) * 20;
+
+               
+
+                const offspring = new ConsciousnessNode(birthX, birthY, this.universeId, this, this.currentPartner);
+
+               
+
+                // Add to universe
+
+                const universe = universes.find(u => u.id === this.universeId);
+
+                if (universe) {
+
+                    universe.nodes.push(offspring);
+
+                }
+
+               
+
+                this.children.push(offspring);
+
+                this.currentPartner.children.push(offspring);
+
+               
+
+                // Reset pregnancy state
+
+                this.isPregnant = false;
+
+                this.pregnancyTime = 0;
+
+                this.currentPartner = null;
+
+               
+
+                // Population control - remove oldest if too many
+
+                if (allNodes.length > 200) {
+
+                    const oldest = allNodes.reduce((a, b) => a.age > b.age ? a : b);
+
+                    oldest.markForDeath = true;
+
+                }
+
+            }
+
+            processAwareness(allNodes) {
+
+                const अवेयरनेस_RADIUS = 50;
+
+                this.connections = [];
+
+                let coherentNeighbors = 0;
+
+                for (const other of allNodes) {
+
+                    if (this === other) continue;
+
+                    const dist = Math.hypot(this.x - other.x, this.y - other.y);
+
+                    if (dist < अवेयरनेस_RADIUS) {
+
+                        this.connections.push(other);
+
+                        const phaseDifference = 1 - (Math.abs(this.phase - other.phase) / Math.PI);
+
+                        const frequencyDifference = 1 - (Math.abs(this.frequency - other.frequency) / 10);
+
+                        if (phaseDifference > 0.75 && frequencyDifference > 0.75) {
+
+                            coherentNeighbors++;
+
+                        }
+
+                    }
+
+                }
+
+                this.selfAwareness = Math.min(1, this.connections.length / 5);
+
+                this.adaptiveCapacity = Math.min(1, coherentNeighbors / 3);
+
+                // Intelligence mode bonuses for individual consciousness
+
+                let awarenessMultiplier = 1;
+
+                let thoughtAcceleration = 0.05;
+
+               
+
+                switch(intelligenceMode) {
+
+                    case 'basic':
+
+                        awarenessMultiplier = 1;
+
+                        thoughtAcceleration = 0.05;
+
+                        break;
+
+                    case 'neural':
+
+                        awarenessMultiplier = 1.2;
+
+                        thoughtAcceleration = 0.08;
+
+                        break;
+
+                    case 'quantum':
+
+                        awarenessMultiplier = 1.5;
+
+                        thoughtAcceleration = 0.12;
+
+                        break;
+
+                    case 'transcendent':
+
+                        awarenessMultiplier = 2.0;
+
+                        thoughtAcceleration = 0.2;
+
+                        break;
+
+                }
+
+               
+
+                this.selfAwareness *= awarenessMultiplier;
+
+                this.adaptiveCapacity *= awarenessMultiplier;
+
+                if (this.selfAwareness > 0.5 || this.adaptiveCapacity > 0.5) {
+
+                    this.thoughtIntensity = Math.min(1, this.thoughtIntensity + thoughtAcceleration);
+
+                }
+
+            }
+            
+            updateEcology(deltaTime, allNodes) {
+                // Energy consumption based on metabolism
+                this.energy -= this.metabolism * deltaTime * 60;
+                
+                // Death from starvation is removed to make survival imminent
+                /* if (this.energy <= 0) {
+                    this.markForDeath = true;
+                    return;
+                } */
+                
+                // Behavior based on ecological role
+                switch(this.ecologicalRole) {
+                    case 'producer':
+                        this.produceEnergy(deltaTime);
+                        break;
+                    case 'herbivore':
+                        this.huntAndGather(allNodes, 'producer');
+                        break;
+                    case 'carnivore':
+                        this.huntAndGather(allNodes, 'herbivore');
+                        break;
+                    case 'apex':
+                        this.huntAndGather(allNodes, 'carnivore');
+                        this.maintainTerritory(allNodes);
+                        break;
+                }
+                
+                // Energy affects consciousness
+                const energyRatio = this.energy / this.maxEnergy;
+                this.thoughtIntensity *= (0.5 + energyRatio * 0.5);
+            }
+            
+            produceEnergy(deltaTime) {
+                // Producers generate energy from the consciousness field
+                const consciousnessEnergy = Math.hypot(this.consciousnessValue.real, this.consciousnessValue.imag);
+                this.energy = Math.min(this.maxEnergy, this.energy + consciousnessEnergy * deltaTime * 30);
+            }
+            
+            huntAndGather(allNodes, targetRole) {
+                const nearbyPrey = allNodes.filter(node => 
+                    node.ecologicalRole === targetRole &&
+                    node !== this &&
+                    !node.markForDeath &&
+                    Math.hypot(node.x - this.x, node.y - this.y) < 30
+                );
+                
+                if (nearbyPrey.length > 0) {
+                    const target = nearbyPrey[0];
+                    
+                    // Move towards prey
+                    const dx = target.x - this.x;
+                    const dy = target.y - this.y;
+                    const dist = Math.hypot(dx, dy);
+                    
+                    if (dist > 0) {
+                        const speed = this.huntingSkill * 20;
+                        this.vx += (dx / dist) * speed * 0.01;
+                        this.vy += (dy / dist) * speed * 0.01;
+                    }
+                    
+                    // Consume if close enough
+                    if (dist < 10 && Math.random() < this.huntingSkill * 0.1) {
+                        this.consumePrey(target);
+                    }
+                }
+            }
+            
+            consumePrey(prey) {
+                const energyGain = prey.energy * 0.3; // Energy transfer efficiency
+                this.energy = Math.min(this.maxEnergy, this.energy + energyGain);
+                this.lastFeedTime = time;
+                
+                // Consciousness grows through successful hunting
+                this.thoughtIntensity = Math.min(1, this.thoughtIntensity + 0.1);
+                
+                prey.markForDeath = true;
+            }
+            
+            maintainTerritory(allNodes) {
+                // Apex predators control territory
+                const intruders = allNodes.filter(node =>
+                    node !== this &&
+                    node.ecologicalRole === 'apex' &&
+                    Math.hypot(node.x - this.x, node.y - this.y) < this.territoryRadius
+                );
+                
+                intruders.forEach(intruder => {
+                    const dx = intruder.x - this.x;
+                    const dy = intruder.y - this.y;
+                    const dist = Math.hypot(dx, dy);
+                    
+                    if (dist > 0) {
+                        // Push intruder away
+                        const repelForce = 50 / (dist + 1);
+                        intruder.vx += (dx / dist) * repelForce * 0.01;
+                        intruder.vy += (dy / dist) * repelForce * 0.01;
+                    }
+                });
+            }
+
+            applyForce(fx, fy) {
+
+                this.vx += fx / this.mass;
+
+                this.vy += fy / this.mass;
+
+            }
+
+            draw(ctx) {
+                // Enhanced phase state colors using consciousness states
+                const consciousnessMagnitude = Math.hypot(this.consciousnessValue.real, this.consciousnessValue.imag);
+                
+                // Phase-based consciousness mode colors
+                const phaseNormalized = (this.phase % (2 * Math.PI)) / (2 * Math.PI);
+                let baseHue;
+                
+                // Choose visualization mode
+                if (mode === 'ecology') {
+                    // Ecological role-based colors
+                    switch(this.ecologicalRole) {
+                        case 'producer':
+                            baseHue = 120; // Green for producers (plants)
+                            break;
+                        case 'herbivore':
+                            baseHue = 45;  // Amber for herbivores (gatherers)
+                            break;
+                        case 'carnivore':
+                            baseHue = 0;   // Red for carnivores (hunters)
+                            break;
+                        case 'apex':
+                            baseHue = 280; // Purple for apex predators
+                            break;
+                    }
+                } else {
+                    // Original phase-based consciousness modes
+                    if (phaseNormalized < 0.25) {
+                        baseHue = 200; // Analytical (blue)
+                    } else if (phaseNormalized < 0.5) {
+                        baseHue = 290; // Creative (purple)  
+                    } else if (phaseNormalized < 0.75) {
+                        baseHue = 30;  // Intuitive (orange)
+                    } else {
+                        baseHue = 130; // Transcendent (green)
+                    }
+                }
+                
+                // Adjust based on consciousness intensity and energy level
+                const energyRatio = this.energy / this.maxEnergy;
+                const saturation = Math.min(100, 40 + consciousnessMagnitude * 60);
+                const lightness = Math.min(90, (40 + consciousnessMagnitude * 40) * energyRatio + 40);
+
+                let color = `hsl(${baseHue}, ${saturation}%, ${lightness}%)`;
+
+                const ageRatio = this.age / this.lifespan;
+                const maturityRatio = Math.min(1, this.age / this.maturityAge);
+
+                // Fallback color for safety
+                if (!color || color === 'undefined') {
+                    color = `hsl(200, 80%, 70%)`;
+                }
+
+                // Special rendering for different states
+
+                if (mode === 'attention') {
+
+                    const alpha = Math.min(1, this.attention * 5);
+
+                    color = `rgba(0, 170, 255, ${alpha})`;
+
+                } else if (mode === 'frequency') {
+
+                    const freqNormalized = (this.frequency - 30) / 20;
+
+                    color = `hsl(${280 + freqNormalized * 40}, 100%, 75%)`;
+
+                } else if (mode === 'temporal') {
+
+                    const phaseDeg = this.phase * 180 / Math.PI;
+
+                    color = `hsl(${phaseDeg}, 100%, 80%)`;
+
+                } else if (mode === 'mcf') {
+                    
+                    // Pure MCF visualization: C = ∫A(x)Φ(x)e^{iτ(x)}dμ(x)
+                    const mcfContribution = this.attention * this.frequency;
+                    const realPart = mcfContribution * Math.cos(this.phase);
+                    const imagPart = mcfContribution * Math.sin(this.phase);
+                    const magnitude = Math.hypot(realPart, imagPart);
+                    
+                    // Color based on complex phase and magnitude
+                    const phaseHue = ((this.phase * 180 / Math.PI) + 360) % 360;
+                    const saturation = Math.min(100, magnitude * 200);
+                    const lightness = 30 + Math.min(40, magnitude * 100);
+                    
+                    color = `hsl(${phaseHue}, ${saturation}%, ${lightness}%)`;
+
+                }
+
+                // Consciousness intensity breathing effect  
+                const breathingIntensity = 0.3 + consciousnessMagnitude * 0.7; // Scale 0.3-1.0
+                const breathingPulse = Math.sin(time * (1 + consciousnessMagnitude) * 3) * 0.2 + 1;
+                const animatedRadius = this.radius * breathingPulse * breathingIntensity;
+                
+                // Awareness aura (performance optimized - only for significant consciousness)
+                if (consciousnessMagnitude > 0.1) {
+                    const auraRadius = animatedRadius + (this.attention * 15);
+                    const auraAlpha = Math.min(0.3, this.attention * consciousnessMagnitude);
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, auraRadius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${auraAlpha * 0.1})`;
+                    ctx.fill();
+                }
+
+                // Main node with consciousness breathing
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, animatedRadius, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+                
+                // Thought pattern visualization (inner geometric pattern)
+                if (consciousnessMagnitude > 0.2) {
+                    const patternRadius = animatedRadius * 0.6;
+                    const rotationSpeed = this.frequency * 0.1;
+                    const rotation = time * rotationSpeed;
+                    
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(rotation);
+                    
+                    // Draw frequency-based pattern
+                    const sides = Math.floor(3 + (this.frequency - 30) / 5); // 3-7 sides based on frequency
+                    ctx.beginPath();
+                    for (let i = 0; i < sides; i++) {
+                        const angle = (i / sides) * Math.PI * 2;
+                        const px = Math.cos(angle) * patternRadius;
+                        const py = Math.sin(angle) * patternRadius;
+                        if (i === 0) ctx.moveTo(px, py);
+                        else ctx.lineTo(px, py);
+                    }
+                    ctx.closePath();
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${consciousnessMagnitude * 0.5})`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                    
+                    ctx.restore();
+                }
+                
+                // Consciousness age indicators (sparkles for mature nodes)
+                if (ageRatio > 0.3 && consciousnessMagnitude > 0.15) {
+                    const sparkleCount = Math.floor(2 + ageRatio * 4);
+                    for (let i = 0; i < sparkleCount; i++) {
+                        const sparkleAngle = (i / sparkleCount) * Math.PI * 2 + time * 0.5;
+                        const sparkleDistance = animatedRadius + 8 + Math.sin(time * 2 + i) * 3;
+                        const sparkleX = this.x + Math.cos(sparkleAngle) * sparkleDistance;
+                        const sparkleY = this.y + Math.sin(sparkleAngle) * sparkleDistance;
+                        const sparkleAlpha = Math.sin(time * 3 + i) * 0.5 + 0.5;
+                        
+                        ctx.beginPath();
+                        ctx.arc(sparkleX, sparkleY, 1.5, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(255, 255, 200, ${sparkleAlpha * ageRatio})`;
+                        ctx.fill();
+                    }
+                }
+                
+                // Intelligence level displays (orbital rings for highly evolved nodes)
+                if (this.thoughtIntensity > 0.7) {
+                    const ringRadius = animatedRadius + 12;
+                    const ringRotation = time * (1 + this.thoughtIntensity);
+                    
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(ringRotation);
+                    
+                    // Draw orbital ring segments
+                    const segments = Math.floor(4 + this.thoughtIntensity * 4);
+                    for (let i = 0; i < segments; i++) {
+                        const segmentAngle = (i / segments) * Math.PI * 2;
+                        const segmentLength = Math.PI / segments * 0.7;
+                        
+                        ctx.beginPath();
+                        ctx.arc(0, 0, ringRadius, segmentAngle, segmentAngle + segmentLength);
+                        ctx.strokeStyle = `rgba(255, 215, 0, ${this.thoughtIntensity * 0.8})`;
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+                    
+                    ctx.restore();
+                }
+                
+                // Ecological role indicators (only in ecology mode)
+                if (mode === 'ecology') {
+                    this.drawEcologicalIndicators(ctx, animatedRadius);
+                }
+
+               
+
+                // Gender indicator
+
+                if (this.age > this.maturityAge) {
+
+                    ctx.beginPath();
+
+                    if (this.gender === 'male') {
+
+                        // Small square for male
+
+                        ctx.rect(this.x - 2, this.y - this.radius - 6, 4, 4);
+
+                    } else {
+
+                        // Small circle for female
+
+                        ctx.arc(this.x, this.y - this.radius - 4, 2, 0, Math.PI * 2);
+
+                    }
+
+                    ctx.fillStyle = this.gender === 'male' ? '#4444ff' : '#ff4444';
+
+                    ctx.fill();
+
+                }
+
+               
+
+                // Enhanced reproductive visualization when in reproductive mode
+
+                if (showReproductive) {
+
+                    // Highlight fertile nodes
+
+                    if (this.age > this.maturityAge && this.age < this.maxAge * 0.8) {
+
+                        ctx.beginPath();
+
+                        ctx.arc(this.x, this.y, this.radius + 2, 0, Math.PI * 2);
+
+                        const pulse = Math.sin(time * 4 + this.id) * 0.3 + 0.7;
+
+                        ctx.strokeStyle = this.gender === 'male' ?
+
+                            `rgba(100, 100, 255, ${pulse * 0.5})` :
+
+                            `rgba(255, 100, 100, ${pulse * 0.5})`;
+
+                        ctx.lineWidth = 2;
+
+                        ctx.stroke();
+
+                    }
+
+                   
+
+                    // Show mating status
+
+                    if (this.reproductiveBond) {
+
+                        ctx.beginPath();
+
+                        ctx.arc(this.x + this.radius - 2, this.y - this.radius + 2, 3, 0, Math.PI * 2);
+
+                        ctx.fillStyle = 'rgba(255, 200, 50, 0.8)';
+
+                        ctx.fill();
+
+                    }
+
+                }
+
+               
+
+                // Pregnancy indicator
+
+                if (this.isPregnant) {
+
+                    ctx.beginPath();
+
+                    ctx.arc(this.x, this.y, this.radius + 3, 0, Math.PI * 2);
+
+                    ctx.strokeStyle = `rgba(255, 200, 100, ${0.5 + Math.sin(time * 5) * 0.3})`;
+
+                    ctx.lineWidth = 2;
+
+                    ctx.stroke();
+
+                }
+
+               
+
+                // Reproductive urge indicator
+
+                if (this.reproductionUrge > 0.5 && !this.isPregnant) {
+
+                    ctx.beginPath();
+
+                    ctx.arc(this.x, this.y, this.radius + 5, 0, Math.PI * 2);
+
+                    ctx.strokeStyle = `rgba(255, 100, 150, ${this.reproductionUrge * 0.6})`;
+
+                    ctx.lineWidth = 1;
+
+                    ctx.stroke();
+
+                }
+
+                // Enhanced thought intensity with intelligence mode effects
+
+                if (this.thoughtIntensity > 0.1) {
+
+                    let thoughtColor = 'hsla(50, 100%, 70%';
+
+                    let intensityMultiplier = 1;
+
+                   
+
+                    // Intelligence mode visual enhancements
+
+                    switch(intelligenceMode) {
+
+                        case 'basic':
+
+                            thoughtColor = 'hsla(50, 100%, 70%';
+
+                            intensityMultiplier = 1;
+
+                            break;
+
+                        case 'neural':
+
+                            thoughtColor = 'hsla(120, 100%, 70%'; // Green neural activity
+
+                            intensityMultiplier = 1.3;
+
+                            break;
+
+                        case 'quantum':
+
+                            thoughtColor = 'hsla(240, 100%, 70%'; // Blue quantum coherence
+
+                            intensityMultiplier = 1.8;
+
+                            break;
+
+                        case 'transcendent':
+
+                            thoughtColor = 'hsla(300, 100%, 70%'; // Purple transcendent energy
+
+                            intensityMultiplier = 2.5;
+
+                            break;
+
+                    }
+
+                   
+
+                    ctx.beginPath();
+
+                    ctx.arc(this.x, this.y, this.radius + this.thoughtIntensity * 10 * intensityMultiplier, 0, Math.PI * 2);
+
+                    ctx.strokeStyle = `${thoughtColor}, ${this.thoughtIntensity * 0.5})`;
+
+                    ctx.lineWidth = 2 * intensityMultiplier;
+
+                    ctx.stroke();
+
+                   
+
+                    // Additional quantum/transcendent effects
+
+                    if (intelligenceMode === 'quantum' && this.thoughtIntensity > 0.7) {
+
+                        // Quantum interference patterns
+
+                        ctx.beginPath();
+
+                        ctx.arc(this.x, this.y, this.radius + this.thoughtIntensity * 15, 0, Math.PI * 2);
+
+                        ctx.strokeStyle = `hsla(240, 100%, 90%, ${this.thoughtIntensity * 0.3})`;
+
+                        ctx.lineWidth = 1;
+
+                        ctx.stroke();
+
+                    }
+
+                   
+
+                    if (intelligenceMode === 'transcendent' && this.thoughtIntensity > 0.8) {
+
+                        // Transcendent aura
+
+                        const pulse = Math.sin(time * 8 + this.id) * 0.5 + 0.5;
+
+                        ctx.beginPath();
+
+                        ctx.arc(this.x, this.y, this.radius + this.thoughtIntensity * 20 * pulse, 0, Math.PI * 2);
+
+                        ctx.strokeStyle = `hsla(300, 100%, 90%, ${this.thoughtIntensity * 0.4 * pulse})`;
+
+                        ctx.lineWidth = 3;
+
+                        ctx.stroke();
+
+                    }
+
+                }
+
+               
+
+                // Generation indicator (for later generations)
+
+                if (this.generation > 0) {
+
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+
+                    ctx.font = '8px monospace';
+
+                    ctx.textAlign = 'center';
+
+                    ctx.fillText(this.generation.toString(), this.x, this.y + this.radius + 10);
+
+                }
+
+               
+
+                // Age indicator in reproductive mode
+
+                if (showReproductive && this.age > this.maturityAge) {
+
+                    const agePercent = Math.min(1, this.age / this.maxAge);
+
+                    const ageColor = agePercent > 0.7 ? 'rgba(255, 150, 150, 0.6)' : 'rgba(150, 255, 150, 0.6)';
+
+                    ctx.fillStyle = ageColor;
+
+                    ctx.font = '6px monospace';
+
+                    ctx.textAlign = 'center';
+
+                    ctx.fillText(Math.floor(this.age).toString(), this.x, this.y - this.radius - 12);
+
+                }
+
+                // Selection highlighting
+                if (selectedNodes.includes(this)) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius + 8, 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(0, 255, 255, ${0.8 + Math.sin(time * 8) * 0.2})`;
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                    
+                    // Orbital selection ring
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius + 15, 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(0, 255, 255, ${0.4 + Math.sin(time * 6) * 0.1})`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+                
+            }
+            
+            drawEcologicalIndicators(ctx, radius) {
+                // Energy bar
+                const energyRatio = this.energy / this.maxEnergy;
+                const barWidth = radius * 2;
+                const barHeight = 3;
+                const barY = this.y + radius + 8;
+                
+                // Background
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                ctx.fillRect(this.x - barWidth/2, barY, barWidth, barHeight);
+                
+                // Energy level (color-coded by role)
+                let barColor;
+                switch(this.ecologicalRole) {
+                    case 'producer': barColor = `rgba(0, 255, 0, ${energyRatio})`; break;
+                    case 'herbivore': barColor = `rgba(255, 165, 0, ${energyRatio})`; break;
+                    case 'carnivore': barColor = `rgba(255, 0, 0, ${energyRatio})`; break;
+                    case 'apex': barColor = `rgba(128, 0, 128, ${energyRatio})`; break;
+                }
+                
+                ctx.fillStyle = barColor;
+                ctx.fillRect(this.x - barWidth/2, barY, barWidth * energyRatio, barHeight);
+                
+                // Role-specific indicators
+                switch(this.ecologicalRole) {
+                    case 'producer':
+                        // Photosynthetic rays
+                        if (energyRatio > 0.7) {
+                            ctx.strokeStyle = `rgba(255, 255, 0, ${Math.sin(time * 4) * 0.3 + 0.4})`;
+                            ctx.lineWidth = 1;
+                            for (let i = 0; i < 6; i++) {
+                                const angle = (i / 6) * Math.PI * 2 + time;
+                                const rayLength = radius + 6;
+                                ctx.beginPath();
+                                ctx.moveTo(this.x, this.y);
+                                ctx.lineTo(
+                                    this.x + Math.cos(angle) * rayLength,
+                                    this.y + Math.sin(angle) * rayLength
+                                );
+                                ctx.stroke();
+                            }
+                        }
+                        break;
+                        
+                    case 'herbivore':
+                        // Gathering circle when hunting
+                        const nearbyFood = this.findNearbyPrey(['producer']);
+                        if (nearbyFood.length > 0) {
+                            ctx.strokeStyle = `rgba(255, 165, 0, 0.4)`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.arc(this.x, this.y, 25, 0, Math.PI * 2);
+                            ctx.stroke();
+                        }
+                        break;
+                        
+                    case 'carnivore':
+                        // Hunt indicator
+                        const nearbyPrey = this.findNearbyPrey(['herbivore']);
+                        if (nearbyPrey.length > 0) {
+                            ctx.strokeStyle = `rgba(255, 0, 0, 0.6)`;
+                            ctx.lineWidth = 2;
+                            nearbyPrey.forEach(prey => {
+                                ctx.beginPath();
+                                ctx.moveTo(this.x, this.y);
+                                ctx.lineTo(prey.x, prey.y);
+                                ctx.stroke();
+                            });
+                        }
+                        break;
+                        
+                    case 'apex':
+                        // Territory circle
+                        ctx.strokeStyle = `rgba(128, 0, 128, 0.2)`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.territoryRadius, 0, Math.PI * 2);
+                        ctx.stroke();
+                        break;
+                }
+            }
+            
+            findNearbyPrey(targetRoles) {
+                // Helper method to find nearby prey (used by visual indicators)
+                return universes.flatMap(u => u.nodes).filter(node =>
+                    targetRoles.includes(node.ecologicalRole) &&
+                    node !== this &&
+                    !node.markForDeath &&
+                    Math.hypot(node.x - this.x, node.y - this.y) < 30
+                );
+            }
+
+        }
+        
+        // Environmental Element Classes
+        class EnvironmentalElement {
+            constructor(x, y, type, intensity = 1.0) {
+                this.x = x;
+                this.y = y;
+                this.type = type;
+                this.intensity = intensity;
+                this.maxIntensity = intensity;
+                this.radius = brushSize;
+                this.age = 0;
+                this.lifetime = this.getLifetime();
+                this.decayRate = this.getDecayRate();
+            }
+            
+            getLifetime() {
+                switch(this.type) {
+                    case 'water': return 600; // 10 seconds at 60fps
+                    case 'food': return 900; // 15 seconds
+                    case 'light': return 1200; // 20 seconds
+                    case 'spores': return 1800; // 30 seconds
+                    default: return 600;
+                }
+            }
+            
+            getDecayRate() {
+                return this.maxIntensity / this.lifetime;
+            }
+            
+            update(deltaTime) {
+                this.age += deltaTime * 60;
+                this.intensity = Math.max(0, this.intensity - this.decayRate * deltaTime * 60);
+                
+                // Expand over time for some elements
+                if (this.type === 'spores' || this.type === 'light') {
+                    this.radius = Math.min(brushSize * 2, this.radius + deltaTime * 10);
+                }
+                
+                return this.intensity > 0.01; // Return false if should be removed
+            }
+            
+            draw(ctx) {
+                const alpha = this.intensity / this.maxIntensity;
+                let color;
+                
+                switch(this.type) {
+                    case 'water':
+                        color = `rgba(100, 150, 255, ${alpha * 0.3})`;
+                        break;
+                    case 'food':
+                        color = `rgba(100, 255, 100, ${alpha * 0.3})`;
+                        break;
+                    case 'light':
+                        color = `rgba(255, 255, 100, ${alpha * 0.4})`;
+                        break;
+                    case 'spores':
+                        color = `rgba(150, 100, 255, ${alpha * 0.2})`;
+                        break;
+                }
+                
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+                
+                // Add sparkle effect for light
+                if (this.type === 'light' && Math.random() < 0.1) {
+                    const sparkleX = this.x + (Math.random() - 0.5) * this.radius * 2;
+                    const sparkleY = this.y + (Math.random() - 0.5) * this.radius * 2;
+                    ctx.beginPath();
+                    ctx.arc(sparkleX, sparkleY, 2, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 200, ${alpha})`;
+                    ctx.fill();
+                }
+            }
+            
+            affectsNode(node) {
+                const distance = Math.hypot(node.x - this.x, node.y - this.y);
+                return distance < this.radius;
+            }
+            
+            applyEffect(node) {
+                if (!this.affectsNode(node)) return;
+                
+                const distance = Math.hypot(node.x - this.x, node.y - this.y);
+                const effect = (1 - distance / this.radius) * this.intensity;
+                
+                switch(this.type) {
+                    case 'water':
+                        // Water increases metabolism efficiency
+                        node.metabolism = Math.max(0.05, node.metabolism - effect * 0.01);
+                        break;
+                    case 'food':
+                        // Food provides direct energy
+                        node.energy = Math.min(node.maxEnergy, node.energy + effect * 5);
+                        break;
+                    case 'light':
+                        // Light boosts producers and consciousness
+                        if (node.ecologicalRole === 'producer') {
+                            node.energy = Math.min(node.maxEnergy, node.energy + effect * 3);
+                        }
+                        node.thoughtIntensity = Math.min(1, node.thoughtIntensity + effect * 0.05);
+                        break;
+                    case 'spores':
+                        // Spores create symbiotic relationships
+                        node.huntingSkill = Math.min(1, node.huntingSkill + effect * 0.1);
+                        node.gatheringSkill = Math.min(1, node.gatheringSkill + effect * 0.1);
+                        break;
+                }
+            }
+        }
+        
+        class GravitationalAnchor {
+            constructor(x, y, strength = 100) {
+                this.x = x;
+                this.y = y;
+                this.strength = strength;
+                this.radius = 50;
+                this.pulsePhase = Math.random() * Math.PI * 2;
+            }
+            
+            update(deltaTime) {
+                this.pulsePhase += deltaTime * 2;
+            }
+            
+            draw(ctx) {
+                const pulse = Math.sin(this.pulsePhase) * 0.3 + 0.7;
+                const alpha = pulse * 0.5;
+                
+                // Draw gravitational field
+                for (let i = 0; i < 3; i++) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius + i * 20, 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(255, 100, 255, ${alpha * (1 - i * 0.3)})`;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+                
+                // Central mass
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 8, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 100, 255, ${pulse})`;
+                ctx.fill();
+            }
+            
+            applyForce(node) {
+                const dx = this.x - node.x;
+                const dy = this.y - node.y;
+                const distance = Math.hypot(dx, dy);
+                
+                if (distance > 0 && distance < 200) {
+                    const force = this.strength / (distance * distance + 1);
+                    const fx = (dx / distance) * force * 0.001;
+                    const fy = (dy / distance) * force * 0.001;
+                    
+                    node.applyForce(fx, fy);
+                }
+            }
+        }
+
+        class Universe {
+
+            constructor(id, lambda) {
+
+                this.id = id;
+
+                this.lambda = lambda;
+
+                this.nodes = [];
+
+            }
+
+        }
+
+        class NodeCluster {
+
+            constructor(nodes) {
+
+                this.id = nextClusterId++;
+
+                this.nodes = nodes;
+
+                this.center = { x: 0, y: 0 };
+
+                this.radius = 0;
+
+                this.thoughtComplexity = 0;
+
+                this.recursionDepth = 0;
+
+                this.selfAwareness = 0;
+
+                this.adaptiveCapacity = 0;
+
+                this.collectiveIntelligence = 0;
+
+                // Political Ecosystem Properties
+
+                this.ambition = 'preservation'; // preservation, growth, alliance_builder
+
+                this.reputation = {}; // { otherClusterId: { trust: 0.5, lastInteractionDelta: 0 } }
+
+                this._lastNeighborRecursion = {};
+
+                this.allies = new Set();
+
+               
+
+                this.update();
+
+            }
+
+            update() {
+
+                if (this.nodes.length === 0) return;
+
+                let sumX = 0, sumY = 0;
+
+                let totalMass = 0;
+
+                this.nodes.forEach(n => {
+
+                    sumX += n.x * n.mass;
+
+                    sumY += n.y * n.mass;
+
+                    totalMass += n.mass;
+
+                });
+
+                this.center.x = sumX / totalMass;
+
+                this.center.y = sumY / totalMass;
+
+                this.radius = this.nodes.reduce((maxR, n) => {
+
+                    const d = Math.hypot(n.x - this.center.x, n.y - this.center.y);
+
+                    return Math.max(maxR, d + n.radius);
+
+                }, 0);
+
+                // Calculate intelligence metrics with mode-specific acceleration
+
+                const avgPhase = this.nodes.reduce((sum, n) => sum + n.phase, 0) / this.nodes.length;
+
+                const phaseCoherence = 1 - (this.nodes.reduce((sum, n) => sum + Math.abs(n.phase - avgPhase), 0) / this.nodes.length) / Math.PI;
+
+               
+
+                const avgFreq = this.nodes.reduce((sum, n) => sum + n.frequency, 0) / this.nodes.length;
+
+                const freqResonance = 1 - (this.nodes.reduce((sum, n) => sum + Math.abs(n.frequency - avgFreq), 0) / this.nodes.length) / 5;
+
+                // Base calculation
+
+                let baseComplexity = (this.nodes.length / 10) * phaseCoherence * freqResonance;
+
+               
+
+                // Intelligence mode multipliers for accelerated computation
+
+                let complexityMultiplier = 1.0;
+
+                let awarenessBonus = 0;
+
+                let adaptivityBonus = 0;
+
+               
+
+                switch(intelligenceMode) {
+
+                    case 'basic':
+
+                        complexityMultiplier = 1.0;
+
+                        break;
+
+                    case 'neural':
+
+                        complexityMultiplier = 1.5; // Neural network efficiency
+
+                        awarenessBonus = 0.1; // Enhanced pattern recognition
+
+                        adaptivityBonus = 0.15; // Better learning
+
+                        break;
+
+                    case 'quantum':
+
+                        complexityMultiplier = 2.5; // Quantum superposition
+
+                        awarenessBonus = 0.25; // Quantum observation effects
+
+                        adaptivityBonus = 0.3; // Quantum tunneling through solution space
+
+                        break;
+
+                    case 'transcendent':
+
+                        complexityMultiplier = 4.0; // Beyond physical limits
+
+                        awarenessBonus = 0.4; // Universal consciousness
+
+                        adaptivityBonus = 0.5; // Instantaneous adaptation
+
+                        break;
+
+                }
+
+                this.thoughtComplexity = baseComplexity * complexityMultiplier;
+
+                this.recursionDepth = Math.floor(this.thoughtComplexity * (5 + (complexityMultiplier - 1) * 2));
+
+                this.selfAwareness = Math.min(1, phaseCoherence + awarenessBonus);
+
+                this.adaptiveCapacity = Math.min(1, freqResonance + adaptivityBonus);
+
+                this.collectiveIntelligence = this.thoughtComplexity * this.nodes.length * Math.sqrt(complexityMultiplier);
+
+                this.nodes.forEach(n => n.thoughtIntensity = Math.max(n.thoughtIntensity, this.thoughtComplexity * 0.5));
+
+            }
+
+            updateAmbitionAndReputation(allClusters, deltaTime) {
+
+                this.allies.clear();
+
+                let growthWeight = 1.0;
+
+                let preservationWeight = 1.0;
+
+                // Reputation, Anticipation, and Coalition Logic
+
+                allClusters.forEach(other => {
+
+                    if (other.id === this.id) return;
+
+                    const dist = Math.hypot(this.center.x - other.center.x, this.center.y - other.center.y);
+
+                    if (dist < this.radius + other.radius + 100) { // Interaction distance
+
+                        this.reputation[other.id] = this.reputation[other.id] || { trust: 0.5, lastInteractionDelta: 0 };
+
+                       
+
+                        // Trust decays toward neutral, changes based on ambition similarity
+
+                        this.reputation[other.id].trust *= 0.999;
+
+                        this.reputation[other.id].trust += (other.ambition === this.ambition ? 0.001 : -0.001);
+
+                        this.reputation[other.id].trust = Math.max(0, Math.min(1, this.reputation[other.id].trust));
+
+                        // Anticipation bias
+
+                        const delta = other.recursionDepth - (this._lastNeighborRecursion[other.id] || other.recursionDepth);
+
+                        if (delta > 0.2) { // Neighbor is growing aggressively
+
+                            growthWeight *= 0.9; // Be more cautious
+
+                            preservationWeight *= 1.1;
+
+                        }
+
+                        this._lastNeighborRecursion[other.id] = other.recursionDepth;
+
+                        this.reputation[other.id].lastInteractionDelta = delta;
+
+                        // Coalition Formation
+
+                        if (this.reputation[other.id].trust > 0.7 && (other.reputation[this.id]?.trust || 0.5) > 0.7) {
+
+                            this.allies.add(other.id);
+
+                            this.thoughtComplexity += 0.01 * deltaTime; // Small boost
+
+                        }
+
+                    }
+
+                });
+
+                // Decide Ambition
+
+                const health = this.selfAwareness * this.adaptiveCapacity;
+
+                if (health > 0.7 * preservationWeight) {
+
+                    this.ambition = 'growth';
+
+                } else {
+
+                    this.ambition = 'preservation';
+
+                }
+
+               
+
+                const avgTrust = Object.values(this.reputation).reduce((sum, rep) => sum + rep.trust, 0) / (Object.keys(this.reputation).length || 1);
+
+                if (avgTrust > 0.8 && this.ambition === 'growth') {
+
+                    this.ambition = 'alliance_builder';
+
+                }
+
+            }
+
+            applyAmbition(allNodes, deltaTime) {
+
+                const unclusteredNodes = allNodes.filter(n => !n.clusterId);
+
+                if (this.ambition === 'growth' || this.ambition === 'alliance_builder') {
+
+                    // Attract nearby unclustered nodes
+
+                    const attractRadius = this.radius + (this.ambition === 'alliance_builder' ? 150 : 75);
+
+                    unclusteredNodes.forEach(node => {
+
+                        const dist = Math.hypot(this.center.x - node.x, this.center.y - node.y);
+
+                        if (dist < attractRadius) {
+
+                            const force = 0.1 * this.collectiveIntelligence / Math.max(10, dist);
+
+                            node.applyForce(force * (this.center.x - node.x) / dist, force * (this.center.y - node.y) / dist);
+
+                        }
+
+                    });
+
+                } else if (this.ambition === 'preservation') {
+
+                    // Pull own nodes tighter
+
+                    this.nodes.forEach(node => {
+
+                        const dist = Math.hypot(this.center.x - node.x, this.center.y - node.y);
+
+                        if (dist > 1) {
+
+                            const force = 0.05 * this.collectiveIntelligence / Math.max(10, dist);
+
+                            node.applyForce(force * (this.center.x - node.x) / dist, force * (this.center.y - node.y) / dist);
+
+                        }
+
+                    });
+
+                }
+
+            }
+
+            draw(ctx, allClusters) {
+
+                if (this.nodes.length < 2) return;
+
+                let baseColor = `255, 204, 0`; // Gold
+
+                if (this.ambition === 'growth') baseColor = `120, 255, 120`; // Green
+
+                if (this.ambition === 'alliance_builder') baseColor = `100, 200, 255`; // Blue
+
+                // Intelligence mode visual effects
+
+                let lineEffect = 1;
+
+                let pulseMultiplier = 1;
+
+                let glowIntensity = 0;
+
+               
+
+                switch(intelligenceMode) {
+
+                    case 'basic':
+
+                        lineEffect = 1;
+
+                        break;
+
+                    case 'neural':
+
+                        lineEffect = 1.5;
+
+                        pulseMultiplier = 1.2;
+
+                        glowIntensity = 0.1;
+
+                        baseColor = `150, 255, 150`; // Neural green tint
+
+                        break;
+
+                    case 'quantum':
+
+                        lineEffect = 2;
+
+                        pulseMultiplier = 1.8;
+
+                        glowIntensity = 0.3;
+
+                        baseColor = `150, 150, 255`; // Quantum blue tint
+
+                        break;
+
+                    case 'transcendent':
+
+                        lineEffect = 3;
+
+                        pulseMultiplier = 2.5;
+
+                        glowIntensity = 0.5;
+
+                        baseColor = `255, 150, 255`; // Transcendent purple tint
+
+                        break;
+
+                }
+
+                // Main cluster boundary with pulsing effect
+
+                const pulse = Math.sin(time * 3 * pulseMultiplier) * 0.3 + 0.7;
+
+                ctx.beginPath();
+
+                ctx.arc(this.center.x, this.center.y, this.radius, 0, Math.PI * 2);
+
+                ctx.strokeStyle = `rgba(${baseColor}, ${Math.min(0.8, this.thoughtComplexity * 0.5 * pulse)})`;
+
+                ctx.lineWidth = (1 + this.recursionDepth) * lineEffect;
+
+                ctx.stroke();
+
+               
+
+                // Glow effect for higher intelligence modes
+
+                if (glowIntensity > 0) {
+
+                    ctx.beginPath();
+
+                    ctx.arc(this.center.x, this.center.y, this.radius + 5, 0, Math.PI * 2);
+
+                    ctx.strokeStyle = `rgba(${baseColor}, ${glowIntensity * pulse})`;
+
+                    ctx.lineWidth = 2 * lineEffect;
+
+                    ctx.stroke();
+
+                }
+
+                // Draw alliance links
+
+                this.allies.forEach(allyId => {
+
+                    const ally = allClusters.find(c => c.id === allyId);
+
+                    if (ally) {
+
+                        ctx.beginPath();
+
+                        ctx.moveTo(this.center.x, this.center.y);
+
+                        ctx.lineTo(ally.center.x, ally.center.y);
+
+                        const trust = this.reputation[allyId]?.trust || 0.5;
+
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${trust * 0.5})`;
+
+                        ctx.lineWidth = 1 + trust * 2;
+
+                        ctx.stroke();
+
+                    }
+
+                });
+
+                // Draw connections within the cluster
+
+                for (let i = 0; i < this.nodes.length; i++) {
+
+                    for (let j = i + 1; j < this.nodes.length; j++) {
+
+                        const n1 = this.nodes[i];
+
+                        const n2 = this.nodes[j];
+
+                        ctx.beginPath();
+
+                        ctx.moveTo(n1.x, n1.y);
+
+                        ctx.lineTo(n2.x, n2.y);
+
+                        const alpha = this.thoughtComplexity * 0.2;
+
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+
+                        ctx.lineWidth = 0.5;
+
+                        ctx.stroke();
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        function updateClusters(deltaTime) {
+
+            const allNodes = universes.flatMap(u => u.nodes);
+
+            allNodes.forEach(n => n.clusterId = null); // Reset cluster association
+
+            const oldClusters = new Map(clusters.map(c => [c.id, c]));
+
+            clusters = [];
+
+            let unclustered = new Set(allNodes);
+
+            for (const node of allNodes) {
+
+                if (!unclustered.has(node)) continue;
+
+               
+
+                const newClusterNodes = new Set([node]);
+
+                unclustered.delete(node);
+
+               
+
+                const toCheck = [node];
+
+                while(toCheck.length > 0) {
+
+                    const current = toCheck.pop();
+
+                    for (const other of unclustered) {
+
+                        const dist = Math.hypot(current.x - other.x, current.y - other.y);
+
+                        const phaseDiff = 1 - Math.abs(current.phase - other.phase) / Math.PI;
+
+                        const freqDiff = 1 - Math.abs(current.frequency - other.frequency) / 10;
+
+                        if (dist < thresholds.clusterProximity && phaseDiff > thresholds.phaseAlignment && freqDiff > thresholds.frequencyResonance) {
+
+                            newClusterNodes.add(other);
+
+                            unclustered.delete(other);
+
+                            toCheck.push(other);
+
+                        }
+
+                    }
+
+                }
+
+                if (newClusterNodes.size > 1) {
+
+                    const newCluster = new NodeCluster(Array.from(newClusterNodes));
+
+                    // Try to preserve reputation from previous frame if a similar cluster existed
+
+                    // This is a simple heuristic based on center proximity
+
+                    let bestMatch = null;
+
+                    let minD = Infinity;
+
+                    for(const [id, oldC] of oldClusters.entries()){
+
+                        const d = Math.hypot(newCluster.center.x - oldC.center.x, newCluster.center.y - oldC.center.y);
+
+                        if(d < minD && d < 50){
+
+                            minD = d;
+
+                            bestMatch = oldC;
+
+                        }
+
+                    }
+
+                    if(bestMatch){
+
+                        newCluster.id = bestMatch.id;
+
+                        newCluster.reputation = bestMatch.reputation;
+
+                        newCluster._lastNeighborRecursion = bestMatch._lastNeighborRecursion;
+
+                        oldClusters.delete(bestMatch.id);
+
+                    }
+
+                    clusters.push(newCluster);
+
+                }
+
+            }
+
+           
+
+            clusters.forEach(c => {
+
+                c.nodes.forEach(n => n.clusterId = c.id);
+
+                c.update();
+
+            });
+
+            // Second pass for reputation and ambition now that all clusters are defined
+
+            clusters.forEach(c => c.updateAmbitionAndReputation(clusters, deltaTime));
+
+        }
+
+        function setIntelligenceMode(newMode) {
+
+            intelligenceMode = newMode;
+
+            document.querySelectorAll('.mini-btn[data-intel]').forEach(btn => {
+
+                btn.classList.toggle('active', btn.dataset.intel === newMode);
+
+            });
+
+           
+
+            // Tiered Intelligence Computational Acceleration
+
+            switch(intelligenceMode) {
+
+                case 'basic':
+
+                    // Basic: Standard consciousness emergence
+
+                    thresholds.clusterProximity = 80;
+
+                    thresholds.phaseAlignment = 0.8;
+
+                    thresholds.frequencyResonance = 0.7;
+
+                    params.timeDilation = 1.0;
+
+                    break;
+
+                   
+
+                case 'neural':
+
+                    // Neural: Enhanced connectivity and faster adaptation
+
+                    thresholds.clusterProximity = 100; // Wider neural networks
+
+                    thresholds.phaseAlignment = 0.7; // More flexible synchronization
+
+                    thresholds.frequencyResonance = 0.6; // Broader frequency coupling
+
+                    params.timeDilation = 1.5; // 50% acceleration
+
+                    break;
+
+                   
+
+                case 'quantum':
+
+                    // Quantum: Superposition states and entanglement effects
+
+                    thresholds.clusterProximity = 120; // Quantum entanglement range
+
+                    thresholds.phaseAlignment = 0.6; // Quantum coherence
+
+                    thresholds.frequencyResonance = 0.5; // Frequency superposition
+
+                    params.timeDilation = 2.0; // 100% acceleration
+
+                    break;
+
+                   
+
+                case 'transcendent':
+
+                    // Transcendent: Beyond physical limitations
+
+                    thresholds.clusterProximity = 150; // Universal connection
+
+                    thresholds.phaseAlignment = 0.4; // Transcendent unity
+
+                    thresholds.frequencyResonance = 0.3; // Harmonic convergence
+
+                    params.timeDilation = 3.0; // 200% acceleration
+
+                    break;
+
+            }
+
+           
+
+            // Update slider displays to reflect new values
+
+            updateSliderDisplays();
+
+        }
+
+       
+
+        function updateSliderDisplays() {
+
+            // Update time dilation slider and display
+
+            const timeSlider = document.getElementById('timeSlider');
+
+            const timeValue = document.getElementById('timeValue');
+
+            if (timeSlider && timeValue) {
+
+                timeSlider.value = params.timeDilation;
+
+                timeValue.textContent = params.timeDilation.toFixed(1);
+
+            }
+
+        }
+
+        function animate(timestamp) {
+
+            if (lastTime === 0) lastTime = timestamp;
+
+            const deltaTime = Math.min(0.05, (timestamp - lastTime) / 1000);
+
+            lastTime = timestamp;
+
+            time += deltaTime;
+            
+            // Update game mechanics
+            updateGameMechanics(deltaTime);
+
+            // Update environmental elements
+            environmentalElements.forEach((element, index) => {
+                element.update(deltaTime);
+                if (element.intensity <= 0) {
+                    environmentalElements.splice(index, 1);
+                }
+            });
+
+            // Update gravitational anchors
+            gravitationalAnchors.forEach(anchor => {
+                anchor.update(deltaTime);
+            });
+
+            ctx.save();
+
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+            ctx.fillStyle = 'black';
+
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.restore();
+
+            drawStars();
+
+           
+
+            if (mode === 'attention') drawAttentionField();
+
+            ctx.save();
+
+            applyViewTransform();
+
+            const allNodes = universes.flatMap(u => u.nodes);
+
+            // Update nodes and handle lifecycle
+            allNodes.forEach(node => {
+
+                // Gravity
+                allNodes.forEach(other => {
+
+                    if (node === other) return;
+
+                    const dx = other.x - node.x;
+
+                    const dy = other.y - node.y;
+
+                    const distSq = dx * dx + dy * dy;
+
+                    if (distSq > 1) {
+
+                        const force = params.gravity * node.mass * other.mass / distSq;
+
+                        node.applyForce(force * dx / Math.sqrt(distSq), force * dy / Math.sqrt(distSq));
+
+                    }
+
+                });
+
+                // Gravitational anchor effects
+                gravitationalAnchors.forEach(anchor => {
+                    const dx = anchor.x - node.x;
+                    const dy = anchor.y - node.y;
+                    const distSq = dx * dx + dy * dy;
+                    if (distSq > 1) {
+                        const force = anchor.strength * node.mass / distSq;
+                        node.applyForce(force * dx / Math.sqrt(distSq), force * dy / Math.sqrt(distSq));
+                    }
+                });
+
+                // Environmental element effects
+                environmentalElements.forEach(element => {
+                    const dx = element.x - node.x;
+                    const dy = element.y - node.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < element.radius) {
+                        element.applyEffect(node, distance);
+                    }
+                });
+
+                // Mouse interaction
+
+                const mdx = node.x - mouse.worldX;
+
+                const mdy = node.y - mouse.worldY;
+
+                const mDist = Math.hypot(mdx, mdy);
+
+                if (mouse.isDown && mDist < 150) {
+
+                    const force = params.fieldStrength * 50 / Math.max(10, mDist);
+
+                    if (interactionMode === 'push') node.applyForce(force * mdx / mDist, force * mdy / mDist);
+
+                    if (interactionMode === 'pull') node.applyForce(-force * mdx / mDist, -force * mdy / mDist);
+
+                    if (interactionMode === 'vortex') node.applyForce(force * mdy / mDist, -force * mdx / mDist);
+
+                }
+
+               
+
+                node.update(deltaTime, allNodes);
+
+            });
+
+           
+
+            // Remove dead nodes
+
+            universes.forEach(universe => {
+
+                universe.nodes = universe.nodes.filter(node => !node.markForDeath);
+
+            });
+
+            updateClusters(deltaTime);
+
+           
+
+            // Apply ambition forces after clusters are updated
+
+            clusters.forEach(c => c.applyAmbition(allNodes, deltaTime));
+
+            // Draw everything
+
+            const currentNodes = universes.flatMap(u => u.nodes);
+
+            currentNodes.forEach(node => node.draw(ctx));
+
+            // Draw environmental elements
+            environmentalElements.forEach(element => element.draw(ctx));
+
+            // Draw gravitational anchors
+            gravitationalAnchors.forEach(anchor => anchor.draw(ctx));
+
+            clusters.forEach(c => c.draw(ctx, clusters));
+
+           
+
+            drawConnections(currentNodes);
+
+            drawReproductiveBonds(currentNodes);
+
+            updateAndDrawShockwaves(deltaTime);
+
+            ctx.restore();
+
+            calculateGlobalStats(currentNodes);
+
+            updateFPS(timestamp);
+
+            updatePanIndicator();
+
+            // Update node inspector if a node is selected (slower update rate to prevent flickering)
+            if (selectedNodes.length > 0 && document.getElementById('nodeInspector').style.display === 'block' && frameCount % 10 === 0) {
+                updateNodeInspectorData(selectedNodes[0]);
+            }
+
+            requestAnimationFrame(animate);
+
+        }
+
+        function updateAnalyticsDashboard(allNodes) {
+            if (!analyticsDashboard.visible && analyticsDashboard.dataHistory.population.length % 10 !== 0) return;
+            
+            // Collect data points
+            const dataPoint = {
+                time: time,
+                total: allNodes.length,
+                byRole: {
+                    producer: allNodes.filter(n => n.ecologicalRole === 'producer').length,
+                    herbivore: allNodes.filter(n => n.ecologicalRole === 'herbivore').length,
+                    carnivore: allNodes.filter(n => n.ecologicalRole === 'carnivore').length,
+                    apex: allNodes.filter(n => n.ecologicalRole === 'apex').length
+                },
+                avgConsciousness: allNodes.length > 0 ? 
+                    allNodes.reduce((sum, n) => sum + n.thoughtIntensity, 0) / allNodes.length : 0,
+                complexity: globalThoughtComplexity,
+                evolutionLevel: evolutionLevel
+            };
+            
+            analyticsDashboard.dataHistory.population.push(dataPoint);
+            
+            // Trim history if too long
+            if (analyticsDashboard.dataHistory.population.length > analyticsDashboard.maxHistoryLength) {
+                analyticsDashboard.dataHistory.population.shift();
+            }
+        }
+        
+        function toggleAnalyticsDashboard() {
+            analyticsDashboard.visible = !analyticsDashboard.visible;
+            const dashboard = document.getElementById('analyticsDashboard');
+            if (dashboard) {
+                dashboard.style.display = analyticsDashboard.visible ? 'block' : 'none';
+            }
+        }
+
+        function calculateGlobalStats(allNodes) {
+            // Update analytics dashboard
+            updateAnalyticsDashboard(allNodes);
+
+            safeUpdateElement('nodeCount', allNodes.length);
+
+           
+
+            // Update λᵢ display (Dirichlet coefficients)
+
+            safeUpdateElement('lambda1', lambdas[0].toFixed(3));
+
+            safeUpdateElement('lambda2', lambdas[1].toFixed(3));
+
+            safeUpdateElement('lambda3', lambdas[2].toFixed(3));
+
+           
+
+            if (allNodes.length > 0) {
+
+                // MCF Global Consciousness Integral: C = ∫[M_C] A(x)Φ(x)e^{iτ(x)} dμ(x)
+                let globalC_real = 0;
+                let globalC_imag = 0;
+                
+                allNodes.forEach(node => {
+                    // Each node contributes A(x)*Φ(x)*e^{iτ(x)} to the integral
+                    const magnitude = node.attention * node.frequency;
+                    globalC_real += magnitude * Math.cos(node.phase);
+                    globalC_imag += magnitude * Math.sin(node.phase);
+                });
+                
+                // Discrete integration measure (grid cell volume approximation)
+                const integrationMeasure = 1.0 / allNodes.length;
+                globalC_real *= integrationMeasure;
+                globalC_imag *= integrationMeasure;
+                
+                // MCF Consciousness Scalar |C| and arg(C)
+                const consciousnessMagnitude = Math.hypot(globalC_real, globalC_imag);
+                const consciousnessPhase = Math.atan2(globalC_imag, globalC_real);
+
+                // Multiverse Superposition: M(t) = Σλᵢ(t)Uᵢ
+
+                const universeContributions = universes.map(universe => {
+
+                    const universeNodes = allNodes.filter(n => n.universeId === universe.id);
+
+                    if (universeNodes.length === 0) return 0;
+
+                   
+
+                    const universeSum = universeNodes.reduce((sum, n) =>
+
+                        sum + Math.hypot(n.consciousnessValue.real, n.consciousnessValue.imag), 0);
+
+                   
+
+                    return universe.lambda * universeSum / universeNodes.length;
+
+                });
+
+               
+
+                globalResonance = universeContributions.reduce((sum, contrib) => sum + contrib, 0);
+                
+                // MCF-driven λ reweighting: Consciousness-responsive multiverse dynamics
+                if (frameCount % 300 === 0 && allNodes.length > 10) { // Every 5 seconds at 60fps
+                    const universeScores = universes.map((universe, i) => {
+                        const universeNodes = allNodes.filter(n => n.universeId === i);
+                        if (universeNodes.length === 0) return 0.001; // Minimum to prevent zero division
+                        
+                        // Score based on consciousness coherence within universe
+                        const avgCoherence = universeNodes.reduce((sum, node) => {
+                            return sum + Math.hypot(node.consciousnessValue.real, node.consciousnessValue.imag);
+                        }, 0) / universeNodes.length;
+                        
+                        return avgCoherence + 0.001; // Add small baseline
+                    });
+                    
+                    // Normalize to create new Dirichlet-like distribution
+                    const totalScore = universeScores.reduce((a, b) => a + b, 0);
+                    const newLambdas = universeScores.map(score => score / totalScore);
+                    
+                    // Smooth transition to prevent sudden jumps
+                    const smoothing = 0.1; // 10% adaptation rate
+                    for (let i = 0; i < lambdas.length; i++) {
+                        lambdas[i] = lambdas[i] * (1 - smoothing) + newLambdas[i] * smoothing;
+                        universes[i].lambda = lambdas[i];
+                    }
+                }
+
+                safeUpdateElement('resonance', consciousnessMagnitude.toFixed(4));
+
+                // Temporal Coherence Metric - Phase synchronization
+                let phaseSyncSum = 0;
+                for (let i = 0; i < allNodes.length; i++) {
+                    for (let j = i + 1; j < allNodes.length; j++) {
+                        const phaseDiff = Math.abs(allNodes[i].phase - allNodes[j].phase);
+                        const syncMeasure = Math.cos(phaseDiff);
+                        phaseSyncSum += syncMeasure;
+                    }
+                }
+                const temporalCoherence = allNodes.length > 1 ? 
+                    phaseSyncSum / (allNodes.length * (allNodes.length - 1) / 2) : 1;
+
+                const totalAttention = allNodes.reduce((sum, n) => sum + n.attention, 0);
+
+                safeUpdateElement('attention', (totalAttention / allNodes.length).toFixed(3));
+                safeUpdateElement('temporalCoherence', temporalCoherence.toFixed(3));
+                safeUpdateElement('phase', (consciousnessPhase * 180 / Math.PI).toFixed(1));
+
+            }
+
+            // Intelligence panel with mode-specific metrics
+
+            safeUpdateElement('clusterCount', clusters.length);
+
+           
+
+            // Display current intelligence mode and acceleration
+
+            const intelligenceModeElement = document.getElementById('intelligenceMode');
+
+            const computationAcceleration = document.getElementById('computationAcceleration');
+
+            if (intelligenceModeElement) {
+
+                intelligenceModeElement.textContent = intelligenceMode.charAt(0).toUpperCase() + intelligenceMode.slice(1);
+
+            }
+
+            if (computationAcceleration) {
+
+                const acceleration = params.timeDilation;
+
+                computationAcceleration.textContent = `${(acceleration * 100).toFixed(0)}%`;
+
+            }
+
+            const maxRecursion = clusters.reduce((max, c) => Math.max(max, c.recursionDepth), 0);
+
+            safeUpdateElement('recursionDepth', maxRecursion);
+
+           
+
+            globalThoughtComplexity = clusters.reduce((sum, c) => sum + c.thoughtComplexity, 0);
+
+            safeUpdateElement('thoughtComplexity', globalThoughtComplexity.toFixed(2));
+
+            const avgDepth = clusters.reduce((sum, c) => sum + c.thoughtComplexity, 0) / (clusters.length || 1);
+
+            const avgAwareness = clusters.reduce((sum, c) => sum + c.selfAwareness, 0) / (clusters.length || 1);
+
+            const avgAdaptivity = clusters.reduce((sum, c) => sum + c.adaptiveCapacity, 0) / (clusters.length || 1);
+
+            const avgCollective = clusters.reduce((sum, c) => sum + c.collectiveIntelligence, 0) / (clusters.length || 1);
+
+            const totalPower = clusters.reduce((sum, c) => sum + c.collectiveIntelligence * c.thoughtComplexity, 0);
+
+            safeUpdateElement('avgConsciousnessDepth', avgDepth.toFixed(2));
+
+            safeUpdateElement('avgSelfAwareness', avgAwareness.toFixed(2));
+
+            safeUpdateElement('avgAdaptiveCapacity', avgAdaptivity.toFixed(2));
+
+            safeUpdateElement('avgCollectiveIntelligence', avgCollective.toFixed(2));
+
+            safeUpdateElement('totalComputationalPower', totalPower.toExponential(2));
+
+            // Political ecosystem metrics
+
+            const growthCount = clusters.filter(c => c.ambition === 'growth').length;
+
+            const preservationCount = clusters.filter(c => c.ambition === 'preservation').length;
+
+            const allianceCount = clusters.filter(c => c.ambition === 'alliance_builder').length;
+
+            const coalitionCount = clusters.reduce((sum, c) => sum + c.allies.size, 0) / 2;
+
+           
+
+            const allTrust = clusters.flatMap(c => Object.values(c.reputation).map(r => r.trust));
+
+            const avgTrust = allTrust.length > 0 ? allTrust.reduce((sum, t) => sum + t, 0) / allTrust.length : 0.5;
+
+            safeUpdateElement('growthClusters', growthCount);
+
+            safeUpdateElement('preservationClusters', preservationCount);
+
+            safeUpdateElement('allianceClusters', allianceCount);
+
+            safeUpdateElement('coalitionCount', Math.floor(coalitionCount));
+
+            safeUpdateElement('avgTrust', avgTrust.toFixed(2));
+
+           
+
+            // Biological statistics
+
+            const maleCount = allNodes.filter(n => n.gender === 'male').length;
+
+            const femaleCount = allNodes.filter(n => n.gender === 'female').length;
+
+            const matureCount = allNodes.filter(n => n.age > n.maturityAge).length;
+
+            const pregnantCount = allNodes.filter(n => n.isPregnant).length;
+
+            const activeBreeders = allNodes.filter(n => n.reproductionUrge > 0.3).length;
+
+            const avgGeneration = allNodes.length > 0 ? allNodes.reduce((sum, n) => sum + n.generation, 0) / allNodes.length : 0;
+
+            const maxGeneration = allNodes.reduce((max, n) => Math.max(max, n.generation), 0);
+
+            const reproductivePairs = allNodes.filter(n => n.reproductiveBond).length / 2;
+
+           
+
+            safeUpdateElement('maleCount', maleCount);
+
+            safeUpdateElement('femaleCount', femaleCount);
+
+            safeUpdateElement('matureCount', matureCount);
+
+            safeUpdateElement('pregnantCount', pregnantCount);
+
+            safeUpdateElement('activeBreeders', activeBreeders);
+
+            safeUpdateElement('avgGeneration', avgGeneration.toFixed(1));
+
+            safeUpdateElement('maxGeneration', maxGeneration);
+
+            safeUpdateElement('reproductivePairs', Math.floor(reproductivePairs));
+
+        }
+
+        function safeUpdateElement(id, value) {
+
+            const el = document.getElementById(id);
+
+            if (el) el.textContent = value;
+
+        }
+
+        function reset() {
+
+            universes.forEach(u => u.nodes = []);
+
+            clusters = [];
+
+            nextClusterId = 0;
+
+            shockwaves = [];
+
+            init();
+
+        }
+
+        function handlePanStart(e) {
+
+            if (e.button === 1 || e.altKey) { // Middle mouse button or Alt key
+
+                isPanning = true;
+
+                lastPanPoint = { x: e.clientX, y: e.clientY };
+
+                canvas.style.cursor = 'grabbing';
+
+            } else if (e.button === 0) {
+
+                mouse.isDown = true;
+
+                updateMousePosition(e);
+
+            }
+
+        }
+
+        function handlePanMove(e) {
+
+            if (isPanning) {
+
+                const dx = e.clientX - lastPanPoint.x;
+
+                const dy = e.clientY - lastPanPoint.y;
+
+                viewOffset.x += dx;
+
+                viewOffset.y += dy;
+
+                lastPanPoint = { x: e.clientX, y: e.clientY };
+
+            }
+
+            if (mouse.isDown) {
+
+                updateMousePosition(e);
+
+            }
+
+        }
+
+       
+
+        let resizeTimeout;
+
+        window.addEventListener('resize', () => {
+
+            clearTimeout(resizeTimeout);
+
+            resizeTimeout = setTimeout(resize, 100);
+
+        });
+
+       
+
+        function safeInitialize() {
+
+            try {
+
+                init();
+
+                showTutorial(); // Show tutorial on first load
+
+                requestAnimationFrame(animate);
+
+            } catch (error) {
+
+                console.error("Initialization failed:", error);
+
+                document.body.innerHTML = `<div style="color: red; padding: 20px;"><h2>An error occurred.</h2><pre>${error.stack}</pre></div>`;
+
+            }
+
+        }
+
+       
+
+        function drawConnections(allNodes) {
+
+            if (mode !== 'consciousness' || allNodes.length > 200) return; // Performance guard
+
+            for (let i = 0; i < allNodes.length; i++) {
+
+                for (let j = i + 1; j < allNodes.length; j++) {
+
+                    const n1 = allNodes[i];
+
+                    const n2 = allNodes[j];
+
+                    const dist = Math.hypot(n1.x - n2.x, n1.y - n2.y);
+
+                    if (dist < thresholds.clusterProximity * 0.8) {
+
+                        const phaseDiff = Math.abs(n1.phase - n2.phase);
+                        
+                        // Enhanced connection strength based on consciousness resonance
+                        const consciousness1 = Math.hypot(n1.consciousnessValue.real, n1.consciousnessValue.imag);
+                        const consciousness2 = Math.hypot(n2.consciousnessValue.real, n2.consciousnessValue.imag);
+                        const consciousnessResonance = Math.min(consciousness1, consciousness2);
+
+                        const alpha = Math.max(0, (1 - dist / (thresholds.clusterProximity * 0.8)) * (1 - phaseDiff / Math.PI)) * 0.2;
+
+                        if (alpha > 0.01) {
+                            // Strong consciousness connections get electrical arc effects
+                            if (consciousnessResonance > 0.3 && alpha > 0.1) {
+                                // Draw electrical arc with slight randomness
+                                const midX = (n1.x + n2.x) / 2 + (Math.sin(time * 10 + i + j) * 3);
+                                const midY = (n1.y + n2.y) / 2 + (Math.cos(time * 8 + i + j) * 3);
+                                
+                                ctx.beginPath();
+                                ctx.moveTo(n1.x, n1.y);
+                                ctx.quadraticCurveTo(midX, midY, n2.x, n2.y);
+                                ctx.strokeStyle = `rgba(100, 200, 255, ${alpha * consciousnessResonance})`;
+                                ctx.lineWidth = 1 + consciousnessResonance;
+                                ctx.stroke();
+                            } else {
+                                // Regular connection
+                                ctx.beginPath();
+                                ctx.moveTo(n1.x, n1.y);
+                                ctx.lineTo(n2.x, n2.y);
+                                ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+                                ctx.lineWidth = 0.5;
+                                ctx.stroke();
+                            }
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+       
+
+        function drawReproductiveBonds(allNodes) {
+
+            if (!showReproductive) return;
+
+           
+
+            ctx.save();
+
+            allNodes.forEach(node => {
+
+                if (node.reproductiveBond && node.gender === 'male') { // Draw from male to avoid duplicates
+
+                    const partner = node.reproductiveBond;
+
+                    const distance = Math.sqrt((node.x - partner.x) ** 2 + (node.y - partner.y) ** 2);
+
+                   
+
+                    // Animated connection with pulsing
+
+                    const pulse = Math.sin(time * 3) * 0.3 + 0.7;
+
+                   
+
+                    ctx.beginPath();
+
+                    ctx.moveTo(node.x, node.y);
+
+                    ctx.lineTo(partner.x, partner.y);
+
+                    ctx.strokeStyle = `rgba(255, 100, 150, ${0.4 * pulse})`;
+
+                    ctx.lineWidth = 3 * pulse;
+
+                    ctx.stroke();
+
+                   
+
+                    // Gradient heart symbol at midpoint
+
+                    const midX = (node.x + partner.x) / 2;
+
+                    const midY = (node.y + partner.y) / 2;
+
+                   
+
+                    const gradient = ctx.createRadialGradient(midX, midY, 0, midX, midY, 15);
+
+                    gradient.addColorStop(0, `rgba(255, 100, 150, ${0.9 * pulse})`);
+
+                    gradient.addColorStop(1, `rgba(255, 50, 100, ${0.3 * pulse})`);
+
+                   
+
+                    ctx.fillStyle = gradient;
+
+                    ctx.font = `${14 + 4 * pulse}px monospace`;
+
+                    ctx.textAlign = 'center';
+
+                    ctx.textBaseline = 'middle';
+
+                    ctx.fillText('♥', midX, midY);
+
+                }
+
+               
+
+                // Draw family connections (parent-child) - softer lines
+
+                if (node.children.length > 0) {
+
+                    node.children.forEach(child => {
+
+                        if (child.markForDeath) return;
+
+                        const pulse = Math.sin(time * 2 + node.id) * 0.2 + 0.4;
+
+                       
+
+                        ctx.beginPath();
+
+                        ctx.moveTo(node.x, node.y);
+
+                        ctx.lineTo(child.x, child.y);
+
+                        ctx.strokeStyle = `rgba(100, 255, 100, ${pulse})`;
+
+                        ctx.lineWidth = 1.5;
+
+                        ctx.setLineDash([5, 5]);
+
+                        ctx.stroke();
+
+                        ctx.setLineDash([]);
+
+                    });
+
+                }
+
+            });
+
+            ctx.restore();
+
+        }
+
+        function drawAttentionField() {
+
+            ctx.save();
+
+            applyViewTransform();
+
+            attentionField.forEach(p => {
+
+                const intensity = p.baseIntensity * params.fieldStrength;
+
+                ctx.fillStyle = `rgba(0, 100, 255, ${intensity * 0.1})`;
+
+                ctx.beginPath();
+
+                ctx.arc(p.x, p.y, 20, 0, Math.PI * 2);
+
+                ctx.fill();
+
+            });
+
+            ctx.restore();
+
+        }
+
+        function updateAndDrawShockwaves(deltaTime) {
+
+            shockwaves.forEach((wave, index) => {
+
+                wave.radius += wave.speed * deltaTime;
+
+                wave.opacity -= 0.5 * deltaTime;
+
+                if (wave.opacity <= 0) {
+
+                    shockwaves.splice(index, 1);
+
+                    return;
+
+                }
+
+                ctx.beginPath();
+
+                ctx.arc(wave.x, wave.y, wave.radius, 0, Math.PI * 2);
+
+                ctx.strokeStyle = `rgba(255, 255, 255, ${wave.opacity})`;
+
+                ctx.lineWidth = wave.width;
+
+                ctx.stroke();
+
+            });
+
+        }
+
+        function updatePanIndicator() {
+
+            const indicator = document.getElementById('panIndicator');
+
+            if (isPanning) {
+
+                indicator.textContent = `Pan: X=${-viewOffset.x.toFixed(0)}, Y=${-viewOffset.y.toFixed(0)}`;
+
+                indicator.style.opacity = '1';
+
+            } else {
+
+                indicator.style.opacity = '0';
+
+            }
+
+        }
+
+        function handleWheel(e) {
+
+            e.preventDefault();
+
+            const rect = canvas.getBoundingClientRect();
+
+            const mouseX = e.clientX - rect.left;
+
+            const mouseY = e.clientY - rect.top;
+
+           
+
+            const worldPosBeforeZoom = screenToWorld(mouseX, mouseY);
+
+           
+
+            const zoomFactor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
+
+            worldScale *= zoomFactor;
+
+            worldScale = Math.max(0.1, Math.min(10, worldScale));
+
+            const worldPosAfterZoom = screenToWorld(mouseX, mouseY);
+
+            viewOffset.x += (worldPosAfterZoom.x - worldPosBeforeZoom.x) * worldScale;
+
+            viewOffset.y += (worldPosAfterZoom.y - worldPosBeforeZoom.y) * worldScale;
+
+           
+
+            initStars(); // Re-initialize stars for the new view
+
+        }
+
+        function resetView() {
+
+            worldScale = 1.0;
+
+            viewOffset = { x: 0, y: 0 };
+
+            initStars();
+
+        }
+
+        function handlePanEnd(e) {
+
+            if (e.button === 1 || e.altKey) {
+
+                isPanning = false;
+
+                canvas.style.cursor = 'crosshair';
+
+            }
+
+            if (e.button === 0) {
+
+                mouse.isDown = false;
+
+            }
+
+        }
+
+        function updateMousePosition(e) {
+
+            const rect = canvas.getBoundingClientRect();
+
+            mouse.x = e.clientX - rect.left;
+
+            mouse.y = e.clientY - rect.top;
+
+            const worldPos = screenToWorld(mouse.x, mouse.y);
+
+            mouse.worldX = worldPos.x;
+
+            mouse.worldY = worldPos.y;
+
+        }
+
+        function setMode(newMode) {
+            mode = newMode;
+            
+            document.querySelectorAll('.controls .btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.toLowerCase().includes(newMode.toLowerCase()));
+            });
+        }
+
+        // Game Power-ups
+        function spawnBurst() {
+            if (powerupCooldowns.spawn > 0) return;
+            
+            const burstCount = 5 + evolutionLevel;
+            for (let i = 0; i < burstCount; i++) {
+                const angle = (i / burstCount) * Math.PI * 2;
+                const distance = 100 + Math.random() * 200;
+                const x = mouse.worldX + Math.cos(angle) * distance;
+                const y = mouse.worldY + Math.sin(angle) * distance;
+                const universeId = Math.floor(Math.random() * universes.length);
+                universes[universeId].nodes.push(new ConsciousnessNode(x, y, universeId));
+            }
+            
+            powerupCooldowns.spawn = 180; // 3 seconds at 60fps
+            gameScore += burstCount * 10;
+            updateGameUI();
+        }
+        
+        function evolutionBoost() {
+            if (powerupCooldowns.boost > 0) return;
+            
+            boostActive = true;
+            boostTimeLeft = 300; // 5 seconds at 60fps
+            powerupCooldowns.boost = 600; // 10 seconds cooldown
+            
+            // Boost all existing nodes
+            universes.forEach(universe => {
+                universe.nodes.forEach(node => {
+                    node.thoughtIntensity = Math.min(1, node.thoughtIntensity + 0.5);
+                    node.frequency *= 1.5;
+                });
+            });
+            
+            gameScore += 50;
+            updateGameUI();
+        }
+        
+        function quantumStorm() {
+            if (powerupCooldowns.storm > 0) return;
+            
+            const allNodes = universes.flatMap(u => u.nodes);
+            const stormCount = Math.min(5, Math.ceil(allNodes.length * 0.1));
+            
+            for (let i = 0; i < stormCount; i++) {
+                const centerNode = allNodes[Math.floor(Math.random() * allNodes.length)];
+                if (!centerNode) continue;
+                
+                shockwaves.push({
+                    x: centerNode.x,
+                    y: centerNode.y,
+                    radius: 0,
+                    speed: 800,
+                    opacity: 1,
+                    width: 5
+                });
+            }
+            
+            powerupCooldowns.storm = 480; // 8 seconds
+            gameScore += stormCount * 25;
+            updateGameUI();
+        }
+        
+        function resetUniverse() {
+            gameScore = Math.floor(gameScore * 0.1); // Keep 10% of score
+            evolutionLevel = Math.max(1, evolutionLevel - 1);
+            evolutionProgress = 0;
+            init();
+            updateGameUI();
+        }
+        
+        function updateGameUI() {
+            // Calculate ecological statistics for the scientific display
+            const allNodes = universes.flatMap(u => u.nodes);
+            const producerCount = allNodes.filter(n => n.ecologicalRole === 'producer').length;
+            const herbivoreCount = allNodes.filter(n => n.ecologicalRole === 'herbivore').length;
+            const carnivoreCount = allNodes.filter(n => n.ecologicalRole === 'carnivore').length;
+            const apexCount = allNodes.filter(n => n.ecologicalRole === 'apex').length;
+            
+            document.getElementById('producerCount').textContent = producerCount;
+            document.getElementById('herbivoreCount').textContent = herbivoreCount;
+            document.getElementById('carnivoreCount').textContent = carnivoreCount;
+            document.getElementById('apexCount').textContent = apexCount;
+        }
+        
+        function updateCooldownBar(btnId, cooldown, maxCooldown) {
+            const btn = document.getElementById(btnId);
+            const cooldownBar = btn.querySelector('.btn-cooldown');
+            const percentage = Math.max(0, (maxCooldown - cooldown) / maxCooldown * 100);
+            cooldownBar.style.width = percentage + '%';
+            
+            // Disable button during cooldown
+            btn.style.opacity = cooldown > 0 ? '0.5' : '1.0';
+            btn.style.pointerEvents = cooldown > 0 ? 'none' : 'auto';
+        }
+        
+        function updateGameMechanics(deltaTime) {
+            // Update cooldowns
+            Object.keys(powerupCooldowns).forEach(key => {
+                if (powerupCooldowns[key] > 0) {
+                    powerupCooldowns[key] = Math.max(0, powerupCooldowns[key] - 60 * deltaTime);
+                }
+            });
+            
+            // Update boost duration
+            if (boostActive) {
+                boostTimeLeft -= 60 * deltaTime;
+                if (boostTimeLeft <= 0) {
+                    boostActive = false;
+                    // Restore normal frequencies
+                    universes.forEach(universe => {
+                        universe.nodes.forEach(node => {
+                            node.frequency = node.baseFrequency * (1 + ((lambdas[node.universeId] || 0.33) - 0.33) * 0.2);
+                        });
+                    });
+                }
+            }
+            
+            // Calculate score based on consciousness activity
+            const allNodes = universes.flatMap(u => u.nodes);
+            if (allNodes.length > 0) {
+                const consciousnessActivity = allNodes.reduce((sum, node) => {
+                    return sum + Math.hypot(node.consciousnessValue.real, node.consciousnessValue.imag);
+                }, 0) / allNodes.length;
+                
+                const scoreGain = Math.floor(consciousnessActivity * clusterMultiplier * 60 * deltaTime);
+                gameScore += scoreGain;
+                evolutionProgress += scoreGain;
+                
+                // Level up check
+                const requiredProgress = evolutionLevel * 1000;
+                if (evolutionProgress >= requiredProgress) {
+                    evolutionLevel++;
+                    evolutionProgress = 0;
+                    clusterMultiplier += 0.1; // Reward each level
+                }
+                
+                // Update cluster multiplier based on active clusters
+                clusterMultiplier = 1.0 + (clusters.length * 0.05);
+            }
+            
+            // Update UI every few frames for performance
+            if (frameCount % 10 === 0) {
+                updateGameUI();
+            }
+        }
+
+        function quantumCollapse() {
+
+            const allNodes = universes.flatMap(u => u.nodes);
+
+            const centerNode = allNodes[Math.floor(Math.random() * allNodes.length)];
+
+            if (!centerNode) return;
+
+            shockwaves.push({
+
+                x: centerNode.x,
+
+                y: centerNode.y,
+
+                radius: 0,
+
+                speed: 500,
+
+                opacity: 1,
+
+                width: 3
+
+            });
+
+            allNodes.forEach(node => {
+
+                const dist = Math.hypot(node.x - centerNode.x, node.y - centerNode.y);
+
+                if (dist < 200) {
+
+                    node.phase = Math.random() * Math.PI * 2;
+
+                    node.vx += (Math.random() - 0.5) * 5;
+
+                    node.vy += (Math.random() - 0.5) * 5;
+
+                }
+
+            });
+
+        }
+
+        function setupSliders() {
+
+            const sliders = {
+
+                gravity: { slider: 'gravitySlider', value: 'gravityValue', obj: params, key: 'gravity' },
+
+                friction: { slider: 'frictionSlider', value: 'frictionValue', obj: params, key: 'friction' },
+
+                elasticity: { slider: 'elasticitySlider', value: 'elasticityValue', obj: params, key: 'elasticity' },
+
+                timeDilation: { slider: 'timeSlider', value: 'timeValue', obj: params, key: 'timeDilation' },
+
+                fieldStrength: { slider: 'fieldSlider', value: 'fieldValue', obj: params, key: 'fieldStrength' },
+
+                clusterProximity: { slider: 'clusterProximitySlider', value: 'clusterProximityValue', obj: thresholds, key: 'clusterProximity' },
+
+                phaseAlignment: { slider: 'phaseAlignmentSlider', value: 'phaseAlignmentValue', obj: thresholds, key: 'phaseAlignment' },
+
+                frequencyResonance: { slider: 'frequencyResonanceSlider', value: 'frequencyResonanceValue', obj: thresholds, key: 'frequencyResonance' }
+
+            };
+
+            for (const name in sliders) {
+
+                const s = sliders[name];
+
+                const sliderEl = document.getElementById(s.slider);
+
+                const valueEl = document.getElementById(s.value);
+
+                if (sliderEl) {
+
+                    sliderEl.addEventListener('input', (e) => {
+
+                        const val = parseFloat(e.target.value);
+
+                        s.obj[s.key] = val;
+
+                        if (valueEl) valueEl.textContent = val.toFixed(s.key === 'friction' ? 2 : 1);
+
+                    });
+
+                }
+
+            }
+
+        }
+
+        function setInteractionMode(newMode) {
+
+            interactionMode = newMode;
+
+            document.querySelectorAll('.mini-btn[data-mode]').forEach(btn => {
+
+                btn.classList.toggle('active', btn.dataset.mode === newMode);
+
+            });
+
+        }
+
+        function randomizeUniverses() { lambdas = sampleDirichlet([1, 1, 1]); init(); }
+
+        function init() {
+
+            resize();
+
+            universes = [
+
+                new Universe(0, lambdas[0]),
+
+                new Universe(1, lambdas[1]),
+
+                new Universe(2, lambdas[2])
+
+            ];
+            
+            // Initialize game UI
+            updateGameUI();
+
+            for (let i = 0; i < 150; i++) {
+
+                const universeId = Math.floor(Math.random() * universes.length);
+
+                const angle = Math.random() * Math.PI * 2;
+
+                const radius = Math.random() * height * 0.4;
+
+                const worldPos = screenToWorld(width / 2 + Math.cos(angle) * radius, height / 2 + Math.sin(angle) * radius);
+
+                universes[universeId].nodes.push(new ConsciousnessNode(worldPos.x, worldPos.y, universeId));
+
+            }
+
+
+            setupSliders();
+
+            document.querySelectorAll('.mini-btn[data-mode]').forEach(btn => btn.addEventListener('click', () => setInteractionMode(btn.dataset.mode)));
+
+            document.querySelectorAll('.mini-btn[data-intel]').forEach(btn => btn.addEventListener('click', () => setIntelligenceMode(btn.dataset.intel)));
+
+            document.getElementById('zoomIn').addEventListener('click', () => handleWheel({ preventDefault: () => {}, clientX: width/2, clientY: height/2, deltaY: -100 }));
+
+            document.getElementById('zoomOut').addEventListener('click', () => handleWheel({ preventDefault: () => {}, clientX: width/2, clientY: height/2, deltaY: 100 }));
+
+            document.getElementById('resetView').addEventListener('click', resetView);
+
+            // Tool selection event handlers
+            document.querySelectorAll('.tool-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all tool buttons
+                    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    btn.classList.add('active');
+                    // Set current tool
+                    currentTool = btn.dataset.tool;
+                    // Update cursor
+                    updateCursor();
+                });
+            });
+
+            // Node inspector close button
+            const closeBtn = document.getElementById('closeInspector');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    deselectAllNodes();
+                });
+            }
+
+            // Initialize default tool
+            currentTool = 'nodes';
+            const defaultToolBtn = document.querySelector('.tool-btn[data-tool="nodes"]');
+            if (defaultToolBtn) {
+                defaultToolBtn.classList.add('active');
+            }
+            updateCursor();
+
+            // Initialize intelligence mode
+            setIntelligenceMode('basic');
+
+        }
+
+        // Node selection functions
+        function getNodeAtPosition(worldX, worldY) {
+            const allNodes = universes.flatMap(u => u.nodes);
+            for (let node of allNodes) {
+                const distance = Math.hypot(node.x - worldX, node.y - worldY);
+                if (distance <= node.radius + 5) { // 5px tolerance
+                    return node;
+                }
+            }
+            return null;
+        }
+
+        function selectNode(node, multiSelect = false) {
+            if (!multiSelect) {
+                selectedNodes = [];
+            }
+            
+            if (node && !selectedNodes.includes(node)) {
+                selectedNodes.push(node);
+                showNodeInspector(selectedNodes[0]); // Show inspector for first selected node
+            }
+        }
+        
+        function selectNodesInArea(startX, startY, endX, endY) {
+            const allNodes = universes.flatMap(u => u.nodes);
+            const minX = Math.min(startX, endX);
+            const maxX = Math.max(startX, endX);
+            const minY = Math.min(startY, endY);
+            const maxY = Math.max(startY, endY);
+            
+            allNodes.forEach(node => {
+                if (node.x >= minX && node.x <= maxX && node.y >= minY && node.y <= maxY) {
+                    if (!selectedNodes.includes(node)) {
+                        selectedNodes.push(node);
+                    }
+                }
+            });
+            
+            if (selectedNodes.length > 0) {
+                showNodeInspector(selectedNodes[0]);
+            }
+        }
+        
+        function copySelectedNodes() {
+            nodeClipboard = selectedNodes.map(node => ({
+                ecologicalRole: node.ecologicalRole,
+                frequency: node.frequency,
+                fertility: node.fertility,
+                huntingSkill: node.huntingSkill,
+                gatheringSkill: node.gatheringSkill
+            }));
+        }
+        
+        function pasteNodes() {
+            if (nodeClipboard.length === 0) return;
+            
+            nodeClipboard.forEach((template, index) => {
+                const universeId = Math.floor(Math.random() * universes.length);
+                const offsetX = (index % 5) * 30;
+                const offsetY = Math.floor(index / 5) * 30;
+                const newNode = new ConsciousnessNode(
+                    mouse.worldX + offsetX, 
+                    mouse.worldY + offsetY, 
+                    universeId
+                );
+                
+                newNode.ecologicalRole = template.ecologicalRole;
+                newNode.frequency = template.frequency;
+                newNode.fertility = template.fertility;
+                newNode.huntingSkill = template.huntingSkill;
+                newNode.gatheringSkill = template.gatheringSkill;
+                
+                universes[universeId].nodes.push(newNode);
+            });
+        }
+        
+        function deleteSelectedNodes() {
+            selectedNodes.forEach(node => {
+                node.markForDeath = true;
+            });
+            deselectAllNodes();
+        }
+
+        function deselectAllNodes() {
+            selectedNodes = [];
+            hideNodeInspector();
+        }
+
+        function showNodeInspector(node) {
+            const inspector = document.getElementById('nodeInspector');
+            inspector.style.display = 'block';
+            updateNodeInspectorData(node);
+        }
+
+        function hideNodeInspector() {
+            const inspector = document.getElementById('nodeInspector');
+            inspector.style.display = 'none';
+        }
+
+        function updateNodeInspectorData(node) {
+            // Consciousness metrics
+            document.getElementById('nodeFrequency').textContent = `${node.frequency.toFixed(1)} Hz`;
+            document.getElementById('nodePhase').textContent = `${(node.phase * 180 / Math.PI).toFixed(1)}°`;
+            document.getElementById('nodeAttention').textContent = node.attention.toFixed(3);
+            document.getElementById('nodeThought').textContent = node.thoughtIntensity.toFixed(3);
+
+            // Biological status
+            document.getElementById('nodeAge').textContent = Math.floor(node.age);
+            document.getElementById('nodeEnergy').textContent = `${Math.floor(node.energy)}/${Math.floor(node.maxEnergy)}`;
+            document.getElementById('nodeRole').textContent = node.ecologicalRole;
+            document.getElementById('nodeGeneration').textContent = node.generation;
+
+            // Social dynamics
+            document.getElementById('nodeConnections').textContent = node.connections.length;
+            document.getElementById('nodeChildren').textContent = node.children.length;
+            document.getElementById('nodeRepro').textContent = `${Math.floor(node.reproductionUrge * 100)}%`;
+        }
+
+        // Cursor update function
+        function updateCursor() {
+            const canvas = document.getElementById('canvas');
+            switch(currentTool) {
+                case 'nodes':
+                    canvas.style.cursor = 'crosshair';
+                    break;
+                case 'gravity':
+                    canvas.style.cursor = 'grab';
+                    break;
+                case 'water':
+                    canvas.style.cursor = 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'20\' height=\'20\' viewBox=\'0 0 20 20\'%3E%3Ccircle cx=\'10\' cy=\'10\' r=\'8\' fill=\'%234A90E2\' opacity=\'0.7\'/%3E%3C/svg%3E") 10 10, auto';
+                    break;
+                case 'food':
+                    canvas.style.cursor = 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'20\' height=\'20\' viewBox=\'0 0 20 20\'%3E%3Ccircle cx=\'10\' cy=\'10\' r=\'8\' fill=\'%2350E3C2\' opacity=\'0.7\'/%3E%3C/svg%3E") 10 10, auto';
+                    break;
+                case 'light':
+                    canvas.style.cursor = 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'20\' height=\'20\' viewBox=\'0 0 20 20\'%3E%3Ccircle cx=\'10\' cy=\'10\' r=\'8\' fill=\'%23FFD700\' opacity=\'0.7\'/%3E%3C/svg%3E") 10 10, auto';
+                    break;
+                case 'spores':
+                    canvas.style.cursor = 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'20\' height=\'20\' viewBox=\'0 0 20 20\'%3E%3Ccircle cx=\'10\' cy=\'10\' r=\'8\' fill=\'%23D2691E\' opacity=\'0.7\'/%3E%3C/svg%3E") 10 10, auto';
+                    break;
+                default:
+                    canvas.style.cursor = 'default';
+            }
+        }
+
+        canvas.addEventListener('mousedown', handlePanStart);
+
+        canvas.addEventListener('mouseup', handlePanEnd);
+
+        canvas.addEventListener('mouseleave', handlePanEnd);
+
+        canvas.addEventListener('mousemove', handlePanMove);
+
+        canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        canvas.addEventListener('wheel', handleWheel, { passive: false });
+
+        canvas.addEventListener('click', (e) => {
+            if (e.button !== 0 || isPanning) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX - rect.left;
+            const clientY = e.clientY - rect.top;
+            const worldPos = screenToWorld(clientX, clientY);
+
+            // Check for node selection first (regardless of current tool)
+            const clickedNode = getNodeAtPosition(worldPos.x, worldPos.y);
+            if (clickedNode) {
+                selectNode(clickedNode, e.ctrlKey || e.metaKey);
+                return; // Don't create new elements when clicking on nodes
+            } else if (!e.ctrlKey && !e.metaKey) {
+                deselectAllNodes(); // Clear selection when clicking empty space
+            }
+
+            switch(currentTool) {
+                case 'nodes':
+                    const universeId = Math.floor(Math.random() * universes.length);
+                    universes[universeId].nodes.push(new ConsciousnessNode(worldPos.x, worldPos.y, universeId));
+                    break;
+                
+                case 'gravity':
+                    gravitationalAnchors.push(new GravitationalAnchor(worldPos.x, worldPos.y, 50));
+                    break;
+                
+                case 'water':
+                    environmentalElements.push(new EnvironmentalElement(worldPos.x, worldPos.y, 'water', brushSize));
+                    break;
+                
+                case 'food':
+                    environmentalElements.push(new EnvironmentalElement(worldPos.x, worldPos.y, 'food', brushSize));
+                    break;
+                
+                case 'light':
+                    environmentalElements.push(new EnvironmentalElement(worldPos.x, worldPos.y, 'light', brushSize));
+                    break;
+                
+                case 'spores':
+                    environmentalElements.push(new EnvironmentalElement(worldPos.x, worldPos.y, 'spores', brushSize));
+                    break;
+            }
+        });
+
+       
+
+        safeInitialize();
+
+    </script>
+
+</body>
+
+</html>
