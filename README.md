@@ -42,7 +42,18 @@
 
 ---
 
-### 🛠️ **For Developers: Local Installation**
+### 🛠️ **Installation Options**
+
+#### 🎯 **Standalone Executable** *(Recommended for easy use)*
+**Zero setup required - download and run!**
+```bash
+# Download from releases or build yourself:
+git clone https://github.com/Jacobcdsmith/CONSIM.git && cd CONSIM
+./build_executable.sh  # Linux/macOS
+# build_executable.bat  # Windows
+# Then run: ./dist/CONSIM
+```
+**✅ No Python installation needed • ✅ No dependencies • ✅ Self-contained**
 
 #### Quick Demo Version
 ```bash
