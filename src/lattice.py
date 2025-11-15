@@ -393,14 +393,14 @@ class ConsciousnessLattice:
             for node in self.nodes:
                 node.attention /= total_attention
     
-    def update(self, delta_time: float, mouse_influence: Optional[Dict] = None):
+    def update(self, delta_time: float):
         """Update the entire consciousness lattice."""
         current_time = time.time()
         actual_delta_time = min(0.05, current_time - self.last_update_time)
         self.last_update_time = current_time
-        
+
         self.time += actual_delta_time * self.params['time_dilation']
-        
+
         # Process mouse influence from queue
         current_mouse_influence = self.mouse_influence_queue.pop(0) if self.mouse_influence_queue else None
 
