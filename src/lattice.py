@@ -380,7 +380,11 @@ class ConsciousnessLattice:
             self.universes[universe_id].nodes.append(node)
     
     def _normalize_attention_field(self):
-        """Normalize attention field A(x) so ∫A(x)dμ(x) = 1."""
+        """
+        Normalize per-node attention so the lattice-wide attention distribution sums to 1.
+        
+        Calculates each node's attention via its calculate_attention_density() method and scales all attention values so their sum equals 1. If the total attention is zero, node attention values are left unchanged.
+        """
         total_attention = 0.0
         
         # Calculate attention for each node
@@ -393,14 +397,22 @@ class ConsciousnessLattice:
             for node in self.nodes:
                 node.attention /= total_attention
     
-    def update(self, delta_time: float, mouse_influence: Optional[Dict] = None):
-        """Update the entire consciousness lattice."""
+    def update(self, delta_time: float):
+        """
+        Advance the lattice simulation by one update cycle, processing interactions, universes, clusters, and queued inputs.
+        
+        Parameters:
+            delta_time (float): Suggested time step in seconds for this update; the lattice may cap the applied step.
+        
+        Returns:
+            dict: Aggregate global consciousness metrics and state summary produced after the update.
+        """
         current_time = time.time()
         actual_delta_time = min(0.05, current_time - self.last_update_time)
         self.last_update_time = current_time
-        
+
         self.time += actual_delta_time * self.params['time_dilation']
-        
+
         # Process mouse influence from queue
         current_mouse_influence = self.mouse_influence_queue.pop(0) if self.mouse_influence_queue else None
 
