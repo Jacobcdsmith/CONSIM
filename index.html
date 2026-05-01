@@ -99,43 +99,18 @@
             font-size: 12px;
         }
         
-        /* Tool Sidebar */
-        .tool-sidebar {
-            position: fixed;
-            left: 20px;
-            top: 200px;
-            width: 100px;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 15px 10px;
-            z-index: 200;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        /* Tool buttons inside left panel */
+        .tool-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 8px;
         }
-        
-        .tool-category {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .tool-header {
-            font-size: 9px;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 5px;
-        }
-        
+
         .tool-btn {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             padding: 6px 8px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -143,7 +118,8 @@
             color: #ccc;
             cursor: pointer;
             transition: all 0.2s ease;
-            font-size: 11px;
+            font-size: 10px;
+            font-family: 'Courier New', monospace;
         }
 
         .tool-btn:hover {
@@ -152,41 +128,55 @@
             color: #fff;
             transform: translateY(-1px);
         }
-        
+
         .tool-btn.active {
             background: rgba(0, 255, 170, 0.2);
             border-color: rgba(0, 255, 170, 0.5);
             color: #00ffaa;
-            box-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
+            box-shadow: 0 0 10px rgba(0, 255, 170, 0.2);
         }
-        
-        .tool-btn span {
-            font-weight: 500;
+
+        /* Right-panel tab bar */
+        .panel-tab-bar {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 14px;
         }
-        
-        .size-slider {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            outline: none;
-            border-radius: 2px;
-            -webkit-appearance: none;
-        }
-        
-        .size-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 12px;
-            height: 12px;
-            background: #00ffaa;
-            border-radius: 50%;
+
+        .panel-tab {
+            flex: 1;
+            padding: 6px 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #888;
+            font-family: 'Courier New', monospace;
+            font-size: 9px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
-        
-        .size-display {
-            text-align: center;
-            font-size: 10px;
+
+        .panel-tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ccc;
+        }
+
+        .panel-tab.active {
+            background: rgba(0, 255, 170, 0.15);
+            border-color: rgba(0, 255, 170, 0.5);
             color: #00ffaa;
-            margin-top: 5px;
+            box-shadow: 0 0 8px rgba(0, 255, 170, 0.2);
+        }
+
+        .tab-pane-hidden {
+            display: none !important;
+        }
+
+        .panel-title-sm {
+            font-size: 12px;
         }
 
        
@@ -1843,49 +1833,30 @@
    
 
     <canvas id="canvas"></canvas>
-    
-    <!-- Tool Selection Sidebar -->
-    <div class="tool-sidebar">
-        <div class="tool-category">
-            <div class="tool-header">INTERACTION TOOLS</div>
-            <button class="tool-btn active" data-tool="nodes" title="Spawn Consciousness Nodes">
-                🧠 <span>Nodes</span>
-            </button>
-            <button class="tool-btn" data-tool="gravity" title="Create Gravitational Anchor">
-                🌑 <span>Gravity</span>
-            </button>
-        </div>
-        
-        <div class="tool-category">
-            <div class="tool-header">ELEMENTS</div>
-            <button class="tool-btn" data-tool="water" title="Inject Water">
-                💧 <span>Water</span>
-            </button>
-            <button class="tool-btn" data-tool="food" title="Inject Nutrients">
-                🍃 <span>Food</span>
-            </button>
-            <button class="tool-btn" data-tool="light" title="Emit Light Energy">
-                ☀️ <span>Light</span>
-            </button>
-            <button class="tool-btn" data-tool="spores" title="Release Fungal Spores">
-                🍄 <span>Spores</span>
-            </button>
-        </div>
-        
-        <div class="tool-category">
-            <div class="tool-header">BRUSH SIZE</div>
-            <input type="range" id="brushSize" min="10" max="100" value="30" class="size-slider">
-            <div class="size-display"><span id="brushSizeValue">30</span>px</div>
-        </div>
-    </div>
 
-   
-
-    <!-- Environmental Controls Panel -->
+    <!-- Unified Left Panel (Tools + Environmental Controls) -->
 
     <div class="side-panel left">
 
-        <div class="panel-title">Environmental Controls</div>
+        <div class="panel-title">Spawn &amp; Tools</div>
+
+        <div class="tool-grid">
+            <button class="tool-btn active" data-tool="nodes" title="Spawn Consciousness Nodes">🧠 Nodes</button>
+            <button class="tool-btn" data-tool="gravity" title="Create Gravitational Anchor">🌑 Gravity</button>
+            <button class="tool-btn" data-tool="water" title="Inject Water">💧 Water</button>
+            <button class="tool-btn" data-tool="food" title="Inject Nutrients">🍃 Food</button>
+            <button class="tool-btn" data-tool="light" title="Emit Light Energy">☀️ Light</button>
+            <button class="tool-btn" data-tool="spores" title="Release Fungal Spores">🍄 Spores</button>
+        </div>
+
+        <div class="slider-container">
+            <label>Brush Size <span id="brushSizeValue">30</span>px</label>
+            <input type="range" id="brushSize" min="10" max="100" value="30">
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div class="panel-title panel-title-sm">Environmental Controls</div>
 
        
 
@@ -1943,7 +1914,7 @@
 
        
 
-        <div class="panel-title" style="font-size: 12px;">Interaction Mode</div>
+        <div class="panel-title panel-title-sm">Interaction Mode</div>
 
         <div class="button-group">
 
@@ -1965,7 +1936,7 @@
 
        
 
-        <div class="panel-title" style="font-size: 12px;">Intelligence Mode</div>
+        <div class="panel-title panel-title-sm">Intelligence Mode</div>
 
         <div class="button-group">
 
@@ -1983,7 +1954,7 @@
 
        
 
-        <div class="panel-title" style="font-size: 12px;">Cluster Thresholds</div>
+        <div class="panel-title panel-title-sm">Cluster Thresholds</div>
 
         <div class="slider-container">
 
@@ -2436,240 +2407,131 @@
 
     </div>
 
-    <!-- Intelligence Panels -->
+    <!-- Intelligence Panels (tabbed) -->
 
     <div class="side-panel right">
 
-        <!-- Main Intelligence Panel -->
+        <div class="panel-tab-bar">
+            <button class="panel-tab active" data-pane="intelligence">Intel</button>
+            <button class="panel-tab" data-pane="political">Political</button>
+            <button class="panel-tab" data-pane="biological">Bio</button>
+        </div>
 
-        <div class="intelligence-panel">
-
+        <!-- Intelligence Tab -->
+        <div class="tab-pane" id="pane-intelligence">
             <div class="intelligence-title main">Emergent Intelligence</div>
-
             <div class="cluster-stats">
-
                 <div class="cluster-stat">
-
                     <div class="cluster-stat-label">Mode</div>
-
                     <div id="intelligenceMode" class="cluster-value">Basic</div>
-
                 </div>
-
                 <div class="cluster-stat">
-
                     <div class="cluster-stat-label">Acceleration</div>
-
                     <div id="computationAcceleration" class="cluster-value">100%</div>
-
                 </div>
-
                 <div class="cluster-stat">
-
                     <div class="cluster-stat-label">Clusters</div>
-
                     <div id="clusterCount" class="cluster-value">0</div>
-
                 </div>
-
                 <div class="cluster-stat">
-
                     <div class="cluster-stat-label">Recursion</div>
-
                     <div id="recursionDepth" class="cluster-value">0</div>
-
                 </div>
-
                 <div class="cluster-stat">
-
                     <div class="cluster-stat-label">Complexity</div>
-
                     <div id="thoughtComplexity" class="cluster-value">0.0</div>
-
                 </div>
-
             </div>
-
             <div class="global-metrics">
-
                 <div>
-
                     <div class="metric-label">Avg Depth</div>
-
                     <div id="avgConsciousnessDepth" class="metric-value">0.0</div>
-
                 </div>
-
                 <div>
-
                     <div class="metric-label">Avg Awareness</div>
-
                     <div id="avgSelfAwareness" class="metric-value">0.0</div>
-
                 </div>
-
                 <div>
-
                     <div class="metric-label">Avg Adaptivity</div>
-
                     <div id="avgAdaptiveCapacity" class="metric-value">0.0</div>
-
                 </div>
-
                 <div>
-
                     <div class="metric-label">Avg Collective</div>
-
                     <div id="avgCollectiveIntelligence" class="metric-value">0.0</div>
-
                 </div>
-
                 <div>
-
                     <div class="metric-label">Total Power</div>
-
                     <div id="totalComputationalPower" class="metric-value">0.0</div>
-
                 </div>
-
                 <div>
-
                     <div class="metric-label">Coalitions</div>
-
                     <div id="coalitionCount" class="metric-value">0</div>
-
                 </div>
-
                 <div>
-
                     <div class="metric-label">Avg Trust</div>
-
                     <div id="avgTrust" class="metric-value">0.5</div>
-
                 </div>
-
             </div>
-
         </div>
 
-        <!-- Political Ecosystem Panel -->
-
-        <div class="intelligence-panel">
-
+        <!-- Political Tab -->
+        <div class="tab-pane tab-pane-hidden" id="pane-political">
             <div class="intelligence-title political">Political Ecosystem</div>
-
             <div class="cluster-stats">
-
                 <div class="cluster-stat">
-
                     <div class="cluster-stat-label">Growth</div>
-
                     <div id="growthClusters" class="cluster-value">0</div>
-
                 </div>
-
                 <div class="cluster-stat">
-
                     <div class="cluster-stat-label">Preservation</div>
-
                     <div id="preservationClusters" class="cluster-value">0</div>
-
                 </div>
-
                 <div class="cluster-stat">
-
                     <div class="cluster-stat-label">Alliance</div>
-
                     <div id="allianceClusters" class="cluster-value">0</div>
-
                 </div>
-
             </div>
-
         </div>
 
-       
-
-        <!-- Biological Ecosystem Panel -->
-
-        <div class="intelligence-panel">
-
+        <!-- Biological Tab -->
+        <div class="tab-pane tab-pane-hidden" id="pane-biological">
             <div class="intelligence-title" style="color: #66ff99;">Biological Ecosystem</div>
-
             <div class="cluster-stats">
-
                 <div class="cluster-stat">
-
                     <div class="cluster-stat-label">Males ♂</div>
-
                     <div id="maleCount" class="cluster-value">0</div>
-
                 </div>
-
                 <div class="cluster-stat">
-
                     <div class="cluster-stat-label">Females ♀</div>
-
                     <div id="femaleCount" class="cluster-value">0</div>
-
                 </div>
-
                 <div class="cluster-stat">
-
                     <div class="cluster-stat-label">Mature</div>
-
                     <div id="matureCount" class="cluster-value">0</div>
-
                 </div>
-
             </div>
-
-           
-
             <div class="global-metrics">
-
                 <div>
-
                     <div class="metric-label">Pregnant</div>
-
                     <div id="pregnantCount" class="metric-value">0</div>
-
                 </div>
-
                 <div>
-
                     <div class="metric-label">Breeders</div>
-
                     <div id="activeBreeders" class="metric-value">0</div>
-
                 </div>
-
                 <div>
-
                     <div class="metric-label">Pairs</div>
-
                     <div id="reproductivePairs" class="metric-value">0</div>
-
                 </div>
-
                 <div>
-
                     <div class="metric-label">Avg Gen</div>
-
                     <div id="avgGeneration" class="metric-value">0.0</div>
-
                 </div>
-
                 <div>
-
                     <div class="metric-label">Max Gen</div>
-
                     <div id="maxGeneration" class="metric-value">0</div>
-
                 </div>
-
             </div>
-
         </div>
 
     </div>
@@ -6533,6 +6395,27 @@
         });
 
        
+
+        // Tab switching for right panel
+        document.querySelectorAll('.panel-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('tab-pane-hidden'));
+                tab.classList.add('active');
+                const pane = document.getElementById('pane-' + tab.dataset.pane);
+                if (pane) pane.classList.remove('tab-pane-hidden');
+            });
+        });
+
+        // Brush size slider
+        const brushSlider = document.getElementById('brushSize');
+        const brushDisplay = document.getElementById('brushSizeValue');
+        if (brushSlider) {
+            brushSlider.addEventListener('input', (e) => {
+                brushSize = parseInt(e.target.value);
+                if (brushDisplay) brushDisplay.textContent = brushSize;
+            });
+        }
 
         safeInitialize();
 
