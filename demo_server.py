@@ -131,15 +131,34 @@ class ConsciousnessHTTPHandler(http.server.SimpleHTTPRequestHandler):
 # Global lattice instance
 lattice = ConsciousnessLattice(grid_size=64)
 
-def start_server(port=8000):
+def get_local_ip():
+    """Get the local network IP address."""
+    import socket
+    try:
+        # Create a socket to find the local IP
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+        return local_ip
+    except Exception:
+        return "Unable to detect"
+
+def start_server(port=8000, host="0.0.0.0"):
     """Start the consciousness simulation server."""
-    with socketserver.TCPServer(("", port), ConsciousnessHTTPHandler) as httpd:
-        print(f"🧠 CONSIM Demo Server starting on http://localhost:{port}")
+    local_ip = get_local_ip()
+
+    socketserver.TCPServer.allow_reuse_address = True
+    with socketserver.TCPServer((host, port), ConsciousnessHTTPHandler) as httpd:
+        print(f"🧠 CONSIM Demo Server starting on ALL network interfaces")
         print(f"✨ Consciousness lattice with {len(lattice.nodes)} nodes initialized")
         print(f"🌌 {len(lattice.universes)} universes with λ weights: {[f'{l:.3f}' for l in lattice.lambdas]}")
         print(f"🔗 API endpoints: /api/status, /api/stats, /api/state")
-        print("💡 Open http://localhost:8000 in your browser")
-        
+        print(f"\n📍 Access URLs:")
+        print(f"   Local:   http://localhost:{port}")
+        print(f"   Network: http://{local_ip}:{port}")
+        print(f"\n💡 Share the Network URL with devices on your local network!")
+
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
