@@ -3,82 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CONSIM - Consciousness Lattice Visualization</title>
+    <meta name="description" content="CONSIM - Interactive Multiversal Consciousness Framework Visualization">
+    <meta name="author" content="Jacob C. Smith">
+    <title>CONSIM - Multiversal Consciousness Framework</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="info-panel" class="panel">
-        <h2>CONSIM Lattice Engine</h2>
-        <div class="equation">
-            <div><strong>Core EQ:</strong></div>
-            <div>C = ∫<sub>M<sub>C</sub></sub> A(x) Φ(x) e<sup>iτ(x)</sup> dμ(x)</div>
-            <div>M = Σ<sub>i</sub> λ<sub>i</sub> U<sub>i</sub></div>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo">
+                <span class="logo-icon">🧠</span>
+                CONSIM
+            </h1>
+            <p class="tagline">Multiversal Consciousness Framework</p>
         </div>
-        <div class="stats">
-            <div>Nodes: <span id="nodeCount">0</span></div>
-            <div>Resonance: <span id="resonance">0.000</span></div>
-            <div>Attention: <span id="attention">0.000</span></div>
-            <div>Phase: <span id="phase">0.0</span>°</div>
-            <div>Clusters: <span id="clusterCount">0</span></div>
-            <div>FPS: <span id="fps">0</span></div>
+    </header>
+
+    <!-- Info Panel -->
+    <aside id="info-panel" class="panel panel-info">
+        <div class="panel-header">
+            <h2>Consciousness Lattice</h2>
+        </div>
+
+        <div class="equation-display">
+            <div class="equation-label">Core Equation:</div>
+            <div class="equation">
+                <div class="eq-line">C = ∫<sub>M<sub>C</sub></sub> A(x) Φ(x) e<sup>iτ(x)</sup> dμ(x)</div>
+                <div class="eq-line">M = Σ<sub>i</sub> λ<sub>i</sub> U<sub>i</sub></div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-label">Nodes</span>
+                <span class="stat-value" id="nodeCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Clusters</span>
+                <span class="stat-value" id="clusterCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Resonance</span>
+                <span class="stat-value" id="resonance">0.000</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Attention</span>
+                <span class="stat-value" id="attention">0.000</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Phase</span>
+                <span class="stat-value" id="phase">0.0°</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">FPS</span>
+                <span class="stat-value" id="fps">0</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Controls Panel -->
+    <aside id="controls-panel" class="panel panel-controls">
+        <div class="panel-section">
+            <h3 class="section-title">Physics</h3>
+
+            <div class="control-group">
+                <div class="control-item">
+                    <label class="control-label">
+                        Gravity
+                        <span class="control-value" id="gravityValue">1.0</span>
+                    </label>
+                    <input type="range" id="gravitySlider" class="slider" min="0" max="2" step="0.1" value="1.0">
+                </div>
+
+                <div class="control-item">
+                    <label class="control-label">
+                        Friction
+                        <span class="control-value" id="frictionValue">0.99</span>
+                    </label>
+                    <input type="range" id="frictionSlider" class="slider" min="0.9" max="1" step="0.01" value="0.99">
+                </div>
+
+                <div class="control-item">
+                    <label class="control-label">
+                        Time Dilation
+                        <span class="control-value" id="timeValue">1.0</span>
+                    </label>
+                    <input type="range" id="timeSlider" class="slider" min="0.1" max="2" step="0.1" value="1.0">
+                </div>
+
+                <div class="control-item">
+                    <label class="control-label">
+                        Field Strength
+                        <span class="control-value" id="fieldValue">1.0</span>
+                    </label>
+                    <input type="range" id="fieldSlider" class="slider" min="0.2" max="3" step="0.1" value="1.0">
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <h3 class="section-title">Interaction</h3>
+            <div class="button-grid">
+                <button class="btn btn-mode active" data-mode="push">
+                    <span class="btn-icon">👋</span>
+                    Push
+                </button>
+                <button class="btn btn-mode" data-mode="pull">
+                    <span class="btn-icon">🧲</span>
+                    Pull
+                </button>
+                <button class="btn btn-mode" data-mode="vortex">
+                    <span class="btn-icon">🌀</span>
+                    Vortex
+                </button>
+                <button class="btn btn-mode" data-mode="wave">
+                    <span class="btn-icon">🌊</span>
+                    Wave
+                </button>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <h3 class="section-title">Visualization</h3>
+            <div class="button-grid button-grid-small">
+                <button class="btn btn-viz active" data-viz="consciousness">Consciousness</button>
+                <button class="btn btn-viz" data-viz="attention">Attention</button>
+                <button class="btn btn-viz" data-viz="frequency">Frequency</button>
+                <button class="btn btn-viz" data-viz="temporal">Temporal</button>
+                <button class="btn btn-viz" data-viz="multiverse">Multiverse</button>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <h3 class="section-title">Actions</h3>
+            <div class="button-stack">
+                <button id="collapseBtn" class="btn btn-action">
+                    <span class="btn-icon">⚡</span>
+                    Quantum Collapse
+                </button>
+                <button id="resetBtn" class="btn btn-action btn-secondary">
+                    <span class="btn-icon">🔄</span>
+                    Reset Lattice
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Status Bar -->
+    <div id="status-bar" class="status-bar">
+        <div class="status-indicator">
+            <span class="status-dot" id="statusDot"></span>
+            <span class="status-text" id="statusText">Initializing...</span>
+        </div>
+        <div class="status-info">
+            <span>Click to spawn nodes • Drag to interact</span>
         </div>
     </div>
 
-    <div id="controls-panel" class="panel">
-        <h3>Physics Controls</h3>
-        <div class="slider-container">
-            <label>Gravity: <span id="gravityValue">1.0</span></label>
-            <input type="range" id="gravitySlider" min="0" max="2" step="0.1" value="1.0">
-        </div>
-        <div class="slider-container">
-            <label>Friction: <span id="frictionValue">0.99</span></label>
-            <input type="range" id="frictionSlider" min="0.9" max="1" step="0.01" value="0.99">
-        </div>
-        <div class="slider-container">
-            <label>Time Dilation: <span id="timeValue">1.0</span></label>
-            <input type="range" id="timeSlider" min="0.1" max="2" step="0.1" value="1.0">
-        </div>
-        <div class="slider-container">
-            <label>Field Strength: <span id="fieldValue">1.0</span></label>
-            <input type="range" id="fieldSlider" min="0.2" max="3" step="0.1" value="1.0">
-        </div>
+    <!-- Canvas -->
+    <canvas id="canvas" aria-label="Consciousness field visualization"></canvas>
 
-        <h3>Interaction Mode</h3>
-        <div class="button-group">
-            <button class="mode-btn active" data-mode="push">Push</button>
-            <button class="mode-btn" data-mode="pull">Pull</button>
-            <button class="mode-btn" data-mode="vortex">Vortex</button>
-            <button class="mode-btn" data-mode="wave">Wave</button>
-        </div>
-
-        <h3>Visualization Mode</h3>
-        <div class="button-group">
-            <button class="viz-btn active" data-viz="consciousness">Consciousness</button>
-            <button class="viz-btn" data-viz="attention">Attention</button>
-            <button class="viz-btn" data-viz="frequency">Frequency</button>
-            <button class="viz-btn" data-viz="temporal">Temporal</button>
-            <button class="viz-btn" data-viz="multiverse">Multiverse</button>
-        </div>
-
-        <h3>Actions</h3>
-        <div class="button-group">
-            <button id="collapseBtn">Quantum Collapse</button>
-            <button id="resetBtn">Reset Lattice</button>
-        </div>
-    </div>
-
-    <div id="connection-status" class="status">
-        <span id="statusText">Connecting...</span>
-        <span id="statusDot" class="dot connecting"></span>
-    </div>
-
-    <canvas id="canvas"></canvas>
-
-    <!-- Three.js (optional for demo) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" onerror="console.warn('Three.js failed to load, using fallback renderer')"></script>
-    <!-- Consciousness field renderer -->
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
+            onerror="console.warn('Three.js failed to load, using fallback renderer')"></script>
     <script src="/static/js/consciousnessRenderer.js"></script>
-    <!-- Demo application (HTTP polling version) -->
     <script src="/static/js/app_demo.js"></script>
 </body>
 </html>

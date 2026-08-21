@@ -3,25 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CONSIM - Interactive Multiversal Consciousness Framework Visualization">
+    <meta name="author" content="Jacob C. Smith">
     <title>CONSIM - Multiversal Consciousness Framework</title>
-    <link rel="stylesheet" href="static/css/style.css">
+    <meta http-equiv="refresh" content="0; url=static/index.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a14 0%, #14141e 100%);
+            color: #00ffaa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .loader {
+            text-align: center;
+        }
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        h1 {
+            font-size: 2rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 20px rgba(0, 255, 170, 0.5);
+        }
+        p {
+            color: #b8b8c8;
+            font-size: 0.875rem;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.95); }
+        }
+    </style>
 </head>
 <body>
-    <div id="canvas-container"></div>
-
-    <!-- Three.js from CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-    <!-- CONSIM Modules -->
-    <script src="static/js/consciousnessRenderer.js"></script>
-    <script src="static/js/app_demo.js"></script>
-
+    <div class="loader">
+        <div class="logo">🧠</div>
+        <h1>CONSIM</h1>
+        <p>Loading Multiversal Consciousness Framework...</p>
+    </div>
     <script>
-        // Initialize standalone demo
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('🧠 CONSIM - Multiversal Consciousness Framework (Standalone Demo)');
-            const app = new ConsciousnessApp();
-        });
+        // Redirect to static version if meta refresh doesn't work
+        setTimeout(() => {
+            window.location.href = 'static/index.html';
+        }, 100);
     </script>
 </body>
 </html>
