@@ -160,30 +160,32 @@ class ConsciousnessApp {
         this.setupSlider('frictionSlider', 'frictionValue', 'friction');
         this.setupSlider('timeSlider', 'timeValue', 'time_dilation');
         this.setupSlider('fieldSlider', 'fieldValue', 'field_strength');
-        
+
         // Interaction mode buttons
-        document.querySelectorAll('.mode-btn').forEach(btn => {
+        document.querySelectorAll('.btn-mode').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                this.setInteractionMode(e.target.dataset.mode);
+                const mode = e.currentTarget.dataset.mode;
+                this.setInteractionMode(mode);
             });
         });
-        
+
         // Visualization mode buttons
-        document.querySelectorAll('.viz-btn').forEach(btn => {
+        document.querySelectorAll('.btn-viz').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                this.setVisualizationMode(e.target.dataset.viz);
+                const viz = e.currentTarget.dataset.viz;
+                this.setVisualizationMode(viz);
             });
         });
-        
+
         // Action buttons
         document.getElementById('collapseBtn').addEventListener('click', () => {
             this.triggerQuantumCollapse();
         });
-        
+
         document.getElementById('resetBtn').addEventListener('click', () => {
             this.resetSimulation();
         });
-        
+
         // Mouse events for node creation
         document.getElementById('canvas').addEventListener('click', (e) => {
             this.createNodeAtMouse(e);
@@ -346,12 +348,14 @@ class ConsciousnessApp {
         if (this.renderer && this.renderer.setInteractionMode) {
             this.renderer.setInteractionMode(mode);
         }
-        
+
         // Update UI
-        document.querySelectorAll('.mode-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.mode === mode);
+        document.querySelectorAll('.btn-mode').forEach(btn => {
+            const isActive = btn.dataset.mode === mode;
+            btn.classList.toggle('active', isActive);
+            btn.setAttribute('aria-pressed', isActive);
         });
-        
+
         console.log('Interaction mode changed to:', mode);
     }
 
@@ -360,24 +364,26 @@ class ConsciousnessApp {
         if (this.renderer && this.renderer.setVisualizationMode) {
             this.renderer.setVisualizationMode(mode);
         }
-        
+
         this.updateVisualizationModeUI(mode);
         console.log('Visualization mode changed to:', mode);
     }
 
     updateVisualizationModeUI(mode) {
-        document.querySelectorAll('.viz-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.viz === mode);
+        document.querySelectorAll('.btn-viz').forEach(btn => {
+            const isActive = btn.dataset.viz === mode;
+            btn.classList.toggle('active', isActive);
+            btn.setAttribute('aria-pressed', isActive);
         });
     }
 
     updateConnectionStatus(status) {
         const statusText = document.getElementById('statusText');
         const statusDot = document.getElementById('statusDot');
-        
+
         if (statusText && statusDot) {
-            statusDot.className = 'dot ' + status;
-            
+            statusDot.className = 'status-dot ' + status;
+
             switch(status) {
                 case 'connecting':
                     statusText.textContent = 'Connecting...';
