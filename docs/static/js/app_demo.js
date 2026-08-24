@@ -11,12 +11,12 @@ class ConsciousnessApp {
         this.isRunning = false;
         this.pollInterval = null;
         this.pollDelay = 100; // 10fps polling for demo
-        
+
         // Current interaction state
         this.interactionMode = 'push';
         this.visualizationMode = 'consciousness';
         this.isMouseDown = false;
-        
+
         // Physics parameters
         this.params = {
             gravity: 1.0,
@@ -25,7 +25,17 @@ class ConsciousnessApp {
             time_dilation: 1.0,
             field_strength: 1.0
         };
-        
+
+        // Drag state
+        this.dragState = {
+            isDragging: false,
+            currentPanel: null,
+            startX: 0,
+            startY: 0,
+            offsetX: 0,
+            offsetY: 0
+        };
+
         this.init();
     }
 
@@ -54,13 +64,19 @@ class ConsciousnessApp {
         
         // Set up event handlers
         this.setupEventHandlers();
-        
+
+        // Set up drag handlers for movable panels
+        this.setupDragHandlers();
+
+        // Load saved panel positions
+        this.loadPanelPositions();
+
         // Start polling for updates
         this.startPolling();
-        
+
         // Update connection status
         this.updateConnectionStatus('connected');
-        
+
         console.log('CONSIM demo application initialized');
     }
 
@@ -190,6 +206,14 @@ class ConsciousnessApp {
         document.getElementById('canvas').addEventListener('click', (e) => {
             this.createNodeAtMouse(e);
         });
+
+        // Reset panels button
+        const resetPanelsBtn = document.getElementById('resetPanelsBtn');
+        if (resetPanelsBtn) {
+            resetPanelsBtn.addEventListener('click', () => {
+                this.resetPanelPositions();
+            });
+        }
     }
 
     setupSlider(sliderId, valueId, paramName) {
@@ -402,6 +426,148 @@ class ConsciousnessApp {
         this.stopPolling();
         if (this.renderer && this.renderer.dispose) {
             this.renderer.dispose();
+        }
+    }
+
+    setupDragHandlers() {
+        const panels = document.querySelectorAll('.panel');
+
+        panels.forEach(panel => {
+            const header = panel.querySelector('.panel-header');
+            if (!header) return;
+
+            // Make header draggable
+            header.style.cursor = 'grab';
+
+            header.addEventListener('mousedown', (e) => this.startDrag(e, panel));
+        });
+
+        // Global mouse handlers
+        document.addEventListener('mousemove', (e) => this.onDrag(e));
+        document.addEventListener('mouseup', (e) => this.stopDrag(e));
+    }
+
+    startDrag(e, panel) {
+        // Don't drag if clicking on interactive elements
+        if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.closest('button')) {
+            return;
+        }
+
+        this.dragState.isDragging = true;
+        this.dragState.currentPanel = panel;
+
+        const header = panel.querySelector('.panel-header');
+        header.style.cursor = 'grabbing';
+
+        // Get current panel position
+        const rect = panel.getBoundingClientRect();
+        this.dragState.offsetX = e.clientX - rect.left;
+        this.dragState.offsetY = e.clientY - rect.top;
+
+        // Change panel positioning
+        panel.style.position = 'fixed';
+        panel.style.left = rect.left + 'px';
+        panel.style.top = rect.top + 'px';
+        panel.style.margin = '0';
+
+        // Add dragging class for visual feedback
+        panel.classList.add('dragging');
+
+        e.preventDefault();
+    }
+
+    onDrag(e) {
+        if (!this.dragState.isDragging || !this.dragState.currentPanel) return;
+
+        const panel = this.dragState.currentPanel;
+
+        // Calculate new position
+        let newX = e.clientX - this.dragState.offsetX;
+        let newY = e.clientY - this.dragState.offsetY;
+
+        // Keep panel within viewport bounds
+        const rect = panel.getBoundingClientRect();
+        const maxX = window.innerWidth - rect.width;
+        const maxY = window.innerHeight - rect.height;
+
+        newX = Math.max(0, Math.min(newX, maxX));
+        newY = Math.max(0, Math.min(newY, maxY));
+
+        panel.style.left = newX + 'px';
+        panel.style.top = newY + 'px';
+
+        e.preventDefault();
+    }
+
+    stopDrag(e) {
+        if (!this.dragState.isDragging) return;
+
+        const panel = this.dragState.currentPanel;
+        const header = panel.querySelector('.panel-header');
+
+        header.style.cursor = 'grab';
+        panel.classList.remove('dragging');
+
+        // Save panel position
+        this.savePanelPosition(panel);
+
+        this.dragState.isDragging = false;
+        this.dragState.currentPanel = null;
+    }
+
+    savePanelPosition(panel) {
+        try {
+            const positions = JSON.parse(localStorage.getItem('consim_panel_positions') || '{}');
+            const panelId = panel.className.split(' ').find(cls => cls.startsWith('panel-'));
+
+            if (panelId) {
+                positions[panelId] = {
+                    left: panel.style.left,
+                    top: panel.style.top
+                };
+                localStorage.setItem('consim_panel_positions', JSON.stringify(positions));
+            }
+        } catch (error) {
+            console.warn('Failed to save panel position:', error);
+        }
+    }
+
+    loadPanelPositions() {
+        try {
+            const positions = JSON.parse(localStorage.getItem('consim_panel_positions') || '{}');
+
+            Object.keys(positions).forEach(panelId => {
+                const panel = document.querySelector('.' + panelId);
+                if (panel) {
+                    const pos = positions[panelId];
+                    panel.style.position = 'fixed';
+                    panel.style.left = pos.left;
+                    panel.style.top = pos.top;
+                    panel.style.margin = '0';
+                }
+            });
+        } catch (error) {
+            console.warn('Failed to load panel positions:', error);
+        }
+    }
+
+    resetPanelPositions() {
+        try {
+            // Clear saved positions
+            localStorage.removeItem('consim_panel_positions');
+
+            // Reset all panels to default
+            const panels = document.querySelectorAll('.panel');
+            panels.forEach(panel => {
+                panel.style.position = '';
+                panel.style.left = '';
+                panel.style.top = '';
+                panel.style.margin = '';
+            });
+
+            console.log('Panel positions reset to default');
+        } catch (error) {
+            console.warn('Failed to reset panel positions:', error);
         }
     }
 }
