@@ -40,3 +40,8 @@ Thumbs.db
 
 # Temporary files
 /tmp/
+
+# PyInstaller build artifacts
+build/
+dist/
+# Keep consim.spec for building
